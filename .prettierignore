@@ -1,0 +1,9 @@
+.husky
+.next
+.vercel
+node_modules
+public
+package-lock.json
+next-env.d.ts
+.prettierignore
+*.log

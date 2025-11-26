@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Run lint-staged as before
+pnpm exec lint-staged
+
+# Block commits that modify protected config files
+PROTECTED="\.vscode|\.husky|\.prettier|\.lintstagedrc\.cjs|\.prettierignore|\.prettierrc|\.eslintrc\.mjs|\.github|\.npmrc|\.env\.example"
+if git diff --cached --name-only | grep -E "$PROTECTED" > /dev/null; then
+  echo "❌ Error: Changes to the following files are not allowed:
+  - .vscode
+  - .husky
+  - .prettier
+  - .lintstagedrc.cjs
+  - .prettierignore
+  - .prettierrc
+  - .github
+  - .npmrc
+  - .env.example
+  - eslint.config.mjs"
+  echo "Please revert changes to these files before committing."
+  exit 1
+fi

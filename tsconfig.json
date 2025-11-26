@@ -19,7 +19,23 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+
+      // Core app folders
+      "@/app/*": ["./app/*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/constants/*": ["./constants/*"],
+      "@/data/*": ["./data/*"],
+
+      // Subfolders commonly imported
+      "@/types/*": ["./lib/types/*"],
+      "@/actions/*": ["./lib/actions/*"],
+
+      // Utility root imports
+      "@/utils/*": ["./lib/utils.ts"], // or folder if you add more utils
+      "@/config/*": ["./lib/constants.ts"] // optional
     }
   },
   "include": [
