@@ -15,19 +15,20 @@
   "prettier.configPath": ".prettierrc",
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
-    // ".husky": true,
+    ".husky": true,
     // ".github": true,
     // ".vscode": true,
-    // ".next": true,
-    // "node_modules": true,
+    ".next": true,
+    "node_modules": true,
     // ".lintstagedrc.cjs": true,
-    // ".npmrc": true,
-    // ".prettierignore": true,
-    // ".prettierrc": true,
+    ".npmrc": true,
+    ".prettierignore": true,
+    ".prettierrc": true,
     // "eslint.config.mjs": true,
-    // "next-env.d.ts": true,
-    // "package-lock.json": true,
-    // "postcss.config.mjs": true
+    "next-env.d.ts": true,
+    "package-lock.json": true,
+    "pnpm-lock.yaml": true,
+    "postcss.config.mjs": true
   },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
