@@ -34,49 +34,53 @@ model MemberInfo {
   userId           String               @unique
   birthDate        DateTime
   school           String
-  regionLabel      String
-  yearLabel        String
-  approvalLabel    String
+  regionId         String
+  yearId           String
+  approvalId       String
   experiencePoints Int
   interests        InterestsOnMembers[]
 
   user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  region           Region               @relation(fields: [regionLabel], references: [name], onDelete: SetNull)
-  yearLevel        YearLevel            @relation(fields: [yearLabel], references: [name], onDelete: SetNull)
-  approvalStatus   ApprovalStatus       @relation(fields: [approvalLabel], references: [name], onDelete: SetNull)
+  region           Region               @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  yearLevel        YearLevel            @relation(fields: [yearId], references: [id], onDelete: SetNull)
+  approvalStatus   ApprovalStatus       @relation(fields: [approvalId], references: [id], onDelete: SetNull)
 }
 
 model Region {
   id      Int          @id @default(autoincrement())
-  name    String       @unique
+  value   String       @unique
+  label   String
   members MemberInfo[]
 }
 
 model YearLevel {
   id      Int          @id @default(autoincrement())
-  name    String       @unique
+  value   String       @unique
+  label   String
   members MemberInfo[]
 }
 
 model ApprovalStatus {
   id      Int          @id @default(autoincrement())
-  name    String       @unique
+  value   String       @unique
+  label   String
   members MemberInfo[] 
 }
 
 model Interest {
   id      Int                  @id @default(autoincrement())
-  name    String
+  value   String               @unique
+  label   String
   members InterestsOnMembers[]
 }
 
 model InterestsOnMembers {
   member        MemberInfo @relation(fields: [memberId], references: [id])
   memberId      Int
-  interest      Interest   @relation(fields: [interestLabel], references: [name])
-  interestLabel String
+  interest      Interest   @relation(fields: [interestId], references: [id])
+  interestId    Int
 
-  @@id([memberId, interestLabel])
+  @@id([memberId, interestId])
 }
 
 model Session {

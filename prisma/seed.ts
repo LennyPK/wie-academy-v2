@@ -32,50 +32,50 @@ const userData: Prisma.UserCreateInput[] = [
 ]
 
 const regionData: Prisma.UserCreateInput[] = [
-  { name: "Northland" },
-  { name: "Auckland" },
-  { name: "Waikato" },
-  { name: "Bay of Plenty" },
-  { name: "Gisborne" },
-  { name: "Hawke's Bay" },
-  { name: "Taranaki" },
-  { name: "Manawatū-Whanganui" },
-  { name: "Wellington" },
-  { name: "Tasman" },
-  { name: "Nelson" },
-  { name: "Marlborough" },
-  { name: "West Coast" },
-  { name: "Canterbury" },
-  { name: "Otago" },
-  { name: "Southland" },
-  { name: "N/A" },
+  { value: "northland-region", label: "Northland" },
+  { value: "auckland-region", label: "Auckland" },
+  { value: "waikato-region", label: "Waikato" },
+  { value: "bay-of-plenty-region", label: "Bay of Plenty" },
+  { value: "gisborne-region", label: "Gisborne" },
+  { value: "hawkes-bay-region", label: "Hawke's Bay" },
+  { value: "taranaki-region", label: "Taranaki" },
+  { value: "manawatu-whanganui-region", label: "Manawatū-Whanganui" },
+  { value: "wellington-region", label: "Wellington" },
+  { value: "tasman-region", label: "Tasman" },
+  { value: "nelson-region", label: "Nelson" },
+  { value: "marlborough-region", label: "Marlborough" },
+  { value: "west-coast-region", label: "West Coast" },
+  { value: "canterbury-region", label: "Canterbury" },
+  { value: "otago-region", label: "Otago" },
+  { value: "southland-region", label: "Southland" },
+  { value: "area-outside-region", label: "Area Outside Region" },
 ]
 
 const yearLevelData: Prisma.UserCreateInput[] = [
-  { name: "Year 9" },
-  { name: "Year 10" },
-  { name: "Year 11" },
-  { name: "Year 12" },
-  { name: "Year 13" },
+  { value: "year-9", label: "Year 9" },
+  { value: "year-10", label: "Year 10" },
+  { value: "year-11", label: "Year 11" },
+  { value: "year-12", label: "Year 12" },
+  { value: "year-13", label: "Year 13" },
 ]
 
 const approvalStatusData: Prisma.UserCreateInput[] = [
-  { name: "pending" },
-  { name: "approved" },
-  { name: "declined" },
+  { value: "approval-pending", label: "Pending Approval" },
+  { value: "approval-accepted", label: "Approval Accepted" },
+  { value: "approval-declined", label: "Approval Declined" },
 ]
 
 const interestData: Prisma.UserCreateInput[] = [
-  { name: "Hardware" },
-  { name: "Manufacturing" },
-  { name: "Health Technology" },
-  { name: "Construction" },
-  { name: "Aerospace" },
-  { name: "Complex Systems" },
-  { name: "Robotics" },
-  { name: "Artificial Intelligence" },
-  { name: "Sustainability" },
-  { name: "Electronics" },
+  { value: "aerospace", label: "Aerospace" },
+  { value: "artificial-intelligence", label: "Artificial Intelligence" },
+  { value: "complex-systems", label: "Complex Systems" },
+  { value: "construction", label: "Construction" },
+  { value: "electronics", label: "Electronics" },
+  { value: "hardware", label: "Hardware" },
+  { value: "health-technology", label: "Health Technology" },
+  { value: "manufacturing", label: "Manufacturing" },
+  { value: "robotics", label: "Robotics" },
+  { value: "sustainability", label: "Sustainability" },
 ]
 
 export async function main() {
@@ -89,7 +89,7 @@ export async function main() {
 
   for (const region of regionData) {
     await prisma.region.upsert({
-      where: { name: region.name },
+      where: { label: region.label },
       update: {},
       create: region,
     })
@@ -97,7 +97,7 @@ export async function main() {
 
   for (const yearLevel of yearLevelData) {
     await prisma.yearLevel.upsert({
-      where: { name: yearLevel.name },
+      where: { label: yearLevel.label },
       update: {},
       create: yearLevel,
     })
@@ -105,7 +105,7 @@ export async function main() {
 
   for (const approvalStatus of approvalStatusData) {
     await prisma.approvalStatus.upsert({
-      where: { name: approvalStatus.name },
+      where: { label: approvalStatus.label },
       update: {},
       create: approvalStatus,
     })
@@ -113,7 +113,7 @@ export async function main() {
 
   for (const interest of interestData) {
     await prisma.interest.upsert({
-      where: { name: interest.name },
+      where: { label: interest.label },
       update: {},
       create: interest,
     })
@@ -121,11 +121,3 @@ export async function main() {
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
