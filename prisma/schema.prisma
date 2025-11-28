@@ -29,6 +29,56 @@ model User {
   @@map("user")
 }
 
+model MemberInfo {
+  id               Int                  @id @default(autoincrement())
+  userId           String               @unique
+  birthDate        DateTime
+  school           String
+  regionLabel      String
+  yearLabel        String
+  approvalLabel    String
+  experiencePoints Int
+  interests        InterestsOnMembers[]
+
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  region           Region               @relation(fields: [regionLabel], references: [name], onDelete: SetNull)
+  yearLevel        YearLevel            @relation(fields: [yearLabel], references: [name], onDelete: SetNull)
+  approvalStatus   ApprovalStatus       @relation(fields: [approvalLabel], references: [name], onDelete: SetNull)
+}
+
+model Region {
+  id      Int          @id @default(autoincrement())
+  name    String       @unique
+  members MemberInfo[]
+}
+
+model YearLevel {
+  id      Int          @id @default(autoincrement())
+  name    String       @unique
+  members MemberInfo[]
+}
+
+model ApprovalStatus {
+  id      Int          @id @default(autoincrement())
+  name    String       @unique
+  members MemberInfo[] 
+}
+
+model Interest {
+  id      Int                  @id @default(autoincrement())
+  name    String
+  members InterestsOnMembers[]
+}
+
+model InterestsOnMembers {
+  member        MemberInfo @relation(fields: [memberId], references: [id])
+  memberId      Int
+  interest      Interest   @relation(fields: [interestLabel], references: [name])
+  interestLabel String
+
+  @@id([memberId, interestLabel])
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime
