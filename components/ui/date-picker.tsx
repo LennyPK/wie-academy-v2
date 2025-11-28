@@ -79,7 +79,7 @@ export function DatePicker({
   return (
     <>
       {/* Compatibility with form */}
-      <Input hidden name={id} value={date ? date.toISOString() : ""} />
+      <Input hidden name={id} value={date ? date.toISOString() : ""} readOnly />
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
