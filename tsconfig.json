@@ -26,18 +26,12 @@
       "@/components/*": ["./components/*"],
       "@/lib/*": ["./lib/*"],
       "@/hooks/*": ["./hooks/*"],
-      "@/data/*": ["./data/*"],
 
       // Subfolders commonly imported
       "@/utils": ["./lib/utils"],
+      "@/constants*": ["./lib/constants"],
       "@/types/*": ["./lib/types/*"],
-      "@/generated/*": ["./lib/generated/prisma/*"],
-      "@/actions/*": ["./lib/actions/*"],
-
-      // Utility root imports
-      "@/utils/*": ["./lib/utils.ts"], // or folder if you add more utils
-      "@/constants/*": ["./lib/utils/constants.ts"], // optional
-      "@/routes": ["./lib/utils/routes.ts"]
+      "@/generated/*": ["./lib/generated/prisma/*"]
     }
   },
   "include": [

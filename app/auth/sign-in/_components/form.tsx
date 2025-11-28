@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { routes } from "@/constants"
+import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
-import { routes } from "@/lib/utils/routes"
 import { useForm } from "@tanstack/react-form"
 import Image from "next/image"
 import Link from "next/link"
+import { useTransition } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 
@@ -19,6 +21,8 @@ const formSchema = z.object({
 })
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
+  const [isTransitioning, startTransition] = useTransition()
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -29,7 +33,26 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      toast.success(`Signed in successfully!${value}`)
+      startTransition(async () => {
+        await authClient.signIn.email(
+          {
+            email: value.email,
+            password: value.password,
+            callbackURL: "/dashboard",
+          },
+          {
+            onRequest: () => {
+              toast.loading("Loading your account...")
+            },
+            onSuccess: () => {
+              toast.success("Successful sign in.")
+            },
+            onError: (ctx) => {
+              toast.error(ctx.error.message)
+            },
+          }
+        )
+      })
     },
   })
 
@@ -133,7 +156,7 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
               </div>
 
               <Field>
-                <Button type="submit" className="cursor-pointer">
+                <Button type="submit" className="cursor-pointer" disabled={isTransitioning}>
                   Sign In
                 </Button>
                 <FieldDescription className="text-center">

@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { regions, routes, yearLevels } from "@/constants"
+import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
-import { REGIONS, YEAR_LEVELS } from "@/lib/utils/constants"
-import { routes } from "@/lib/utils/routes"
 import { useForm } from "@tanstack/react-form"
-import { format, getYear } from "date-fns"
+import { getYear } from "date-fns"
 import Image from "next/image"
+import { useTransition } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 
@@ -53,6 +54,8 @@ const formSchema = z
   })
 
 export default function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
+  const [isTransitioning, startTransition] = useTransition()
+
   const form = useForm({
     defaultValues: {
       firstName: "",
@@ -70,8 +73,29 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      if (value.dob === null) return
-      toast.success(`Signed up successfully! ${format(value.dob, "PPPPpp")}`)
+      startTransition(async () => {
+        // TOOD: Handle additional fields and redirect
+        await authClient.signUp.email(
+          {
+            email: value.email,
+            password: value.password,
+            name: `${value.firstName} ${value.lastName}`,
+            // image: null,
+            callbackURL: "/dashboard",
+          },
+          {
+            onRequest: () => {
+              toast.loading("Creating your account...")
+            },
+            onSuccess: () => {
+              toast.success("Check your email to verify your account.")
+            },
+            onError: (ctx) => {
+              toast.error(ctx.error.message)
+            },
+          }
+        )
+      })
     },
   })
 
@@ -222,7 +246,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                           <SelectValue placeholder="Select Region" />
                         </SelectTrigger>
                         <SelectContent>
-                          {REGIONS.map((region) => (
+                          {regions.map((region) => (
                             <SelectItem key={region.value} value={region.value}>
                               {region.label}
                             </SelectItem>
@@ -254,7 +278,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                           <SelectValue placeholder="Select Year Level" />
                         </SelectTrigger>
                         <SelectContent>
-                          {YEAR_LEVELS.map((year) => (
+                          {yearLevels.map((year) => (
                             <SelectItem key={year.value} value={year.value}>
                               {year.label}
                             </SelectItem>
@@ -356,7 +380,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
               </form.Field>
 
               <Field>
-                <Button type="submit" className="cursor-pointer">
+                <Button type="submit" className="cursor-pointer" disabled={isTransitioning}>
                   Sign Up
                 </Button>
                 <FieldDescription className="text-center">
