@@ -2,14 +2,36 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { routes } from "@/lib/utils/routes"
+import { useForm } from "@tanstack/react-form"
 import Image from "next/image"
+import Link from "next/link"
+import { toast } from "sonner"
+import * as z from "zod"
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
-  // TODO: Handle form submission and validation with zod schema
+  const formSchema = z.object({
+    email: z.email("Enter a valid email address"),
+    password: z.string().nonempty("Password is required"),
+    rememberMe: z.boolean(),
+  })
+
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+    validators: {
+      onSubmit: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      toast.success(`Logged in successfully!${value}`)
+    },
+  })
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -27,28 +49,86 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
           <CardDescription>Sign in to your Academy account to continue</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form
+            id="sign-in-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              form.handleSubmit()
+            }}
+          >
             <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="email@example.com"
-                  className="text-sm"
-                  required
-                />
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  {/* FIXME: Add forgot password link*/}
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
-              </Field>
+              <form.Field name="email">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        placeholder="email@example.com"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        className="text-sm"
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <form.Field name="password">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <Input
+                        id={field.name}
+                        type="password"
+                        placeholder="********"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <div className="flex justify-between">
+                {/* TODO: Add remember me functionality */}
+                {/* <form.Field name="rememberMe">
+                  {(field) => {
+                    const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+
+                    return (
+                      <Field orientation="horizontal">
+                        <Checkbox
+                          id={field.name}
+                          checked={field.state.value}
+                          onCheckedChange={(checked) => field.handleChange(checked === true)}
+                          aria-invalid={isInvalid}
+                        />
+                        <FieldLabel htmlFor={field.name} className="text-sm font-normal">
+                          Remember Me?
+                        </FieldLabel>
+                      </Field>
+                    )
+                  }}
+                </form.Field> */}
+
+                {/* TODO: Add forgot password link */}
+                <Link href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                  Forgot your password?
+                </Link>
+              </div>
+
               <Field>
                 <Button type="submit" className="cursor-pointer">
                   Sign In
