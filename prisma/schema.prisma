@@ -36,7 +36,7 @@ model MemberInfo {
   school           String
   regionId         String
   yearId           String
-  approvalId       String
+  approvalStatus   ApprovalStatus       @default(PENDING)
   experiencePoints Int
   interests        InterestsOnMembers[]
 
@@ -44,6 +44,12 @@ model MemberInfo {
   region           Region               @relation(fields: [regionId], references: [id], onDelete: SetNull)
   yearLevel        YearLevel            @relation(fields: [yearId], references: [id], onDelete: SetNull)
   approvalStatus   ApprovalStatus       @relation(fields: [approvalId], references: [id], onDelete: SetNull)
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  DECLINED
 }
 
 model Region {
@@ -58,13 +64,6 @@ model YearLevel {
   value   String       @unique
   label   String
   members MemberInfo[]
-}
-
-model ApprovalStatus {
-  id      Int          @id @default(autoincrement())
-  value   String       @unique
-  label   String
-  members MemberInfo[] 
 }
 
 model Interest {

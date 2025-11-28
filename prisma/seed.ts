@@ -59,12 +59,6 @@ const yearLevelData: Prisma.UserCreateInput[] = [
   { value: "year-13", label: "Year 13" },
 ]
 
-const approvalStatusData: Prisma.UserCreateInput[] = [
-  { value: "approval-pending", label: "Pending Approval" },
-  { value: "approval-accepted", label: "Approval Accepted" },
-  { value: "approval-declined", label: "Approval Declined" },
-]
-
 const interestData: Prisma.UserCreateInput[] = [
   { value: "aerospace", label: "Aerospace" },
   { value: "artificial-intelligence", label: "Artificial Intelligence" },
