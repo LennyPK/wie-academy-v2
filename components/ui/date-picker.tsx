@@ -13,13 +13,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 import { format, getMonth, getYear, setMonth, setYear } from "date-fns"
 import { Input } from "./input"
 
 interface DatePickerProps {
   id?: string
-  // date?: Date
-  // onDateChange?: (date: Date | undefined) => void
+  name?: string
+  value: Date | null
+  onChange?: (value: Date | null) => void
+  onBlur?: React.FocusEventHandler<HTMLInputElement>
+  "aria-invalid"?: boolean
+  className?: string
+
   startYear?: number
   endYear?: number
   disableFutureDates?: boolean
@@ -27,16 +33,30 @@ interface DatePickerProps {
 
 export function DatePicker({
   id,
+  name,
+  value,
+  onBlur,
+  onChange,
+  "aria-invalid": ariaInvalid,
+  className,
+
   startYear = getYear(new Date()) - 100,
   endYear = getYear(new Date()) + 100,
-  // date,
-  // onDateChange,
   disableFutureDates,
+
+  ...props
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(undefined)
-  // const currentDate = date ?? undefined
-  // const setCurrentDate = onDateChange ?? (() => {})
+
+  // Sync internal date state with form value
+  React.useEffect(() => {
+    if (value) {
+      setDate(new Date(value))
+    } else {
+      setDate(undefined)
+    }
+  }, [value])
 
   const months = [
     "January",
@@ -69,27 +89,42 @@ export function DatePicker({
     setDate(newDate)
   }
 
-  const handleSelect = (selectedData: Date | undefined) => {
-    if (selectedData) {
-      setDate(selectedData)
-      setOpen(false)
-    }
+  const handleSelect = (selectedDate: Date | undefined) => {
+    if (!selectedDate) return
+    setDate(selectedDate)
+    setOpen(false)
+    onChange?.(selectedDate)
   }
 
   return (
     <>
       {/* Compatibility with form */}
-      <Input hidden name={id} value={date ? date.toISOString() : ""} readOnly />
+      <Input
+        id={id}
+        name={name}
+        value={value ? value.toISOString() : ""}
+        onBlur={onBlur}
+        aria-invalid={ariaInvalid}
+        hidden
+        readOnly
+        {...props}
+      />
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
             id={id}
+            name={name}
+            aria-invalid={ariaInvalid}
             data-empty={!date}
-            className="w-48 justify-between font-normal data-[empty=true]:text-muted-foreground"
+            variant="outline"
+            className={cn(
+              "w-48 cursor-pointer justify-between font-normal hover:bg-background data-[empty=true]:text-muted-foreground",
+              className
+            )}
+            {...props}
           >
-            {date ? format(date, "PPP") : "Select date"}
+            {date ? format(date, "PPP") : "Select Date"}
             <ChevronDownIcon className="size-4 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -125,9 +160,7 @@ export function DatePicker({
             mode="single"
             selected={date}
             captionLayout="label"
-            onSelect={(date) => {
-              handleSelect(date)
-            }}
+            onSelect={handleSelect}
             autoFocus
             month={date}
             onMonthChange={setDate}

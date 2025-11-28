@@ -12,13 +12,13 @@ import Link from "next/link"
 import { toast } from "sonner"
 import * as z from "zod"
 
-export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
-  const formSchema = z.object({
-    email: z.email("Enter a valid email address"),
-    password: z.string().nonempty("Password is required"),
-    rememberMe: z.boolean(),
-  })
+const formSchema = z.object({
+  email: z.email("Enter a valid email address"),
+  password: z.string().nonempty("Password is required"),
+  rememberMe: z.boolean(),
+})
 
+export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
   const form = useForm({
     defaultValues: {
       email: "",
@@ -29,11 +29,12 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      toast.success(`Logged in successfully!${value}`)
+      toast.success(`Signed in successfully!${value}`)
     },
   })
 
   return (
+    // TODO: Max length for email and password fields?
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
@@ -88,6 +89,7 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                       <Input
                         id={field.name}
+                        name={field.name}
                         type="password"
                         placeholder="********"
                         value={field.state.value}
@@ -108,9 +110,10 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
                     const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
 
                     return (
-                      <Field orientation="horizontal">
+                      <Field orientation="horizontal" data-invalid={isInvalid}>
                         <Checkbox
                           id={field.name}
+                          name={field.name}
                           checked={field.state.value}
                           onCheckedChange={(checked) => field.handleChange(checked === true)}
                           aria-invalid={isInvalid}
