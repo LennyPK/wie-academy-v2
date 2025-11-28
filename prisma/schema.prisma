@@ -14,72 +14,21 @@ datasource db {
 }
 
 model User {
-  id            String      @id
+  id            String    @id
   name          String
   email         String
-  emailVerified Boolean     @default(false)
+  emailVerified Boolean   @default(false)
   image         String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  memberInfo    MemberInfo? 
+
+  memberInfo MemberInfo?
+  role       Role        @default(MEMBER)
 
   @@unique([email])
   @@map("user")
-}
-
-model MemberInfo {
-  id               Int                  @id @default(autoincrement())
-  userId           String               @unique
-  birthDate        DateTime
-  school           String
-  regionId         String
-  yearId           String
-  approvalStatus   ApprovalStatus       @default(PENDING)
-  experiencePoints Int
-  interests        InterestsOnMembers[]
-
-  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  region           Region               @relation(fields: [regionId], references: [id], onDelete: SetNull)
-  yearLevel        YearLevel            @relation(fields: [yearId], references: [id], onDelete: SetNull)
-  approvalStatus   ApprovalStatus       @relation(fields: [approvalId], references: [id], onDelete: SetNull)
-}
-
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  DECLINED
-}
-
-model Region {
-  id      Int          @id @default(autoincrement())
-  value   String       @unique
-  label   String
-  members MemberInfo[]
-}
-
-model YearLevel {
-  id      Int          @id @default(autoincrement())
-  value   String       @unique
-  label   String
-  members MemberInfo[]
-}
-
-model Interest {
-  id      Int                  @id @default(autoincrement())
-  value   String               @unique
-  label   String
-  members InterestsOnMembers[]
-}
-
-model InterestsOnMembers {
-  member        MemberInfo @relation(fields: [memberId], references: [id])
-  memberId      Int
-  interest      Interest   @relation(fields: [interestId], references: [id])
-  interestId    Int
-
-  @@id([memberId, interestId])
 }
 
 model Session {
@@ -128,4 +77,61 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model MemberInfo {
+  id               Int                  @id @default(autoincrement())
+  userId           String               @unique
+  birthDate        DateTime
+  school           String
+  regionId         Int
+  yearId           Int
+  approvalStatus   ApprovalStatus       @default(PENDING)
+  experiencePoints Int
+  interests        InterestsOnMembers[]
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  region    Region    @relation(fields: [regionId], references: [id], onDelete: Restrict)
+  yearLevel YearLevel @relation(fields: [yearId], references: [id], onDelete: Restrict)
+}
+
+model Region {
+  id      Int          @id @default(autoincrement())
+  value   String       @unique
+  label   String
+  members MemberInfo[]
+}
+
+model YearLevel {
+  id      Int          @id @default(autoincrement())
+  value   String       @unique
+  label   String
+  members MemberInfo[]
+}
+
+model Interest {
+  id      Int                  @id @default(autoincrement())
+  value   String               @unique
+  label   String
+  members InterestsOnMembers[]
+}
+
+model InterestsOnMembers {
+  member     MemberInfo @relation(fields: [memberId], references: [id])
+  memberId   Int
+  interest   Interest   @relation(fields: [interestId], references: [id])
+  interestId Int
+
+  @@id([memberId, interestId])
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+enum Role {
+  ADMIN
+  MEMBER
 }

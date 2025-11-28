@@ -97,14 +97,6 @@ export async function main() {
     })
   }
 
-  for (const approvalStatus of approvalStatusData) {
-    await prisma.approvalStatus.upsert({
-      where: { label: approvalStatus.label },
-      update: {},
-      create: approvalStatus,
-    })
-  }
-
   for (const interest of interestData) {
     await prisma.interest.upsert({
       where: { label: interest.label },
