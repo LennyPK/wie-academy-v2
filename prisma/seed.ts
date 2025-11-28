@@ -14,6 +14,7 @@ const prisma = new PrismaClient({
 
 const userData: Prisma.UserCreateInput[] = [
   {
+    id: "1",
     name: "Alice",
     email: "alice@prisma.io",
     // profile: {
@@ -21,6 +22,7 @@ const userData: Prisma.UserCreateInput[] = [
     // },
   },
   {
+    id: "2",
     name: "Bob",
     email: "bob@prisma.io",
     // profile: {
@@ -31,7 +33,7 @@ const userData: Prisma.UserCreateInput[] = [
   },
 ]
 
-const regionData: Prisma.UserCreateInput[] = [
+const regionData: Prisma.RegionCreateInput[] = [
   { value: "northland-region", label: "Northland" },
   { value: "auckland-region", label: "Auckland" },
   { value: "waikato-region", label: "Waikato" },
@@ -51,7 +53,7 @@ const regionData: Prisma.UserCreateInput[] = [
   { value: "area-outside-region", label: "Area Outside Region" },
 ]
 
-const yearLevelData: Prisma.UserCreateInput[] = [
+const yearLevelData: Prisma.YearLevelCreateInput[] = [
   { value: "year-9", label: "Year 9" },
   { value: "year-10", label: "Year 10" },
   { value: "year-11", label: "Year 11" },
@@ -59,7 +61,7 @@ const yearLevelData: Prisma.UserCreateInput[] = [
   { value: "year-13", label: "Year 13" },
 ]
 
-const interestData: Prisma.UserCreateInput[] = [
+const interestData: Prisma.InterestCreateInput[] = [
   { value: "aerospace", label: "Aerospace" },
   { value: "artificial-intelligence", label: "Artificial Intelligence" },
   { value: "complex-systems", label: "Complex Systems" },
@@ -83,7 +85,7 @@ export async function main() {
 
   for (const region of regionData) {
     await prisma.region.upsert({
-      where: { label: region.label },
+      where: { value: region.value },
       update: {},
       create: region,
     })
@@ -91,7 +93,7 @@ export async function main() {
 
   for (const yearLevel of yearLevelData) {
     await prisma.yearLevel.upsert({
-      where: { label: yearLevel.label },
+      where: { value: yearLevel.value },
       update: {},
       create: yearLevel,
     })
@@ -99,7 +101,7 @@ export async function main() {
 
   for (const interest of interestData) {
     await prisma.interest.upsert({
-      where: { label: interest.label },
+      where: { value: interest.value },
       update: {},
       create: interest,
     })
