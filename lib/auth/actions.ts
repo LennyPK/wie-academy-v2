@@ -1,5 +1,79 @@
 "use server"
 
+import { signUpSchema } from "@/app/auth/sign-up/_components/form"
+import z from "zod"
+import { prisma } from "../prisma"
+import { authClient } from "./client"
+
+export type RegionOption = {
+  id: number
+  value: string
+  label: string
+}
+
+export type YearLevelOption = {
+  id: number
+  value: string
+  label: string
+}
+
+export async function getRegions() {
+  return await prisma.region.findMany({
+    orderBy: { label: "asc" },
+  })
+}
+
+export async function getYearLevels() {
+  return await prisma.yearLevel.findMany({
+    orderBy: { id: "asc" },
+  })
+}
+
+// TODO: this code does not work
+export async function registerUser(payload: z.infer<typeof signUpSchema>) {
+  const data = signUpSchema.parse(payload)
+
+  const authResult = await authClient.signUp.email({
+    email: data.email,
+    password: data.password,
+    name: `${data.firstName} ${data.lastName}`,
+    // image: null,
+    callbackURL: "/dashboard",
+  })
+
+  const userId = authResult.data?.user?.id
+  if (!userId) {
+    throw new Error("Auth provider did not return a user id")
+  }
+
+  try {
+    await prisma.memberInfo.create({
+      data: {
+        userId,
+        school: data.school,
+        regionId: Number.parseInt(data.region),
+        yearId: Number.parseInt(data.yearLevel),
+        birthDate: data.dob || "",
+        // TODO: Delete exp reference after migration/push (now listed as a default value)
+        experiencePoints: 0,
+      },
+    })
+  } catch (createError) {
+    try {
+      await authClient.deleteUser({
+        token: authResult.data?.token || undefined,
+      })
+    } catch (deleteError) {
+      console.error(`Failed to clean up user after profile creation error: ${deleteError}`)
+    }
+
+    throw createError
+  }
+
+  return { userId }
+}
+
+/* Example code temporarily commented out
 import { LoginFormValues, RegisterFormValues } from "@/components/forms/types"
 import { FUNCTIONS } from "@/lib/database"
 import { routes } from "@/lib/routes"
@@ -198,3 +272,4 @@ export async function logout() {
   //   }
   // }
 }
+*/

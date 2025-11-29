@@ -87,7 +87,7 @@ model MemberInfo {
   regionId         Int
   yearId           Int
   approvalStatus   ApprovalStatus       @default(PENDING)
-  experiencePoints Int
+  experiencePoints Int                  @default(0)
   interests        InterestsOnMembers[]
 
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

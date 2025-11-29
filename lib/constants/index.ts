@@ -1,7 +1,5 @@
 export * from "./avatars"
 export * from "./badge-ids"
 export * from "./interests"
-export * from "./regions"
 export * from "./routes"
 export * from "./xp-values"
-export * from "./year-levels"

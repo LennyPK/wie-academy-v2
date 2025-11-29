@@ -13,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { regions, routes, yearLevels } from "@/constants"
+import { routes } from "@/constants"
+import { RegionOption, registerUser, YearLevelOption } from "@/lib/auth/actions"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
 import { useForm } from "@tanstack/react-form"
@@ -23,7 +24,7 @@ import { useTransition } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 
-const formSchema = z
+export const signUpSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
@@ -53,7 +54,17 @@ const formSchema = z
     path: ["confirmPassword"],
   })
 
-export default function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
+type Props = {
+  regions: RegionOption[]
+  yearLevels: YearLevelOption[]
+}
+
+export default function SignUpForm({
+  className,
+  regions,
+  yearLevels,
+  ...props
+}: React.ComponentProps<"div"> & Props) {
   const [isTransitioning, startTransition] = useTransition()
 
   const form = useForm({
@@ -70,11 +81,12 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
       consent: false,
     },
     validators: {
-      onSubmit: formSchema,
+      onSubmit: signUpSchema,
     },
     onSubmit: async ({ value }) => {
       startTransition(async () => {
-        // TOOD: Handle additional fields and redirect
+        // TODO: Handle additional fields and redirect
+        await registerUser(value)
         await authClient.signUp.email(
           {
             email: value.email,
@@ -247,7 +259,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                         </SelectTrigger>
                         <SelectContent>
                           {regions.map((region) => (
-                            <SelectItem key={region.value} value={region.value}>
+                            <SelectItem key={region.id} value={region.value}>
                               {region.label}
                             </SelectItem>
                           ))}
@@ -279,7 +291,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                         </SelectTrigger>
                         <SelectContent>
                           {yearLevels.map((year) => (
-                            <SelectItem key={year.value} value={year.value}>
+                            <SelectItem key={year.id} value={year.value}>
                               {year.label}
                             </SelectItem>
                           ))}
