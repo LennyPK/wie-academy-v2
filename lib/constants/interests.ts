@@ -1,4 +1,4 @@
-export const interests = [
+export const INTERESTS = [
   { value: "artificial-intelligence", label: "Artificial Intelligence" },
   { value: "sustainability", label: "Sustainability" },
   { value: "electronics", label: "Electronics" },

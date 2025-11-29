@@ -1,4 +1,4 @@
-import { routes } from "@/constants"
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
   // This is the recommended approach to optimistically redirect users
   // We recommend handling auth checks in each page/route
   if (!session) {
-    return NextResponse.redirect(new URL(routes.SIGN_IN, request.url))
+    return NextResponse.redirect(new URL(ROUTES.SIGN_IN, request.url))
   }
 
   return NextResponse.next()

@@ -1,4 +1,4 @@
-export const xpValues = {
+export const XP_VALUES = {
   COMPLETE_ONBOARDING: 10,
   CREATE_POST: 10,
   CREATE_REPLY: 10,

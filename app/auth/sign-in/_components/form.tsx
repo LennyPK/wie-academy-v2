@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { routes } from "@/constants"
+import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
 import { useForm } from "@tanstack/react-form"
@@ -154,7 +154,7 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
                   Sign In
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href={routes.SIGN_UP}>Sign up</a>
+                  Don&apos;t have an account? <a href={ROUTES.SIGN_UP}>Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { routes } from "@/constants"
+import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
 import { RegionOption, YearLevelOption } from "@/types"
@@ -375,7 +375,7 @@ export default function SignUpForm({
                   Sign Up
                 </Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <a href={routes.SIGN_IN}>Sign in</a>
+                  Already have an account? <a href={ROUTES.SIGN_IN}>Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
