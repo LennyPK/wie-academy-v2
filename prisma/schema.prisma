@@ -39,6 +39,8 @@ model User {
   region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
   yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
 
+  announcementsAuthored Announcement[]
+
   @@unique([email])
   @@map("user")
 }
@@ -146,18 +148,22 @@ enum Role {
 }
 
 model Announcement {
-  id           String @id
+  id           String   @id
   title        String
   contentPlain String
   contentHtml  String
   contentJson  Json
   categoryId   Int
+  authorId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   targetSchools SchoolsOnAnnouncements[]
   targetRegions RegionsOnAnnouncements[]
   targetYears   YearLevelsOnAnnouncements[]
 
   category AnnouncementCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  author   User?                @relation(fields: [authorId], references: [id], onDelete: SetNull)
 
   @@map("announcement")
 }
