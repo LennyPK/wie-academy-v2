@@ -12,13 +12,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useTransition } from "react"
 import { toast } from "sonner"
-import * as z from "zod"
-
-const formSchema = z.object({
-  email: z.email("Enter a valid email address"),
-  password: z.string().nonempty("Password is required"),
-  rememberMe: z.boolean(),
-})
+import { formSchema } from "./form-schema"
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
   const [isTransitioning, startTransition] = useTransition()
