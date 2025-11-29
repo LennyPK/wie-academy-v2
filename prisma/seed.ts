@@ -78,6 +78,16 @@ const interestData: Prisma.InterestCreateInput[] = [
   { value: "sustainability", label: "Sustainability" },
 ]
 
+const announcementCategoryData: Prisma.AnnouncementCategoryCreateInput[] = [
+  { value: "general", label: "General" },
+  { value: "workshop", label: "Workshop" },
+  { value: "academic-support", label: "Academic Support" },
+  { value: "competition", label: "Competition" },
+  { value: "social", label: "Social" },
+  { value: "school-visit", label: "School Visit" },
+  { value: "other", label: "Other" },
+]
+
 export async function main() {
   for (const user of userData) {
     await prisma.user.upsert({
@@ -108,6 +118,14 @@ export async function main() {
       where: { value: interest.value },
       update: {},
       create: interest,
+    })
+  }
+
+  for (const announcementCategory of announcementCategoryData) {
+    await prisma.announcementCategory.upsert({
+      where: { value: announcementCategory.value },
+      update: {},
+      create: announcementCategory,
     })
   }
 }

@@ -92,21 +92,21 @@ model Verification {
 }
 
 model Region {
-  id            Int             @id @default(autoincrement())
-  value         String          @unique
+  id            Int                      @id @default(autoincrement())
+  value         String                   @unique
   label         String
   users         User[]
-  announcements Announcements[]
+  announcements RegionsOnAnnouncements[]
 
   @@map("region")
 }
 
 model YearLevel {
-  id            Int             @id @default(autoincrement())
-  value         String          @unique
+  id            Int                         @id @default(autoincrement())
+  value         String                      @unique
   label         String
   users         User[]
-  announcements Announcements[]
+  announcements YearLevelsOnAnnouncements[]
 
   @@map("yearLevel")
 }
@@ -121,9 +121,9 @@ model Interest {
 }
 
 model InterestsOnUsers {
-  interest   Interest @relation(fields: [interestId], references: [id])
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
   interestId Int
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
 
   @@id([userId, interestId])
@@ -145,28 +145,57 @@ enum Role {
   @@map("role")
 }
 
-model Announcements {
-  id            String               @id
-  title         String
-  contentPlain  String
-  contentHtml   String
-  contentJson   Json
-  category      AnnouncementCategory
-  targetSchools String[]
-  targetRegions Region[]
-  targetYear    YearLevel[]
+model Announcement {
+  id           String @id
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  categoryId   Int
+
+  targetSchools SchoolsOnAnnouncements[]
+  targetRegions RegionsOnAnnouncements[]
+  targetYears   YearLevelsOnAnnouncements[]
+
+  category AnnouncementCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   @@map("announcement")
 }
 
-enum AnnouncementCategory {
-  GENERAL
-  WORKSHOP
-  ACADEMIC_SUPPORT
-  COMPETITION
-  SOCIAL
-  SCHOOL_VISIT
-  OTHER
+model AnnouncementCategory {
+  id            Int            @id @default(autoincrement())
+  value         String         @unique
+  label         String
+  announcements Announcement[]
 
   @@map("announcementCategory")
+}
+
+model SchoolsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  school         String
+
+  @@id([announcementId, school])
+  @@map("schoolsOnAnnouncements")
+}
+
+model RegionsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  region         Region       @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId       Int
+
+  @@id([announcementId, regionId])
+  @@map("regionsOnAnnouncements")
+}
+
+model YearLevelsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  yearLevel      YearLevel    @relation(fields: [yearLevelId], references: [id], onDelete: Cascade)
+  yearLevelId    Int
+
+  @@id([announcementId, yearLevelId])
+  @@map("yearLevelsOnAnnouncements")
 }
