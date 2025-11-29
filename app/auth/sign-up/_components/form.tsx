@@ -24,7 +24,7 @@ import { useTransition } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 
-const signUpSchema = z
+const formSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
@@ -51,7 +51,7 @@ const signUpSchema = z
     path: ["confirmPassword"],
   })
 
-type Props = {
+type SignUpFormProps = {
   regions: RegionOption[]
   yearLevels: YearLevelOption[]
 }
@@ -61,7 +61,7 @@ export default function SignUpForm({
   regions,
   yearLevels,
   ...props
-}: React.ComponentProps<"div"> & Props) {
+}: React.ComponentProps<"div"> & SignUpFormProps) {
   const [isTransitioning, startTransition] = useTransition()
 
   const form = useForm({
@@ -78,7 +78,7 @@ export default function SignUpForm({
       consent: false,
     },
     validators: {
-      onSubmit: signUpSchema,
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
       startTransition(async () => {
