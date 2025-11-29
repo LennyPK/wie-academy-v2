@@ -16,6 +16,8 @@ const userData: Prisma.UserCreateInput[] = [
   {
     id: "1",
     name: "Alice",
+    firstName: "Alice",
+    lastName: "Smith",
     email: "alice@prisma.io",
     // profile: {
     //   create: [{ bio: "I love databases!", avatarUrl: "https://example.com/alice.png" }],
@@ -24,6 +26,8 @@ const userData: Prisma.UserCreateInput[] = [
   {
     id: "2",
     name: "Bob",
+    firstName: "Bob",
+    lastName: "Johnson",
     email: "bob@prisma.io",
     // profile: {
     //   create: [

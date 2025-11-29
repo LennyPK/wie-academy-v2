@@ -13,47 +13,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { regions, routes, yearLevels } from "@/constants"
+import { routes } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
+import { RegionOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"
-import * as z from "zod"
+import { formSchema } from "./form-schema"
 
-const formSchema = z
-  .object({
-    firstName: z.string().min(1, "First name is required"),
-    lastName: z.string().min(1, "Last name is required"),
-    email: z.email("Enter a valid email address"),
-    school: z.string().min(1, "Please select a school"),
-    region: z.string().min(1, "Please select a region"),
-    yearLevel: z.string().min(1, "Year level is required"),
-    dob: z
-      .date()
-      .nullable()
-      .refine((val) => val !== null, {
-        message: "Date of birth is required",
-      }),
-    password: z
-      .string()
-      .nonempty("Password is required")
-      .min(8, "Password must be at least 8 characters"),
-    // .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    // .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    // .regex(/[0-9]/, "Password must contain at least one number")
-    // .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
-    confirmPassword: z.string().nonempty("Please confirm your password"),
-    consent: z.boolean().refine((val) => val === true),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  })
+type SignUpFormProps = {
+  regions: RegionOption[]
+  yearLevels: YearLevelOption[]
+}
 
-export default function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
+export default function SignUpForm({
+  className,
+  regions,
+  yearLevels,
+  ...props
+}: React.ComponentProps<"div"> & SignUpFormProps) {
   const [isTransitioning, startTransition] = useTransition()
 
   const form = useForm({
@@ -64,7 +45,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
       school: "",
       region: "",
       yearLevel: "",
-      dob: null as Date | null,
+      dob: undefined as Date | undefined,
       password: "",
       confirmPassword: "",
       consent: false,
@@ -74,12 +55,22 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
     },
     onSubmit: async ({ value }) => {
       startTransition(async () => {
-        // TOOD: Handle additional fields and redirect
+        if (!value.dob) {
+          return
+        }
+
+        // TODO: Handle redirect
         await authClient.signUp.email(
           {
             email: value.email,
             password: value.password,
             name: `${value.firstName} ${value.lastName}`,
+            firstName: value.firstName,
+            lastName: value.lastName,
+            birthDate: value.dob,
+            school: value.school,
+            regionId: Number(value.region),
+            yearId: Number(value.yearLevel),
             // image: null,
             callbackURL: "/dashboard",
           },
@@ -247,7 +238,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                         </SelectTrigger>
                         <SelectContent>
                           {regions.map((region) => (
-                            <SelectItem key={region.value} value={region.value}>
+                            <SelectItem key={region.id} value={String(region.id)}>
                               {region.label}
                             </SelectItem>
                           ))}
@@ -279,7 +270,7 @@ export default function SignUpForm({ className, ...props }: React.ComponentProps
                         </SelectTrigger>
                         <SelectContent>
                           {yearLevels.map((year) => (
-                            <SelectItem key={year.value} value={year.value}>
+                            <SelectItem key={year.id} value={String(year.id)}>
                               {year.label}
                             </SelectItem>
                           ))}

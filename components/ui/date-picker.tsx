@@ -20,8 +20,8 @@ import { Input } from "./input"
 interface DatePickerProps {
   id?: string
   name?: string
-  value: Date | null
-  onChange?: (value: Date | null) => void
+  value: Date | undefined
+  onChange?: (value: Date | undefined) => void
   onBlur?: React.FocusEventHandler<HTMLInputElement>
   "aria-invalid"?: boolean
   className?: string

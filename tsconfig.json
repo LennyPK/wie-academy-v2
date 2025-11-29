@@ -29,9 +29,12 @@
 
       // Subfolders commonly imported
       "@/utils": ["./lib/utils"],
+      "@/types": ["./lib/types"],
+      "@/prisma": ["./lib/prisma.ts"],
+      "@/db": ["./lib/database/index.ts"],
+      "@/generated/*": ["./lib/generated/prisma/*"],
       "@/constants*": ["./lib/constants"],
-      "@/types/*": ["./lib/types/*"],
-      "@/generated/*": ["./lib/generated/prisma/*"]
+      "@/db/*": ["./lib/database/*"]
     }
   },
   "include": [

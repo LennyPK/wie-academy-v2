@@ -12,4 +12,47 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [nextCookies()],
+  user: {
+    additionalFields: {
+      firstName: {
+        type: "string",
+        required: true,
+      },
+      lastName: {
+        type: "string",
+        required: true,
+      },
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "MEMBER",
+        input: false,
+      },
+      approvalStatus: {
+        type: "string",
+        required: false,
+        defaultValue: "PENDING",
+        input: false,
+      },
+      birthDate: {
+        type: "date",
+        required: true,
+      },
+      school: {
+        type: "string",
+        required: true,
+      },
+      regionId: {
+        type: "number",
+        required: true,
+      },
+      yearId: {
+        type: "number",
+        required: true,
+      },
+    },
+    deleteUser: {
+      enabled: true,
+    },
+  },
 })
