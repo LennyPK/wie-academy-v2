@@ -92,19 +92,21 @@ model Verification {
 }
 
 model Region {
-  id    Int    @id @default(autoincrement())
-  value String @unique
-  label String
-  users User[]
+  id            Int             @id @default(autoincrement())
+  value         String          @unique
+  label         String
+  users         User[]
+  announcements Announcements[]
 
   @@map("region")
 }
 
 model YearLevel {
-  id    Int    @id @default(autoincrement())
-  value String @unique
-  label String
-  users User[]
+  id            Int             @id @default(autoincrement())
+  value         String          @unique
+  label         String
+  users         User[]
+  announcements Announcements[]
 
   @@map("yearLevel")
 }
@@ -141,4 +143,30 @@ enum Role {
   MEMBER
 
   @@map("role")
+}
+
+model Announcements {
+  id            String               @id
+  title         String
+  contentPlain  String
+  contentHtml   String
+  contentJson   Json
+  category      AnnouncementCategory
+  targetSchools String[]
+  targetRegions Region[]
+  targetYear    YearLevel[]
+
+  @@map("announcement")
+}
+
+enum AnnouncementCategory {
+  GENERAL
+  WORKSHOP
+  ACADEMIC_SUPPORT
+  COMPETITION
+  SOCIAL
+  SCHOOL_VISIT
+  OTHER
+
+  @@map("announcementCategory")
 }
