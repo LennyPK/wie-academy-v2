@@ -14,9 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { routes } from "@/constants"
-import { RegionOption, registerUser, YearLevelOption } from "@/lib/auth/actions"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
+import { RegionOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
@@ -24,7 +24,7 @@ import { useTransition } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 
-export const signUpSchema = z
+const signUpSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
@@ -32,12 +32,9 @@ export const signUpSchema = z
     school: z.string().min(1, "Please select a school"),
     region: z.string().min(1, "Please select a region"),
     yearLevel: z.string().min(1, "Year level is required"),
-    dob: z
-      .date()
-      .nullable()
-      .refine((val) => val !== null, {
-        message: "Date of birth is required",
-      }),
+    dob: z.date().refine((val) => !!val, {
+      message: "Date of birth is required",
+    }),
     password: z
       .string()
       .nonempty("Password is required")
@@ -75,7 +72,7 @@ export default function SignUpForm({
       school: "",
       region: "",
       yearLevel: "",
-      dob: null as Date | null,
+      dob: undefined as Date | undefined,
       password: "",
       confirmPassword: "",
       consent: false,
@@ -85,13 +82,22 @@ export default function SignUpForm({
     },
     onSubmit: async ({ value }) => {
       startTransition(async () => {
-        // TODO: Handle additional fields and redirect
-        await registerUser(value)
+        if (!value.dob) {
+          return
+        }
+
+        // TODO: Handle redirect
         await authClient.signUp.email(
           {
             email: value.email,
             password: value.password,
             name: `${value.firstName} ${value.lastName}`,
+            firstName: value.firstName,
+            lastName: value.lastName,
+            birthDate: value.dob,
+            school: value.school,
+            regionId: Number(value.region),
+            yearId: Number(value.yearLevel),
             // image: null,
             callbackURL: "/dashboard",
           },
@@ -259,7 +265,7 @@ export default function SignUpForm({
                         </SelectTrigger>
                         <SelectContent>
                           {regions.map((region) => (
-                            <SelectItem key={region.id} value={region.value}>
+                            <SelectItem key={region.id} value={String(region.id)}>
                               {region.label}
                             </SelectItem>
                           ))}
@@ -291,7 +297,7 @@ export default function SignUpForm({
                         </SelectTrigger>
                         <SelectContent>
                           {yearLevels.map((year) => (
-                            <SelectItem key={year.id} value={year.value}>
+                            <SelectItem key={year.id} value={String(year.id)}>
                               {year.label}
                             </SelectItem>
                           ))}

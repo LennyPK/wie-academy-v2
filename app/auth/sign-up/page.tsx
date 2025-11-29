@@ -1,4 +1,4 @@
-import { getRegions, getYearLevels } from "@/lib/auth/actions"
+import { getRegions, getYearLevels } from "@/db"
 import SignUpCard from "./_components/form"
 
 export default async function SignUpPage() {

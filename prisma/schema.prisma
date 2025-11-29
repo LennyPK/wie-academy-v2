@@ -24,11 +24,23 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  memberInfo MemberInfo?
-  role       Role        @default(MEMBER)
-  // @@map("user")
+  firstName      String
+  lastName       String
+  role           Role            @default(MEMBER)
+  approvalStatus ApprovalStatus? @default(PENDING)
+
+  birthDate        DateTime?
+  school           String?
+  regionId         Int?
+  yearId           Int?
+  experiencePoints Int?               @default(0)
+  interests        InterestsOnUsers[]
+
+  region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
+  yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
 
   @@unique([email])
+  @@map("user")
 }
 
 model Session {
@@ -41,10 +53,10 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  // @@map("session")
 
   @@unique([token])
   @@index([userId])
+  @@map("session")
 }
 
 model Account {
@@ -62,9 +74,9 @@ model Account {
   password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-  // @@map("account")
 
   @@index([userId])
+  @@map("account")
 }
 
 model Verification {
@@ -74,64 +86,59 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  // @@map("verification")
 
   @@index([identifier])
-}
-
-model MemberInfo {
-  id               Int                  @id @default(autoincrement())
-  userId           String               @unique
-  birthDate        DateTime
-  school           String
-  regionId         Int
-  yearId           Int
-  approvalStatus   ApprovalStatus       @default(PENDING)
-  experiencePoints Int                  @default(0)
-  interests        InterestsOnMembers[]
-
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  region    Region    @relation(fields: [regionId], references: [id], onDelete: Restrict)
-  yearLevel YearLevel @relation(fields: [yearId], references: [id], onDelete: Restrict)
+  @@map("verification")
 }
 
 model Region {
-  id      Int          @id @default(autoincrement())
-  value   String       @unique
-  label   String
-  members MemberInfo[]
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  label String
+  users User[]
+
+  @@map("region")
 }
 
 model YearLevel {
-  id      Int          @id @default(autoincrement())
-  value   String       @unique
-  label   String
-  members MemberInfo[]
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  label String
+  users User[]
+
+  @@map("yearLevel")
 }
 
 model Interest {
-  id      Int                  @id @default(autoincrement())
-  value   String               @unique
-  label   String
-  members InterestsOnMembers[]
+  id    Int                @id @default(autoincrement())
+  value String             @unique
+  label String
+  users InterestsOnUsers[]
+
+  @@map("interest")
 }
 
-model InterestsOnMembers {
-  member     MemberInfo @relation(fields: [memberId], references: [id])
-  memberId   Int
-  interest   Interest   @relation(fields: [interestId], references: [id])
+model InterestsOnUsers {
+  interest   Interest @relation(fields: [interestId], references: [id])
   interestId Int
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
 
-  @@id([memberId, interestId])
+  @@id([userId, interestId])
+  @@map("interestsOnUsers")
 }
 
 enum ApprovalStatus {
   PENDING
   APPROVED
   DECLINED
+
+  @@map("approvalStatus")
 }
 
 enum Role {
   ADMIN
   MEMBER
+
+  @@map("role")
 }
