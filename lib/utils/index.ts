@@ -34,3 +34,5 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
 export async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+export { highlightText } from "./highlight-text"

@@ -39,7 +39,8 @@ model User {
   region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
   yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
 
-  announcementsAuthored Announcement[]
+  announcementsAuthored    Announcement[]
+  announcementInteractions AnnouncementInteraction[]
 
   @@unique([email])
   @@map("user")
@@ -162,8 +163,9 @@ model Announcement {
   targetRegions RegionsOnAnnouncements[]
   targetYears   YearLevelsOnAnnouncements[]
 
-  category AnnouncementCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  author   User?                @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  author       User?                     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  interactions AnnouncementInteraction[]
 
   @@map("announcement")
 }
@@ -204,4 +206,15 @@ model YearLevelsOnAnnouncements {
 
   @@id([announcementId, yearLevelId])
   @@map("yearLevelsOnAnnouncements")
+}
+
+model AnnouncementInteraction {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  isRead         Boolean
+
+  @@id([announcementId, userId])
+  @@map("announcementInteraction")
 }
