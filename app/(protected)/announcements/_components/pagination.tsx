@@ -71,16 +71,14 @@ function PaginationNumber({
   position?: "first" | "last" | "middle" | "single"
   isActive: boolean
 }) {
-  const className = cn(
-    "flex h-10 w-10 items-center justify-center text-sm border text-primary select-none ",
-    {
-      "rounded-l-md": position === "first" || position === "single",
-      "rounded-r-md": position === "last" || position === "single",
-      "z-10 bg-primary border-primary text-primary-foreground": isActive,
-      "hover:bg-primary": !isActive && position !== "middle",
-      "text-gray-300": position === "middle",
-    }
-  )
+  const className = cn("flex h-10 w-10 items-center justify-center text-sm border select-none", {
+    "rounded-l-md": position === "first" || position === "single",
+    "rounded-r-md": position === "last" || position === "single",
+    "z-10 bg-primary border-primary text-primary-foreground": isActive,
+    "hover:bg-secondary hover:border-secondary hover:text-secondary-foreground":
+      !isActive && position !== "middle",
+    "text-gray-300": position === "middle",
+  })
 
   return isActive || position === "middle" ? (
     <div className={className}>{page}</div>
@@ -103,8 +101,8 @@ function PaginationArrow({
   const className = cn(
     "flex h-10 w-10 items-center justify-center rounded-md border bg-primary text-primary-foreground",
     {
-      "pointer-events-none text-secondary-foreground border-secondary bg-secondary": isDisabled,
-      "hover:bg-primary/20": !isDisabled,
+      "pointer-events-none text-muted-foreground border-muted bg-muted": isDisabled,
+      "hover:bg-primary/90": !isDisabled,
       "mr-2 md:mr-4": direction === "left",
       "ml-2 md:ml-4": direction === "right",
     }

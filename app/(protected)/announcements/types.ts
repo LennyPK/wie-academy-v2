@@ -8,6 +8,7 @@ export type Announcement = {
   contentJson: unknown
   categoryId: number
   authorId: string | null
+  category: { id: number; value: string; label: string }
   author: { image: string | null; name: string } | null
   interactions: { isRead: boolean }[]
 }

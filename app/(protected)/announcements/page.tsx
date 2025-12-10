@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
-import { Role } from "@/lib/constants/prisma"
 import { Prisma } from "@/lib/generated/prisma/client"
-import { prisma } from "@/prisma"
+import { prisma } from "@/lib/prisma/client"
+import { Role } from "@/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import AnnouncementList from "./_components/_announcement-list"
@@ -163,6 +163,7 @@ export default async function AnnouncementsPage({
     prisma.announcement.findMany({
       // where: { AND: whereConditions },
       include: {
+        category: { select: { id: true, value: true, label: true } },
         author: { select: { name: true, image: true } },
         interactions: {
           where: { userId: user.id },
@@ -199,6 +200,7 @@ export default async function AnnouncementsPage({
       {announcements && announcements.length === 0 && <AnnouncementEmpty />}
 
       <AnnouncementList
+        userId={user.id}
         userRole={user.role}
         announcements={announcements}
         // readAnnouncements={}
