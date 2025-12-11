@@ -6,12 +6,12 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 
   return (
     <main className="flex min-h-screen flex-col items-center">
-      <div className="flex w-full flex-1 flex-col items-center gap-5">
+      <div className="flex w-full flex-1 flex-col items-center">
         <header className="sticky top-0 z-50 flex w-full justify-center border-b bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/60">
           {/* <MenuBar user={user} /> */}
           <h1>Hello World</h1>
         </header>
-        <div className="flex w-full max-w-6xl flex-1 flex-col gap-20 p-5">{children}</div>
+        <div className="flex w-full flex-1 flex-col">{children}</div>
       </div>
     </main>
   )

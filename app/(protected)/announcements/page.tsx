@@ -8,6 +8,7 @@ import { redirect } from "next/navigation"
 import AnnouncementList from "./_components/_announcement-list"
 import AnnouncementEmpty from "./_components/announcement-empty"
 import Filters from "./_components/filters"
+import { AnnouncementHeader } from "./_components/header"
 import Pagination from "./_components/pagination"
 
 interface SearchParams {
@@ -188,29 +189,33 @@ export default async function AnnouncementsPage({
 
   return (
     <div>
-      <Filters
-        userRole={user.role}
-        search={searchQuery}
-        readStatus={readStatus}
-        dateRange={dateRange}
-        totalCount={count ?? announcements?.length ?? 0}
-      />
+      <AnnouncementHeader />
 
-      {/* No announcements found */}
-      {announcements && announcements.length === 0 && <AnnouncementEmpty />}
+      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+        <Filters
+          // userRole={user.role}
+          search={searchQuery}
+          readStatus={readStatus}
+          dateRange={dateRange}
+          totalCount={count ?? announcements?.length ?? 0}
+        />
 
-      <AnnouncementList
-        userId={user.id}
-        userRole={user.role}
-        announcements={announcements}
-        // readAnnouncements={}
-        // onToggleRead={}
-        // onMarkSeen={}
-        searchQuery={searchQuery}
-      />
+        {/* No announcements found */}
+        {announcements && announcements.length === 0 && <AnnouncementEmpty />}
 
-      {/* Pagination */}
-      <Pagination totalPages={totalPages} />
+        <AnnouncementList
+          userId={user.id}
+          userRole={user.role}
+          announcements={announcements}
+          // readAnnouncements={}
+          // onToggleRead={}
+          // onMarkSeen={}
+          searchQuery={searchQuery}
+        />
+
+        {/* Pagination */}
+        <Pagination totalPages={totalPages} />
+      </main>
     </div>
   )
 }
