@@ -3,6 +3,7 @@
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
 import { revalidatePath } from "next/cache"
+import { Announcement } from "./types"
 
 export async function toggleRead(announcementId: string, userId: string) {
   const interaction = await prisma.announcementInteraction.findUnique({
@@ -42,45 +43,16 @@ export async function toggleRead(announcementId: string, userId: string) {
 }
 
 export async function markAsRead(announcementId: string, userId: string) {
-  await prisma.announcementInteraction
-    .upsert({
-      where: { announcementId_userId: { announcementId, userId } },
-      update: { isRead: true },
-      create: { announcementId, userId, isRead: true },
-    })
-    .then(revalidatePath(ROUTES.ANNOUNCEMENTS))
-  // const interaction = await prisma.announcementInteraction.findUnique({
-  //   where: {
-  //     announcementId_userId: {
-  //       announcementId,
-  //       userId,
-  //     },
-  //   },
-  // })
+  await prisma.announcementInteraction.upsert({
+    where: { announcementId_userId: { announcementId, userId } },
+    update: { isRead: true },
+    create: { announcementId, userId, isRead: true },
+  })
 
-  // if (interaction) {
-  //   // Toggle the current value
-  //   await prisma.announcementInteraction.update({
-  //     where: {
-  //       announcementId_userId: {
-  //         announcementId,
-  //         userId,
-  //       },
-  //     },
-  //     data: {
-  //       isRead: true,
-  //     },
-  //   })
-  // } else {
-  //   // If no interaction exists yet, create it as read
-  //   await prisma.announcementInteraction.create({
-  //     data: {
-  //       announcementId,
-  //       userId,
-  //       isRead: true,
-  //     },
-  //   })
-  // }
+  revalidatePath(ROUTES.ANNOUNCEMENTS)
+}
 
-  // revalidatePath(ROUTES.ANNOUNCEMENTS)
+export async function createAnnouncement(announcement: Announcement) {
+  // TODO: @Kwisu
+  return { announcement }
 }

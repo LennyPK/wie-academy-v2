@@ -17,11 +17,10 @@ import {
 import { Role } from "@/prisma/enums"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { BookCheck, BookOpenCheck, Clock, Pencil } from "lucide-react"
-import { useCallback } from "react"
 import { Announcement } from "../types"
 import CategoryBadge from "./category-badge"
 
-interface AnnouncementModalProps {
+interface AnnouncementDetailProps {
   announcement: Announcement | null
   open: boolean
   setOpen: (open: boolean) => void
@@ -31,7 +30,7 @@ interface AnnouncementModalProps {
   onEdit: (announcement: Announcement) => void
 }
 
-export default function AnnouncementModal({
+export default function AnnouncementDetail({
   announcement,
   open,
   setOpen,
@@ -39,23 +38,23 @@ export default function AnnouncementModal({
   userRole,
   onToggleRead,
   onEdit,
-}: AnnouncementModalProps) {
+}: AnnouncementDetailProps) {
   const isMobile = useIsMobile()
 
   const isRead = announcement ? announcement.interactions.some((i) => i.isRead) : false
   const isAdmin = userRole === Role.ADMIN
 
-  const handleToggleRead = useCallback(() => {
-    if (announcement) {
-      onToggleRead(announcement.id)
-    }
-  }, [announcement, onToggleRead])
+  // const handleToggleRead = useCallback(() => {
+  //   if (announcement) {
+  //     onToggleRead(announcement.id)
+  //   }
+  // }, [announcement, onToggleRead])
 
-  const handleEdit = useCallback(() => {
-    if (announcement) {
-      onEdit(announcement)
-    }
-  }, [announcement, onEdit])
+  // const handleEdit = useCallback(() => {
+  //   if (announcement) {
+  //     onEdit(announcement)
+  //   }
+  // }, [announcement, onEdit])
 
   if (!announcement) return null
 
@@ -64,11 +63,12 @@ export default function AnnouncementModal({
       <div className="mt-4 flex items-center gap-1 border-y border-border py-3">
         <Tooltip>
           <TooltipTrigger asChild>
+            {/* FIXME: Button doesn't update when read status changes */}
             <Button
               variant={isRead ? "ghost" : "default"}
               size="icon"
-              // onClick={() => onToggleRead(announcement.id)}
-              onClick={handleToggleRead}
+              onClick={() => onToggleRead(announcement.id)}
+              // onClick={handleToggleRead}
               className="flex-1 cursor-pointer gap-1.5"
             >
               {isRead ? <BookCheck className="h-4 w-4" /> : <BookOpenCheck className="h-4 w-4" />}
@@ -84,8 +84,8 @@ export default function AnnouncementModal({
               <Button
                 variant="ghost"
                 size="icon"
-                // onClick={() => onEdit(announcement)}
-                onClick={handleEdit}
+                onClick={() => onEdit(announcement)}
+                // onClick={handleEdit}
                 className="flex-1 cursor-pointer gap-1.5"
               >
                 <Pencil className={"h-4 w-4 fill-current"} />

@@ -186,38 +186,6 @@ export default function SignUpForm({
                 }}
               </form.Field>
 
-              <form.Field name="school">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>School</FieldLabel>
-                      <Select
-                        name={field.name}
-                        value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger
-                          id={field.name}
-                          aria-invalid={isInvalid}
-                          className="cursor-pointer"
-                        >
-                          <SelectValue placeholder="Select School" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="school-1">School 1</SelectItem>
-                          <SelectItem value="school-2">School 2</SelectItem>
-                          <SelectItem value="school-3">School 3</SelectItem>
-                          <SelectItem value="school-4">School 4</SelectItem>
-                          <SelectItem value="school-5">School 5</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  )
-                }}
-              </form.Field>
-
               <form.Field name="region">
                 {(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -242,6 +210,38 @@ export default function SignUpForm({
                               {region.label}
                             </SelectItem>
                           ))}
+                        </SelectContent>
+                      </Select>
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <form.Field name="school">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>School</FieldLabel>
+                      <Select
+                        name={field.name}
+                        value={field.state.value}
+                        onValueChange={field.handleChange}
+                      >
+                        <SelectTrigger
+                          id={field.name}
+                          aria-invalid={isInvalid}
+                          className="cursor-pointer"
+                        >
+                          <SelectValue placeholder="Select School" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="school-1">School 1</SelectItem>
+                          <SelectItem value="school-2">School 2</SelectItem>
+                          <SelectItem value="school-3">School 3</SelectItem>
+                          <SelectItem value="school-4">School 4</SelectItem>
+                          <SelectItem value="school-5">School 5</SelectItem>
                         </SelectContent>
                       </Select>
                       {isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -282,6 +282,7 @@ export default function SignUpForm({
                 }}
               </form.Field>
 
+              {/* FIXME: Can't pick today's date if month/year selected from dropdown  */}
               <form.Field name="dob">
                 {(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
