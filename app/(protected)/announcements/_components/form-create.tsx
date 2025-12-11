@@ -30,6 +30,8 @@ import {
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { createAnnouncement } from "../actions"
+import { NewAnnouncement } from "../types"
 import { formCreateSchema } from "./form-create-schema"
 
 // const filter = new Filter()
@@ -66,16 +68,19 @@ export default function FormCreate({ setOpen }: FormCreateProps) {
         return
       }
 
-      const announcement = {
-        ...value,
+      const announcementInfo: NewAnnouncement = {
+        title: value.title,
         contentPlain: editorContent.plain,
         contentHtml: editorContent.html,
         contentJson: editorContent.json,
+        categoryId: Number(value.category),
+        schools: value.schools,
+        regionIds: value.regions.map((region) => Number(region)),
+        yearLevelIds: value.yearLevels.map((yearLevel) => Number(yearLevel)),
       }
 
-      // TODO: @Kwisu
-
-      toast.success(announcement.title)
+      const announcement = await createAnnouncement(announcementInfo)
+      toast.success(announcement.announcement.title)
 
       setOpen(false)
 

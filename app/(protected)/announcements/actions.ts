@@ -1,9 +1,10 @@
 "use server"
 
+import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
 import { revalidatePath } from "next/cache"
-import { Announcement } from "./types"
+import { NewAnnouncement } from "./types"
 
 export async function toggleRead(announcementId: string, userId: string) {
   const interaction = await prisma.announcementInteraction.findUnique({
@@ -52,7 +53,42 @@ export async function markAsRead(announcementId: string, userId: string) {
   revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
-export async function createAnnouncement(announcement: Announcement) {
-  // TODO: @Kwisu
+export async function createAnnouncement(announcementInfo: NewAnnouncement) {
+  const session = await auth.api.getSession()
+
+  const announcement = await prisma.announcement.create({
+    data: {
+      title: announcementInfo.title,
+      contentPlain: announcementInfo.contentPlain,
+      contentHtml: announcementInfo.contentHtml,
+      contentJson: announcementInfo.contentJson,
+      categoryId: announcementInfo.categoryId,
+      authorId: session?.user.id ?? undefined,
+      targetSchools: {
+        create: announcementInfo.schools.map((school) => ({
+          school,
+        })),
+      },
+      targetRegions: {
+        create: announcementInfo.regionIds.map((regionId) => ({
+          region: { connect: { id: regionId } },
+        })),
+      },
+      targetYearLevels: {
+        create: announcementInfo.yearLevelIds.map((yearLevelId) => ({
+          yearLevel: { connect: { id: yearLevelId } },
+        })),
+      },
+
+      include: {
+        author: { include: { image: true, name: true } },
+        category: true,
+        targetSchools: true,
+        targetRegions: { include: { region: true } },
+        targetYears: { include: { yearLevel: true } },
+      },
+    },
+  })
+
   return { announcement }
 }

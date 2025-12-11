@@ -149,7 +149,7 @@ enum Role {
 }
 
 model Announcement {
-  id           String   @id
+  id           String   @id @default(uuid())
   title        String
   contentPlain String
   contentHtml  String
