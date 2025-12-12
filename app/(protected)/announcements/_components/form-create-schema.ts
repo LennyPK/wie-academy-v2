@@ -6,7 +6,5 @@ export const formCreateSchema = z.object({
   regions: z.array(z.string()),
   schools: z.array(z.string()),
   yearLevels: z.array(z.string()),
-  content: z.string().min(1, "Content is required"),
-  // contentHtml: z.string(),
-  // contentJson: z.object(),
+  content: z.string().trim().min(1, "Content is required"),
 })

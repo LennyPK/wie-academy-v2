@@ -159,9 +159,9 @@ model Announcement {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  targetSchools SchoolsOnAnnouncements[]
-  targetRegions RegionsOnAnnouncements[]
-  targetYears   YearLevelsOnAnnouncements[]
+  targetSchools    SchoolsOnAnnouncements[]
+  targetRegions    RegionsOnAnnouncements[]
+  targetYearLevels YearLevelsOnAnnouncements[]
 
   category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   author       User?                     @relation(fields: [authorId], references: [id], onDelete: SetNull)

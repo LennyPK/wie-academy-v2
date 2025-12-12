@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
 import { revalidatePath } from "next/cache"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 import { NewAnnouncement } from "./types"
 
 export async function toggleRead(announcementId: string, userId: string) {
@@ -54,7 +56,11 @@ export async function markAsRead(announcementId: string, userId: string) {
 }
 
 export async function createAnnouncement(announcementInfo: NewAnnouncement) {
-  const session = await auth.api.getSession()
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (!session) {
+    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  }
 
   const announcement = await prisma.announcement.create({
     data: {
@@ -79,14 +85,13 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
           yearLevel: { connect: { id: yearLevelId } },
         })),
       },
-
-      include: {
-        author: { include: { image: true, name: true } },
-        category: true,
-        targetSchools: true,
-        targetRegions: { include: { region: true } },
-        targetYears: { include: { yearLevel: true } },
-      },
+    },
+    include: {
+      author: { select: { name: true, image: true } },
+      category: true,
+      targetSchools: true,
+      targetRegions: { include: { region: true } },
+      targetYearLevels: { include: { yearLevel: true } },
     },
   })
 
