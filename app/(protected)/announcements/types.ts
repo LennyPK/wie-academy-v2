@@ -1,3 +1,4 @@
+import { JsonValue } from "@/lib/generated/prisma/internal/prismaNamespace"
 import { InputJsonValue } from "@prisma/client/runtime/client"
 
 export type Announcement = {
@@ -7,7 +8,7 @@ export type Announcement = {
   updatedAt: Date
   contentPlain: string
   contentHtml: string
-  contentJson: InputJsonValue
+  contentJson: JsonValue
   categoryId: number
   authorId: string | null
   category: { id: number; value: string; label: string }
@@ -24,4 +25,10 @@ export type NewAnnouncement = {
   schools: string[]
   regionIds: number[]
   yearLevelIds: number[]
+}
+
+export type AnnouncementCategory = {
+  id: number
+  value: string
+  label: string
 }

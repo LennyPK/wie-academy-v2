@@ -15,34 +15,26 @@ import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
 interface FiltersProps {
-  // userRole: string
-  search: string
+  searchQuery: string
   readStatus: string
   dateRange: string
   totalCount: number
 }
 
-export default function Filters({
-  // userRole,
-  search,
-  readStatus,
-  dateRange,
-  totalCount,
-}: FiltersProps) {
+export default function Filters({ searchQuery, readStatus, dateRange, totalCount }: FiltersProps) {
   const router = useRouter()
   const pathName = usePathname()
   const searchParams = useSearchParams()
 
-  // const [open, setOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState(search)
+  const [query, setQuery] = useState(searchQuery)
 
-  const updateSearch = useDebouncedCallback((value: string) => {
+  const updateQuery = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams.toString())
 
     if (value.trim()) {
-      params.set("search", value)
+      params.set("query", value)
     } else {
-      params.delete("search")
+      params.delete("query")
     }
 
     // Reset pagination when filters change
@@ -89,31 +81,27 @@ export default function Filters({
 
   const clearFilters = useCallback(() => {
     const params = new URLSearchParams()
-    params.delete("search")
+    params.delete("query")
     params.delete("readStatus")
     params.delete("dateRange")
     params.delete("page")
-    setSearchValue("")
+    setQuery("")
     router.replace(`${pathName}?${params.toString()}`)
   }, [router, pathName])
 
-  // const run = true
-
-  // if (run) {
   return (
     <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex-1 space-y-2">
-        {/* Search FIlter */}
+        {/* Search Filter */}
         <div className="relative">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             placeholder="Search announcements..."
             className="pl-10"
-            value={searchValue}
+            value={query}
             onChange={(e) => {
-              const value = e.target.value
-              setSearchValue(value)
-              updateSearch(value)
+              setQuery(e.target.value)
+              updateQuery(e.target.value)
             }}
           />
         </div>
@@ -159,7 +147,6 @@ export default function Filters({
       </div>
     </div>
   )
-  // }
 
   // return (
   //   <>
@@ -187,11 +174,11 @@ export default function Filters({
   //               <Input
   //                 placeholder="Search announcements..."
   //                 className="pl-10"
-  //                 value={searchValue}
+  //                 value={query}
   //                 onChange={(e) => {
   //                   const value = e.target.value
-  //                   setSearchValue(value)
-  //                   updateSearch(value)
+  //                   setQuery(value)
+  //                   updateQuery(value)
   //                 }}
   //               />
   //             </div>

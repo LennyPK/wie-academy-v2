@@ -12,17 +12,17 @@ import { AnnouncementHeader } from "./_components/header"
 import Pagination from "./_components/pagination"
 
 interface SearchParams {
-  searchQuery?: string
+  query?: string
   readStatus?: "all" | "read" | "unread"
   dateRange?: "all" | "today" | "week" | "month" | "year"
   page?: string
 }
 
-export default async function AnnouncementsPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>
-}) {
+interface AnnouncementsPageProps {
+  searchParams?: Promise<SearchParams>
+}
+
+export default async function AnnouncementsPage({ searchParams }: AnnouncementsPageProps) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -45,29 +45,23 @@ export default async function AnnouncementsPage({
   }
 
   // Extract search params with defaults
-  const {
-    searchQuery: searchQueryParam,
-    readStatus: readStatusParam,
-    dateRange: dateFilterParam,
-    page: pageParam,
-  } = await searchParams
+  const params = await searchParams
 
-  const searchQuery = searchQueryParam?.trim() || ""
-  const readStatus = readStatusParam || "all"
-  const dateRange = dateFilterParam || "month"
-  const page = Number(pageParam) || 1
+  const query = params?.query?.trim() || ""
+  const readStatus = params?.readStatus || "all"
+  const dateRange = params?.dateRange || "month"
+  const currentPage = Number(params?.page) || 1
   const pageSize = 2
 
-  const whereConditions: Prisma.AnnouncementWhereInput["AND"] = []
+  const where: Prisma.AnnouncementWhereInput = {}
 
   // Search Filter
-  if (searchQuery) {
-    whereConditions.push({
-      OR: [
-        { title: { contains: searchQuery, mode: "insensitive" } },
-        { contentPlain: { contains: searchQuery, mode: "insensitive" } },
-      ],
-    })
+  if (query) {
+    // Using OR at the top level so other filters (date, targeting, read status) are ANDed
+    where.OR = [
+      { title: { contains: query, mode: "insensitive" } },
+      { contentPlain: { contains: query, mode: "insensitive" } },
+    ]
   }
 
   // Date Filter
@@ -92,18 +86,7 @@ export default async function AnnouncementsPage({
         gte = new Date(0)
     }
 
-    // const ranges: Record<string, () => Date> = {
-    //   today: () => new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-    //   week: () => new Date(now.getTime() - 7 * 86400000),
-    //   month: () => new Date(now.getTime() - 30 * 86400000),
-    //   year: () => new Date(now.getTime() - 365 * 86400000),
-    // }
-
-    // const dateFn = ranges[dateRange]
-    // if (dateFn) {
-    //   where.updatedAt = { gte: dateFn() }
-    // }
-    whereConditions.push({ updatedAt: { gte } })
+    where.updatedAt = { gte }
   }
 
   // Read Status Filter
@@ -111,58 +94,50 @@ export default async function AnnouncementsPage({
     const isRead = readStatus === "read"
 
     if (isRead) {
-      whereConditions.push({
-        interactions: { some: { userId: user.id, isRead } },
-      })
+      where.interactions = { some: { userId: user.id, isRead: true } }
     } else {
-      whereConditions.push({
-        interactions: { none: { userId: user.id, isRead } },
-      })
+      where.interactions = { none: { userId: user.id, isRead: true } }
     }
-
-    whereConditions.push({ interactions: { some: { userId: user.id, isRead } } })
   }
 
-  // if (readStatus === "unread") {
-  //   whereConditions.push({
-  //     NOT: {
-  //       interactions: { some: { userId: user.id, isRead: true } },
-  //     },
-  //   })
-  // }
-
   // Targeting
+  // TODO: Fix targeting logic
   if (user.role === Role.MEMBER) {
-    const orConditions: Prisma.AnnouncementWhereInput[] = []
+    //   const orConditions: Prisma.AnnouncementWhereInput[] = []
+
+    if (user.region) {
+      where.targetRegions = { some: { region: user.region } }
+      //     orConditions.push({ targetRegions: { some: { regionId: user.region.id } } })
+    }
 
     if (user.school) {
-      orConditions.push({ targetSchools: { some: { school: user.school } } })
+      where.targetSchools = { some: { school: user.school } }
+      //     orConditions.push({ targetSchools: { some: { school: user.school } } })
     }
 
-    if (user.region && user.region.id) {
-      orConditions.push({ targetRegions: { some: { regionId: user.region.id } } })
+    if (user.yearLevel) {
+      where.targetYearLevels = { some: { yearLevel: user.yearLevel } }
     }
 
-    if (orConditions.length > 0) {
-      whereConditions.push({ OR: orConditions })
-    }
-
-    // where.AND = [
-    //   {
-    //     OR: [{ targetSchools: { isEmpty: true } }, { targetSchools: { has: user.school } }],
-    //   },
-    //   {
-    //     OR: [{ targetRegions: { isEmpty: true } }, { targetRegions: { has: user.region.id } }],
-    //   },
-    //   {
-    //     OR: [{ targetYears: { isEmpty: true } }, { targetYears: { has: user.yearLevel.id } }],
-    //   },
-    // ]
+    //   if (orConditions.length > 0) {
+    //     whereConditions.push({ OR: orConditions })
+    //   }
+    //   // where.AND = [
+    //   //   {
+    //   //     OR: [{ targetSchools: { isEmpty: true } }, { targetSchools: { has: user.school } }],
+    //   //   },
+    //   //   {
+    //   //     OR: [{ targetRegions: { isEmpty: true } }, { targetRegions: { has: user.region.id } }],
+    //   //   },
+    //   //   {
+    //   //     OR: [{ targetYears: { isEmpty: true } }, { targetYears: { has: user.yearLevel.id } }],
+    //   //   },
+    //   // ]
   }
 
   const [announcements, count] = await Promise.all([
     prisma.announcement.findMany({
-      // where: { AND: whereConditions },
+      where,
       include: {
         category: { select: { id: true, value: true, label: true } },
         author: { select: { name: true, image: true } },
@@ -170,34 +145,34 @@ export default async function AnnouncementsPage({
           where: { userId: user.id },
           select: { isRead: true },
         },
+        targetRegions: { select: { regionId: true } },
+        targetSchools: { select: { school: true } },
+        targetYearLevels: { select: { yearLevelId: true } },
       },
       orderBy: { updatedAt: "desc" },
       take: pageSize,
-      skip: (page - 1) * pageSize,
+      skip: (currentPage - 1) * pageSize,
     }),
 
-    prisma.announcement.count({ where: { AND: whereConditions } }),
+    prisma.announcement.count({ where }),
   ])
 
   // Get the total number of pages
   const totalPages = Math.max(1, Math.ceil((count || 0) / pageSize))
 
-  console.log("Announcements:", announcements)
   console.log("Count:", count)
   console.log("Total Pages:", totalPages)
-  console.log("Page:", page)
 
   return (
     <div>
-      <AnnouncementHeader />
+      <AnnouncementHeader userRole={user.role} />
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
         <Filters
-          // userRole={user.role}
-          search={searchQuery}
+          searchQuery={query}
           readStatus={readStatus}
           dateRange={dateRange}
-          totalCount={count ?? announcements?.length ?? 0}
+          totalCount={count}
         />
 
         {/* No announcements found */}
@@ -207,10 +182,9 @@ export default async function AnnouncementsPage({
           userId={user.id}
           userRole={user.role}
           announcements={announcements}
-          // readAnnouncements={}
           // onToggleRead={}
           // onMarkSeen={}
-          searchQuery={searchQuery}
+          searchQuery={query}
         />
 
         {/* Pagination */}

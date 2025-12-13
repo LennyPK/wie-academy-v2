@@ -1,8 +1,8 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { AnnouncementCategory } from "@/lib/types/announcement"
 import { cn } from "@/lib/utils"
+import { AnnouncementCategory } from "../types"
 
 export default function CategoryBadge({
   category,
