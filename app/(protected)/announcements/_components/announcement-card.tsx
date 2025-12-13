@@ -19,20 +19,18 @@ import CategoryBadge from "./category-badge"
 interface AnnouncementCardProps {
   userRole: string
   announcement: Announcement
-  // isRead: boolean
   searchQuery?: string
   onClick: () => Promise<void>
-  // onEdit: (announcement: Announcement) => void
+  onEdit: () => Promise<void>
   onToggleRead: () => Promise<void>
 }
 
 export default function AnnouncementCard({
   userRole,
   announcement,
-  // isRead,
   searchQuery,
   onClick,
-  // onEdit,
+  onEdit,
   onToggleRead,
 }: AnnouncementCardProps) {
   const handleAnnouncementClick = () => {
@@ -49,10 +47,10 @@ export default function AnnouncementCard({
   //   }
   // }
 
-  // const handleEditClick = (e: React.MouseEvent) => {
-  //   e.stopPropagation() // Prevent card click
-  //   onEdit(announcement)
-  // }
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    onEdit()
+  }
 
   // const handleReadStatusKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
   //   if (e.key === "Enter" || e.key === " ") {
@@ -83,7 +81,6 @@ export default function AnnouncementCard({
               : ["border-l-4", updated ? "border-l-secondary" : "border-l-primary"]
           )}
           onClick={handleAnnouncementClick}
-          // onClick={() => handleAnnouncementClick(announcement)}
           // onKeyDown={(e) => handleAnnouncementKeyDown(e, announcement)}
         >
           <CardHeader>
@@ -184,15 +181,10 @@ export default function AnnouncementCard({
             </>
           )}
         </ContextMenuItem>
+
         {/* Edit option */}
         {userRole !== Role.MEMBER && (
-          <ContextMenuItem
-            onClick={(e) => {
-              e.stopPropagation()
-              // TODO: Add edit announcement functionality
-              // console.log("Edit announcement:", announcement.id)
-            }}
-          >
+          <ContextMenuItem onClick={handleEditClick}>
             <Edit className="h-4 w-4" />
             <span>Edit</span>
           </ContextMenuItem>

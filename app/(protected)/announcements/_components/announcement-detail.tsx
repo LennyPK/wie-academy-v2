@@ -27,14 +27,14 @@ interface AnnouncementDetailProps {
   // isRead: boolean
   userRole: string
   onToggleRead: (announcementId: string) => Promise<void>
-  onEdit: (announcement: Announcement) => void
+  // onEdit: (announcement: Announcement) => void
+  onEdit: (announcementId: string) => Promise<void>
 }
 
 export default function AnnouncementDetail({
   announcement,
   open,
   setOpen,
-  // isRead,
   userRole,
   onToggleRead,
   onEdit,
@@ -84,7 +84,7 @@ export default function AnnouncementDetail({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => onEdit(announcement)}
+                onClick={() => onEdit(announcement.id)}
                 // onClick={handleEdit}
                 className="flex-1 cursor-pointer gap-1.5"
               >

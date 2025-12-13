@@ -1,12 +1,21 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Role } from "@/prisma/enums"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import AnnouncementForm from "./announcement-form"
 
-export function AnnouncementHeader() {
+interface AnnouncementHeaderProps {
+  userRole: Role
+}
+
+export function AnnouncementHeader({ userRole }: AnnouncementHeaderProps) {
   const [open, setOpen] = useState(false)
+
+  const handleModalClick = () => {
+    setOpen(true)
+  }
 
   return (
     <>
@@ -16,15 +25,17 @@ export function AnnouncementHeader() {
             <h1 className="text-3xl font-bold text-foreground">Announcements</h1>
             <p className="mt-1 text-sm text-muted-foreground">Stay updated with the latest news</p>
           </div>
-          <Button className="gap-2" onClick={() => setOpen(true)}>
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Create Announcement</span>
-            <span className="sm:hidden">Create</span>
-          </Button>
+          {userRole === Role.ADMIN && (
+            <Button className="gap-2" onClick={handleModalClick}>
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Create Announcement</span>
+              <span className="sm:hidden">Create</span>
+            </Button>
+          )}
         </div>
       </header>
 
-      <AnnouncementForm mode="create" open={open} setOpen={setOpen} />
+      <AnnouncementForm open={open} setOpen={setOpen} />
     </>
   )
 }

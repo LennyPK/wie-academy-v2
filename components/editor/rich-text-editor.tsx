@@ -14,7 +14,7 @@ interface RichTextEditorProps {
   onChangePlainText: (content: string) => void
   onChangeJSON: (json: object) => void
   onChangeHTML: (content: string) => void
-  // initialContent?: object
+  initialContent?: string
   className?: string
   // onImageUpload?: (file: File) => Promise<string>
 }
@@ -24,7 +24,7 @@ export default function RichTextEditor({
   onChangePlainText,
   onChangeHTML,
   onChangeJSON,
-  // initialContent,
+  initialContent,
   className,
   // onImageUpload,
 }: RichTextEditorProps) {
@@ -42,7 +42,7 @@ export default function RichTextEditor({
         placeholder: placeholder,
       }),
     ],
-    // content: initialContent,
+    content: initialContent,
     // Don't render immediately on the server to avoid SSR issues
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,

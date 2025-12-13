@@ -79,9 +79,12 @@ export default function SignUpForm({
               toast.loading("Creating your account...")
             },
             onSuccess: () => {
+              toast.dismiss()
               toast.success("Check your email to verify your account.")
+              // TODO: Add redirect to approval pending page
             },
             onError: (ctx) => {
+              toast.dismiss()
               toast.error(ctx.error.message)
             },
           }
