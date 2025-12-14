@@ -78,7 +78,7 @@ export async function main() {
   for (const school of schoolData) {
     if (i % 10 === 0) updateProgress(schoolData.length, i)
     await prisma.school.upsert({
-      where: { code: school.code },
+      where: { id: school.id },
       update: {},
       create: school,
     })

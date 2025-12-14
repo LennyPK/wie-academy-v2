@@ -36,9 +36,9 @@ model User {
   experiencePoints Int?               @default(0)
   interests        InterestsOnUsers[]
 
-  school    School?    @relation(fields: [schoolId], references: [id], onDelete: Restrict)
-  region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
-  yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
+  school    School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  region    Region?    @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: SetNull)
 
   announcementsAuthored    Announcement[]
   announcementInteractions AnnouncementInteraction[]
@@ -116,8 +116,7 @@ model YearLevel {
 }
 
 model School {
-  id            Int                      @id @default(autoincrement())
-  code          String                   @unique
+  id            Int                      @id
   label         String
   users         User[]
   announcements SchoolsOnAnnouncements[]
@@ -165,7 +164,7 @@ model Announcement {
   contentPlain String
   contentHtml  String
   contentJson  Json
-  categoryId   Int
+  categoryId   Int      @default(1)
   authorId     String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -174,7 +173,7 @@ model Announcement {
   targetSchools    SchoolsOnAnnouncements[]
   targetYearLevels YearLevelsOnAnnouncements[]
 
-  category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
   author       User?                     @relation(fields: [authorId], references: [id], onDelete: SetNull)
   interactions AnnouncementInteraction[]
 
