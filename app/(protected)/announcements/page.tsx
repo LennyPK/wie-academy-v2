@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma/client"
 import { Role } from "@/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import AnnouncementList from "./_components/_announcement-list"
 import AnnouncementEmpty from "./_components/announcement-empty"
+import AnnouncementList from "./_components/announcement-list"
 import Filters from "./_components/filters"
 import { AnnouncementHeader } from "./_components/header"
 import Pagination from "./_components/pagination"
@@ -34,7 +34,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
     select: {
       id: true,
       role: true,
-      school: true,
+      // school: { select: { id: true, label: true } },
       region: { select: { id: true, label: true } },
       yearLevel: { select: { id: true, label: true } },
     },
@@ -104,21 +104,17 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
   // TODO: Fix targeting logic
   if (user.role === Role.MEMBER) {
     //   const orConditions: Prisma.AnnouncementWhereInput[] = []
-
-    if (user.region) {
-      where.targetRegions = { some: { region: user.region } }
-      //     orConditions.push({ targetRegions: { some: { regionId: user.region.id } } })
-    }
-
-    if (user.school) {
-      where.targetSchools = { some: { school: user.school } }
-      //     orConditions.push({ targetSchools: { some: { school: user.school } } })
-    }
-
-    if (user.yearLevel) {
-      where.targetYearLevels = { some: { yearLevel: user.yearLevel } }
-    }
-
+    // if (user.region) {
+    //   where.targetRegions = { some: { region: user.region } }
+    //   //     orConditions.push({ targetRegions: { some: { regionId: user.region.id } } })
+    // }
+    // if (user.school) {
+    //   where.targetSchools = { some: { school: user.school } }
+    //   //     orConditions.push({ targetSchools: { some: { school: user.school } } })
+    // }
+    // if (user.yearLevel) {
+    //   where.targetYearLevels = { some: { yearLevel: user.yearLevel } }
+    // }
     //   if (orConditions.length > 0) {
     //     whereConditions.push({ OR: orConditions })
     //   }

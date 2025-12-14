@@ -1,6 +1,6 @@
 import * as z from "zod"
 
-export const formCreateSchema = z.object({
+export const formSchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(100),
   category: z.string().nonempty("Category is required"),
   regions: z.array(z.string()),

@@ -5,14 +5,12 @@ import { markAsRead, toggleRead } from "../actions"
 import { Announcement } from "../types"
 import AnnouncementCard from "./announcement-card"
 import AnnouncementDetail from "./announcement-detail"
+import AnnouncementForm from "./announcement-form"
 
 interface AnnouncementListProps {
   userId: string
   userRole: string
   announcements: Announcement[]
-  // readAnnouncements: Set<string>
-  // onToggleRead: (id: string) => Promise<void>
-  // onMarkSeen: (id: string) => Promise<BadgeUpdateEvent | void>
   searchQuery: string
   // loading: boolean
   // error: string | null
@@ -22,20 +20,17 @@ export default function AnnouncementList({
   userId,
   userRole,
   announcements,
-  // readAnnouncements,
-  // onToggleRead,
-  // onMarkSeen,
   searchQuery,
   // loading,
   // error,
 }: AnnouncementListProps) {
-  const [open, setOpen] = useState(false)
-  // const [editOpen, setEditOpen] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
   const [announcement, setAnnouncement] = useState<Announcement | null>(null)
 
   const handleAnnouncementClick = (announcement: Announcement) => async () => {
     setAnnouncement(announcement)
-    setOpen(true)
+    setDetailOpen(true)
     // Mark as seen when opened
     await markAsRead(announcement.id, userId)
     // const seen = await onMarkSeen(announcement.id)
@@ -62,31 +57,26 @@ export default function AnnouncementList({
   //   setOpen(false)
   //   setEditOpen(true)
   // }
+  const handleEditClick = async () => {
+    setEditOpen(true)
+  }
 
   const onToggleRead = async (announcementId: string, userId: string) => {
     await toggleRead(announcementId, userId)
-
-    // revalidatePath(ROUTES.ANNOUNCEMENTS)
   }
 
   return (
     <div className="space-y-6" role="list" aria-label="Announcements">
       <AnnouncementDetail
-        open={open}
-        setOpen={setOpen}
+        open={detailOpen}
+        setOpen={setDetailOpen}
         announcement={announcement}
-        // isRead={readAnnouncements.has(announcement?.id ?? "")}
         userRole={userRole}
         onToggleRead={(id) => onToggleRead(id, userId)}
-        // onEdit={handleEditClick}
+        onEdit={handleEditClick}
       />
 
-      {/* <AnnouncementForm
-        mode="edit"
-        open={editOpen}
-        setOpen={setEditOpen}
-        announcement={announcement}
-      /> */}
+      <AnnouncementForm announcement={announcement} open={editOpen} setOpen={setEditOpen} />
 
       {announcements &&
         announcements.map((announcement) => (
@@ -94,9 +84,8 @@ export default function AnnouncementList({
             userRole={userRole}
             key={announcement.id}
             announcement={announcement}
-            // isRead={readAnnouncements.has(announcement.id)}
             onClick={handleAnnouncementClick(announcement)}
-            // onEdit={handleEditClick}
+            onEdit={handleEditClick}
             onToggleRead={() => onToggleRead(announcement.id, userId)}
             searchQuery={searchQuery}
           />

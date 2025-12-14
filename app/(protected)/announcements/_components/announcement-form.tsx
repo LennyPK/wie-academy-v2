@@ -16,22 +16,24 @@ import {
 } from "@/components/ui/drawer"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Announcement } from "../types"
-import CreateDialog from "./form-create"
+import Form from "./form"
 
 interface AnnouncementFormProps {
-  mode: "create" | "edit"
   announcement?: Announcement | null
   open: boolean
   setOpen: (open: boolean) => void
 }
 
-export default function AnnouncementForm({
-  mode,
-  announcement,
-  open,
-  setOpen,
-}: AnnouncementFormProps) {
+export default function AnnouncementForm({ announcement, open, setOpen }: AnnouncementFormProps) {
   const isMobile = useIsMobile()
+
+  const modalTitle = <span>{announcement ? "Edit Announcement" : "Create Announcement"}</span>
+
+  const modalContent = (
+    <div className="no-scrollbar overflow-y-auto">
+      <Form announcement={announcement} setOpen={setOpen} />
+    </div>
+  )
 
   if (isMobile) {
     return (
@@ -39,11 +41,9 @@ export default function AnnouncementForm({
         <DrawerOverlay className="backdrop-blur-xs" />
         <DrawerContent className="bg-card">
           <DrawerHeader className="text-center">
-            <DrawerTitle>
-              <ModalTitle mode={mode} />
-            </DrawerTitle>
+            <DrawerTitle>{modalTitle}</DrawerTitle>
           </DrawerHeader>
-          <ModalContent mode={mode} setOpen={setOpen} announcement={announcement} />
+          {modalContent}
         </DrawerContent>
       </Drawer>
     )
@@ -54,37 +54,10 @@ export default function AnnouncementForm({
       <DialogOverlay className="backdrop-blur-xs" />
       <DialogContent className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]">
         <DialogHeader>
-          <DialogTitle>
-            <ModalTitle mode={mode} />
-          </DialogTitle>
+          <DialogTitle>{modalTitle}</DialogTitle>
         </DialogHeader>
-        <ModalContent mode={mode} setOpen={setOpen} announcement={announcement} />
+        {modalContent}
       </DialogContent>
     </Dialog>
-  )
-}
-
-function ModalTitle({ mode }: { mode: "create" | "edit" }) {
-  return <>{mode === "create" ? "Create Announcement" : "Edit Announcement"}</>
-}
-
-function ModalContent({
-  mode,
-  // announcement,
-  setOpen,
-}: {
-  mode: "create" | "edit"
-  announcement?: Announcement | null
-  setOpen: (open: boolean) => void
-}) {
-  return (
-    <div className="no-scrollbar overflow-y-auto">
-      {mode === "create" ? (
-        <CreateDialog setOpen={setOpen} />
-      ) : (
-        <div></div>
-        // <EditDialog announcement={announcement!} setOpen={setOpen} />
-      )}
-    </div>
   )
 }

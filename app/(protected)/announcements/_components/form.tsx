@@ -29,36 +29,64 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { createAnnouncement } from "../actions"
-import { NewAnnouncement } from "../types"
-import { formCreateSchema } from "./form-create-schema"
+// import { Announcement, NewAnnouncement } from "../types"
+import { Announcement, NewAnnouncement } from "../types"
+import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
 
 interface FormCreateProps {
+  announcement?: Announcement | null
   setOpen: (open: boolean) => void
 }
 
-export default function FormCreate({ setOpen }: FormCreateProps) {
+export default function Form({ setOpen, announcement }: FormCreateProps) {
   const router = useRouter()
+
+  console.log("announcement in form:", announcement)
+
+  // const [editorContent, setEditorContent] = useState({
+  //   plain: announcement?.contentPlain ?? "",
+  //   html: announcement?.contentHtml ?? "",
+  //   json: announcement?.contentJson ?? {},
+  // })
   const [editorContent, setEditorContent] = useState({
     plain: "",
     html: "",
     json: {},
   })
 
+  // const initialValues = {
+  //   title: announcement?.title ?? "",
+  //   category: announcement?.category?.id ? String(announcement.category.id) : "",
+  //   regions:
+  //     announcement?.targetRegions?.map((region: Region) => String(region.regionId)) ??
+  //     ([] as string[]),
+  //   schools:
+  //     announcement?.targetSchools?.map((school: School) => String(school.schoolId)) ??
+  //     ([] as string[]),
+  //   yearLevels:
+  //     announcement?.targetYearLevels?.map((yearLevel: YearLevel) =>
+  //       String(yearLevel.yearLevelId)
+  //     ) ?? ([] as string[]),
+  //   content: announcement?.contentPlain ?? "",
+  // }
+  const initialValues = {
+    title: "",
+    category: "",
+    regions: [] as string[],
+    schools: [] as string[],
+    yearLevels: [] as string[],
+    content: "",
+  }
+
   const form = useForm({
-    defaultValues: {
-      title: "",
-      category: "",
-      regions: [] as string[],
-      schools: [] as string[],
-      yearLevels: [] as string[],
-      content: "",
-    },
+    defaultValues: initialValues,
     validators: {
-      onSubmit: formCreateSchema,
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      // TODO: Disable button when announcement is being saved
       const newAnnouncement: NewAnnouncement = {
         title: value.title.trim(),
         contentPlain: editorContent.plain.trim(),
@@ -250,11 +278,11 @@ export default function FormCreate({ setOpen }: FormCreateProps) {
                             {school.label}
                           </MultiSelectItem>
                         ))} */}
-                        <MultiSelectItem value="school-1">School 1</MultiSelectItem>
-                        <MultiSelectItem value="school-2">School 2</MultiSelectItem>
-                        <MultiSelectItem value="school-3">School 3</MultiSelectItem>
-                        <MultiSelectItem value="school-4">School 4</MultiSelectItem>
-                        <MultiSelectItem value="school-5">School 5</MultiSelectItem>
+                        <MultiSelectItem value={String(1)}>School 1</MultiSelectItem>
+                        <MultiSelectItem value={String(2)}>School 2</MultiSelectItem>
+                        <MultiSelectItem value={String(3)}>School 3</MultiSelectItem>
+                        <MultiSelectItem value={String(4)}>School 4</MultiSelectItem>
+                        <MultiSelectItem value={String(5)}>School 5</MultiSelectItem>
                       </MultiSelectGroup>
                     </MultiSelectContent>
                   </MultiSelect>

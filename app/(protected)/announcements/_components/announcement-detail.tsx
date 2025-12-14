@@ -58,6 +58,14 @@ export default function AnnouncementDetail({
 
   if (!announcement) return null
 
+  const handleToggleRead = async () => {
+    onToggleRead(announcement.id)
+  }
+
+  const handleEdit = async () => {
+    onEdit(announcement.id)
+  }
+
   const actions = (
     <TooltipProvider>
       <div className="mt-4 flex items-center gap-1 border-y border-border py-3">
@@ -67,8 +75,8 @@ export default function AnnouncementDetail({
             <Button
               variant={isRead ? "ghost" : "default"}
               size="icon"
-              onClick={() => onToggleRead(announcement.id)}
-              // onClick={handleToggleRead}
+              // onClick={() => onToggleRead(announcement.id)}
+              onClick={handleToggleRead}
               className="flex-1 cursor-pointer gap-1.5"
             >
               {isRead ? <BookCheck className="h-4 w-4" /> : <BookOpenCheck className="h-4 w-4" />}
@@ -84,8 +92,8 @@ export default function AnnouncementDetail({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => onEdit(announcement.id)}
-                // onClick={handleEdit}
+                // onClick={() => onEdit(announcement.id)}
+                onClick={handleEdit}
                 className="flex-1 cursor-pointer gap-1.5"
               >
                 <Pencil className={"h-4 w-4 fill-current"} />

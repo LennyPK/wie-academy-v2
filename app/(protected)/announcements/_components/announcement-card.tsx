@@ -37,28 +37,10 @@ export default function AnnouncementCard({
     onClick()
   }
 
-  // const handleAnnouncementKeyDown = (
-  //   e: React.KeyboardEvent<HTMLDivElement>,
-  //   announcement: Announcement
-  // ) => {
-  //   if (e.key === "Enter" || e.key === " ") {
-  //     e.preventDefault()
-  //     onClick(announcement)
-  //   }
-  // }
-
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click
     onEdit()
   }
-
-  // const handleReadStatusKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-  //   if (e.key === "Enter" || e.key === " ") {
-  //     e.preventDefault()
-  //     e.stopPropagation()
-  //     onToggleRead(announcement.id)
-  //   }
-  // }
 
   const handleToggleReadStatus = (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click/open
@@ -81,11 +63,8 @@ export default function AnnouncementCard({
               : ["border-l-4", updated ? "border-l-secondary" : "border-l-primary"]
           )}
           onClick={handleAnnouncementClick}
-          // onKeyDown={(e) => handleAnnouncementKeyDown(e, announcement)}
         >
           <CardHeader>
-            {/* <div className="flex h-full flex-col"> */}
-            {/* <div className="flex flex-1 flex-col"> */}
             <div className="flex flex-col">
               {/* Category & Date Container */}
               <div className="flex flex-col gap-4 md:flex-row md:justify-between">
@@ -111,6 +90,7 @@ export default function AnnouncementCard({
                   )}
                 </div>
               </div>
+
               {/* Title and status dot */}
               <div
                 id={`announcement-${announcement.id}-title`}
@@ -133,6 +113,7 @@ export default function AnnouncementCard({
                     </Tooltip>
                   </TooltipProvider>
                 )}
+
                 {/* Card Title */}
                 <CardTitle
                   id={announcement.id}
@@ -146,6 +127,7 @@ export default function AnnouncementCard({
                     : announcement.title}
                 </CardTitle>
               </div>
+
               {/* Author */}
               <div
                 id={`announcement-${announcement.id}-author`}
@@ -154,8 +136,6 @@ export default function AnnouncementCard({
                 {announcement.author ? `By: ${announcement.author.name}` : "[deleted]"}
               </div>
             </div>
-            {/* </div> */}
-            {/* </div> */}
           </CardHeader>
           <CardContent className="flex-1 overflow-hidden">
             <p className="line-clamp-2 text-sm md:text-base">
