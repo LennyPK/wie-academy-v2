@@ -31,8 +31,8 @@ export const authClient = createAuthClient({
           type: "date",
           required: true,
         },
-        school: {
-          type: "string",
+        schoolId: {
+          type: "number",
           required: true,
         },
         regionId: {

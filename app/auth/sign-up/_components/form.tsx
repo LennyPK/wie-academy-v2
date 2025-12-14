@@ -16,7 +16,7 @@ import {
 import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
-import { RegionOption, YearLevelOption } from "@/types"
+import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
@@ -27,12 +27,14 @@ import { formSchema } from "./form-schema"
 type SignUpFormProps = {
   regions: RegionOption[]
   yearLevels: YearLevelOption[]
+  schools: SchoolOption[]
 }
 
 export default function SignUpForm({
   className,
   regions,
   yearLevels,
+  schools,
   ...props
 }: React.ComponentProps<"div"> & SignUpFormProps) {
   const [isTransitioning, startTransition] = useTransition()
@@ -68,7 +70,7 @@ export default function SignUpForm({
             firstName: value.firstName,
             lastName: value.lastName,
             birthDate: value.dob,
-            school: value.school,
+            schoolId: Number(value.school),
             regionId: Number(value.region),
             yearId: Number(value.yearLevel),
             // image: null,
@@ -240,11 +242,11 @@ export default function SignUpForm({
                           <SelectValue placeholder="Select School" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="school-1">School 1</SelectItem>
-                          <SelectItem value="school-2">School 2</SelectItem>
-                          <SelectItem value="school-3">School 3</SelectItem>
-                          <SelectItem value="school-4">School 4</SelectItem>
-                          <SelectItem value="school-5">School 5</SelectItem>
+                          {schools.map((school) => (
+                            <SelectItem key={school.id} value={String(school.id)}>
+                              {school.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {isInvalid && <FieldError errors={field.state.meta.errors} />}

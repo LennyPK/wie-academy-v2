@@ -71,8 +71,8 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
       categoryId: announcementInfo.categoryId,
       authorId: session?.user.id ?? undefined,
       targetSchools: {
-        create: announcementInfo.schools.map((school) => ({
-          school,
+        create: announcementInfo.schoolIds.map((schoolId) => ({
+          school: { connect: { id: schoolId } },
         })),
       },
       targetRegions: {
@@ -89,7 +89,7 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
     include: {
       author: { select: { name: true, image: true } },
       category: true,
-      targetSchools: true,
+      targetSchools: { include: { school: true } },
       targetRegions: { include: { region: true } },
       targetYearLevels: { include: { yearLevel: true } },
     },

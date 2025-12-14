@@ -38,8 +38,8 @@ export const auth = betterAuth({
         type: "date",
         required: true,
       },
-      school: {
-        type: "string",
+      schoolId: {
+        type: "number",
         required: true,
       },
       regionId: {

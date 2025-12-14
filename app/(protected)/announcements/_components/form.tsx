@@ -19,11 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { getAnnouncementCategories } from "@/lib/database"
+import { getAnnouncementCategories, getSchools } from "@/lib/database"
 import { getRegions } from "@/lib/database/regions"
 import { getYearLevels } from "@/lib/database/year-levels"
 import { AnnouncementCategory } from "@/lib/generated/prisma/client"
-import { RegionOption, YearLevelOption } from "@/lib/types"
+import { RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -93,7 +93,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
         contentHtml: editorContent.html,
         contentJson: JSON.parse(JSON.stringify(editorContent.json)),
         categoryId: Number(value.category),
-        schools: value.schools,
+        schoolIds: value.schools.map((school) => Number(school)),
         regionIds: value.regions.map((region) => Number(region)),
         yearLevelIds: value.yearLevels.map((yearLevel) => Number(yearLevel)),
       }
@@ -111,17 +111,20 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
   const [categories, setCategories] = useState<AnnouncementCategory[]>([])
   const [regions, setRegions] = useState<RegionOption[]>([])
   const [yearLevels, setYearLevels] = useState<YearLevelOption[]>([])
+  const [schools, setSchools] = useState<SchoolOption[]>([])
 
   useEffect(() => {
     async function loadData() {
-      const [categories, regions, yearLevels] = await Promise.all([
+      const [categories, regions, yearLevels, schools] = await Promise.all([
         getAnnouncementCategories(),
         getRegions(),
         getYearLevels(),
+        getSchools(),
       ])
       setCategories(categories)
       setRegions(regions)
       setYearLevels(yearLevels)
+      setSchools(schools)
     }
     loadData()
   }, [])
@@ -273,16 +276,11 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
                     </MultiSelectTrigger>
                     <MultiSelectContent>
                       <MultiSelectGroup>
-                        {/* {schools.map((school) => (
+                        {schools.map((school) => (
                           <MultiSelectItem key={school.id} value={String(school.id)}>
                             {school.label}
                           </MultiSelectItem>
-                        ))} */}
-                        <MultiSelectItem value={String(1)}>School 1</MultiSelectItem>
-                        <MultiSelectItem value={String(2)}>School 2</MultiSelectItem>
-                        <MultiSelectItem value={String(3)}>School 3</MultiSelectItem>
-                        <MultiSelectItem value={String(4)}>School 4</MultiSelectItem>
-                        <MultiSelectItem value={String(5)}>School 5</MultiSelectItem>
+                        ))}
                       </MultiSelectGroup>
                     </MultiSelectContent>
                   </MultiSelect>

@@ -22,7 +22,7 @@ export type NewAnnouncement = {
   contentHtml: string
   contentJson: InputJsonValue
   categoryId: number
-  schools: string[]
+  schoolIds: number[]
   regionIds: number[]
   yearLevelIds: number[]
 }

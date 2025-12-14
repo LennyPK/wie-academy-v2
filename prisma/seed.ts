@@ -7,6 +7,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 import "dotenv/config"
 import { announcementData } from "./seed/announcements"
 import { announcementCategoryData, interestData, regionData, yearLevelData } from "./seed/constants"
+import { getNZSchools } from "./seed/schools"
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -33,6 +34,13 @@ const userData: Prisma.UserCreateInput[] = [
     email: "bob@prisma.io",
   },
 ]
+
+const updateProgress = (items: number, current: number) => {
+  const progress = ((current / items) * 100).toFixed(2)
+  process.stdout.clearLine(0)
+  process.stdout.cursorTo(0)
+  process.stdout.write(`Progress: ${progress}%`)
+}
 
 export async function main() {
   console.log("starting to seed...")
@@ -64,7 +72,20 @@ export async function main() {
     })
   }
 
-  console.log("...seeding interests...")
+  console.log("...seeding schools...")
+  const schoolData = await getNZSchools()
+  let i = 0
+  for (const school of schoolData) {
+    if (i % 10 === 0) updateProgress(schoolData.length, i)
+    await prisma.school.upsert({
+      where: { code: school.code },
+      update: {},
+      create: school,
+    })
+    i++
+  }
+
+  console.log("\n...seeding interests...")
   for (const interest of interestData) {
     await prisma.interest.upsert({
       where: { value: interest.value },

@@ -34,7 +34,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
     select: {
       id: true,
       role: true,
-      // school: { select: { id: true, label: true } },
+      school: { select: { id: true, label: true } },
       region: { select: { id: true, label: true } },
       yearLevel: { select: { id: true, label: true } },
     },
@@ -142,7 +142,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
           select: { isRead: true },
         },
         targetRegions: { select: { regionId: true } },
-        targetSchools: { select: { school: true } },
+        targetSchools: { select: { schoolId: true } },
         targetYearLevels: { select: { yearLevelId: true } },
       },
       orderBy: { updatedAt: "desc" },

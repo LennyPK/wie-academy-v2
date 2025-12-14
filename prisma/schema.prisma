@@ -30,12 +30,13 @@ model User {
   approvalStatus ApprovalStatus? @default(PENDING)
 
   birthDate        DateTime?
-  school           String?
+  schoolId         Int?
   regionId         Int?
   yearId           Int?
   experiencePoints Int?               @default(0)
   interests        InterestsOnUsers[]
 
+  school    School?    @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
   yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
 
@@ -114,6 +115,16 @@ model YearLevel {
   @@map("yearLevel")
 }
 
+model School {
+  id            Int                      @id @default(autoincrement())
+  code          String                   @unique
+  label         String
+  users         User[]
+  announcements SchoolsOnAnnouncements[]
+
+  @@map("school")
+}
+
 model Interest {
   id    Int                @id @default(autoincrement())
   value String             @unique
@@ -182,9 +193,10 @@ model AnnouncementCategory {
 model SchoolsOnAnnouncements {
   announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   announcementId String
-  school         String
+  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId       Int
 
-  @@id([announcementId, school])
+  @@id([announcementId, schoolId])
   @@map("schoolsOnAnnouncements")
 }
 
