@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { format, getMonth, getYear, setMonth, setYear } from "date-fns"
-import { Input } from "./input"
+import { Input } from "./ui/input"
 
 interface DatePickerProps {
   id?: string
