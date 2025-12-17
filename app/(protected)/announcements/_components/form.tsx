@@ -26,11 +26,11 @@ import { AnnouncementCategory } from "@/lib/generated/prisma/client"
 import { RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
+import { useDebouncedCallback } from "use-debounce"
 import { createAnnouncement } from "../actions"
-// import { Announcement, NewAnnouncement } from "../types"
-import { Announcement, NewAnnouncement } from "../types"
+import { Announcement, NewAnnouncement, Region, School, YearLevel } from "../types"
 import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
@@ -51,10 +51,23 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
   //   json: announcement?.contentJson ?? {},
   // })
   const [editorContent, setEditorContent] = useState({
-    plain: "",
-    html: "",
-    json: {},
+    plain: announcement?.contentPlain ?? "",
+    html: announcement?.contentHtml ?? "",
+    json: announcement?.contentJson ?? {},
   })
+
+  // Keep a ref for the latest editor content so onSubmit can read freshest value
+  const editorContentRef = useRef(editorContent)
+
+  // Debounced update to reduce re-renders when typing quickly in the editor
+  const debouncedUpdate = useDebouncedCallback(
+    (next: Partial<typeof editorContent>) => {
+      setEditorContent((prev) => ({ ...prev, ...next }))
+      editorContentRef.current = { ...editorContentRef.current, ...next }
+    },
+    // 200ms is a reasonable default for typing responsiveness
+    200
+  )
 
   // const initialValues = {
   //   title: announcement?.title ?? "",
@@ -72,12 +85,18 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
   //   content: announcement?.contentPlain ?? "",
   // }
   const initialValues = {
-    title: "",
-    category: "",
-    regions: [] as string[],
-    schools: [] as string[],
-    yearLevels: [] as string[],
-    content: "",
+    title: announcement?.title ?? "",
+    category: announcement?.categoryId ? String(announcement.category.id) : "",
+    regions:
+      announcement?.targetRegions.map((region: Region) => String(region.regionId)) ??
+      ([] as string[]),
+    schools:
+      announcement?.targetSchools.map((school: School) => String(school.schoolId)) ??
+      ([] as string[]),
+    yearLevels:
+      announcement?.targetYearLevels.map((yearLevel: YearLevel) => String(yearLevel.yearLevelId)) ??
+      ([] as string[]),
+    content: announcement?.contentPlain ?? "",
   }
 
   const form = useForm({
@@ -103,7 +122,6 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
 
       setOpen(false)
 
-      // Do db call here
       router.refresh()
     },
   })
@@ -129,34 +147,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
     loadData()
   }, [])
 
-  // const [schools, setSchools] = useState<string[]>([])
-  // const [schoolSearch, setSchoolSearch] = useState<string>("")
-  // const [schoolOptions, setSchoolOptions] = useState<{ value: string; label: string }[]>([])
   // const titleLength = 100
-
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-
-  // FIXME: Maybe better to move this to page level
-  // useEffect(() => {
-  //   // let active = true
-  //   const fetchSchools = async () => {
-  //     // const { results } = await searchNZSchools(schoolSearch)
-  //     // if (active) setSchoolOptions(results)
-  //     setSchoolOptions([])
-  //     const categories = await getAnnouncementCategories()
-  //     const regions = await getRegions()
-  //     const years = await getYearLevels()
-  //     setCategoryOptions(categories)
-  //     setRegionOptions(regions)
-  //     setYearOptions(years)
-
-  //     setCategory(categories[0])
-  //   }
-  //   fetchSchools()
-  //   return () => {
-  //     // active = false
-  //   }
-  // }, [schoolSearch])
 
   return (
     <form
@@ -339,10 +330,15 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
                 </div>
                 <RichTextEditor
                   placeholder="Type here..."
-                  onChangeHTML={(html) => setEditorContent((prev) => ({ ...prev, html }))}
-                  onChangeJSON={(json) => setEditorContent((prev) => ({ ...prev, json }))}
+                  initialContent={announcement?.contentHtml}
+                  onChangeHTML={(html) => debouncedUpdate({ html })}
+                  onChangeJSON={(json) => debouncedUpdate({ json })}
                   onChangePlainText={(plain) => {
-                    setEditorContent((prev) => ({ ...prev, plain }))
+                    // write immediate plain text to a ref to keep latest content for submit
+                    editorContentRef.current = { ...editorContentRef.current, plain }
+                    // debounce state updates to avoid re-renders while typing
+                    debouncedUpdate({ plain })
+                    // update the form's content field but debounce the heavy state changes
                     field.handleChange(plain)
                   }}
                 />

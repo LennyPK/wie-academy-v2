@@ -9,7 +9,7 @@ export default function AnnouncementEmpty() {
       tabIndex={0}
       role="article"
       aria-labelledby={"announcement-empty-card"}
-      className="border-0"
+      className="border-none bg-transparent shadow-none"
     >
       <CardContent className="flex-1 items-center justify-center py-20 text-center">
         <Megaphone className="mx-auto mb-4 h-12 w-12 text-primary" />

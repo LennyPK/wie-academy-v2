@@ -14,6 +14,21 @@ export type Announcement = {
   category: { id: number; value: string; label: string }
   author: { image: string | null; name: string } | null
   interactions: { isRead: boolean }[]
+  targetRegions: { regionId: number }[]
+  targetSchools: { schoolId: number }[]
+  targetYearLevels: { yearLevelId: number }[]
+}
+
+export type Region = {
+  regionId: number
+}
+
+export type School = {
+  schoolId: number
+}
+
+export type YearLevel = {
+  yearLevelId: number
 }
 
 export type NewAnnouncement = {

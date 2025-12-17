@@ -21,7 +21,7 @@ interface AnnouncementCardProps {
   announcement: Announcement
   searchQuery?: string
   onClick: () => Promise<void>
-  onEdit: () => Promise<void>
+  onEdit: (announcementId: string) => Promise<void>
   onToggleRead: () => Promise<void>
 }
 
@@ -39,7 +39,7 @@ export default function AnnouncementCard({
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click
-    onEdit()
+    onEdit(announcement.id)
   }
 
   const handleToggleReadStatus = (e: React.MouseEvent) => {

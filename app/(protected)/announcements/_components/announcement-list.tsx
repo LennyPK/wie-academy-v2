@@ -57,8 +57,11 @@ export default function AnnouncementList({
   //   setOpen(false)
   //   setEditOpen(true)
   // }
-  const handleEditClick = async () => {
+  const handleEditClick = async (announcementId: string) => {
     setEditOpen(true)
+    setAnnouncement(
+      announcements.find((announcement) => announcement.id === announcementId) || null
+    )
   }
 
   const onToggleRead = async (announcementId: string, userId: string) => {

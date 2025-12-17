@@ -51,7 +51,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
   const readStatus = params?.readStatus || "all"
   const dateRange = params?.dateRange || "month"
   const currentPage = Number(params?.page) || 1
-  const pageSize = 2
+  const pageSize = 5
 
   const where: Prisma.AnnouncementWhereInput = {}
 
