@@ -1,9 +1,10 @@
 "use client"
 
+import { Combobox } from "@/components/combobox"
+import { DatePicker } from "@/components/date-picker"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -229,26 +230,19 @@ export default function SignUpForm({
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>School</FieldLabel>
-                      <Select
+                      <Combobox
+                        id={field.name}
                         name={field.name}
+                        placeholder="Select School"
+                        items={schools.map((school) => ({
+                          value: String(school.id),
+                          label: school.label,
+                        }))}
                         value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger
-                          id={field.name}
-                          aria-invalid={isInvalid}
-                          className="cursor-pointer"
-                        >
-                          <SelectValue placeholder="Select School" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {schools.map((school) => (
-                            <SelectItem key={school.id} value={String(school.id)}>
-                              {school.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        onChange={field.handleChange}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
                       {isInvalid && <FieldError errors={field.state.meta.errors} />}
                     </Field>
                   )

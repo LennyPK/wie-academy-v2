@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { Input } from "./ui/input"
 
 interface Item {
   value: string
@@ -21,33 +22,69 @@ interface Item {
 }
 
 interface ComboboxProps {
+  id?: string
+  name?: string
   placeholder: string
   items: Item[]
   value: string
-  onValueChange: (value: string) => void
-  disabled: boolean
+  onChange: (value: string) => void
+  onBlur?: React.FocusEventHandler<HTMLInputElement>
+  "aria-invalid"?: boolean
+  className?: string
+  disabled?: boolean
 }
 
-export function Combobox({ placeholder, items, value, onValueChange, disabled }: ComboboxProps) {
+export function Combobox({
+  id,
+  name,
+  placeholder,
+  items,
+  value,
+  onChange,
+  onBlur,
+  "aria-invalid": ariaInvalid,
+  className,
+  disabled = false,
+  ...props
+}: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          id={id}
+          name={name}
+          aria-invalid={ariaInvalid}
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          data-empty={value === ""}
+          className={cn(
+            "w-[200px] justify-between bg-transparent font-normal hover:bg-transparent data-[empty=true]:text-muted-foreground",
+            className
+          )}
           disabled={disabled}
+          {...props}
         >
           {value ? items.find((item) => item.value === value)?.label : placeholder}
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
+
+      <Input
+        id={id}
+        name={name}
+        value={value}
+        onBlur={onBlur}
+        aria-invalid={ariaInvalid}
+        hidden
+        readOnly
+        {...props}
+      />
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={placeholder} className="h-9" />
+          <CommandInput placeholder={placeholder} className="h-9" onBlur={onBlur} />
           <CommandList>
             <CommandEmpty>No items found.</CommandEmpty>
             <CommandGroup>
@@ -57,7 +94,7 @@ export function Combobox({ placeholder, items, value, onValueChange, disabled }:
                   value={item.value}
                   keywords={[item.label, item.value]}
                   onSelect={(currentValue) => {
-                    onValueChange(currentValue === value ? "" : currentValue)
+                    onChange(currentValue === value ? "" : currentValue)
                     setOpen(false)
                   }}
                 >

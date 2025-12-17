@@ -66,7 +66,6 @@ export function Combobox({
 
   const Row = ({ index, style }: RowComponentProps) => {
     const item = showItems[index]
-    // if (!item) return null
     return (
       <div style={style} key={item.value}>
         <CommandItem
