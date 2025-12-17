@@ -105,8 +105,11 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
+      console.log(`Content: ${editorContent.plain.trim()}`)
+
       // TODO: Disable button when announcement is being saved
-      const newAnnouncement: NewAnnouncement = {
+      const newAnnouncementInfo: NewAnnouncement = {
+        id: announcement?.id ?? "",
         title: value.title.trim(),
         contentPlain: editorContent.plain.trim(),
         contentHtml: editorContent.html,
@@ -117,8 +120,8 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
         yearLevelIds: value.yearLevels.map((yearLevel) => Number(yearLevel)),
       }
 
-      const announcement = await createAnnouncement(newAnnouncement)
-      toast.success(announcement.announcement.title)
+      const newAnnouncement = await createAnnouncement(newAnnouncementInfo)
+      toast.success(newAnnouncement.announcement.title)
 
       setOpen(false)
 

@@ -62,8 +62,9 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
     redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
 
-  const announcement = await prisma.announcement.create({
-    data: {
+  const announcement = await prisma.announcement.upsert({
+    where: { id: announcementInfo.id },
+    create: {
       title: announcementInfo.title,
       contentPlain: announcementInfo.contentPlain,
       contentHtml: announcementInfo.contentHtml,
@@ -81,6 +82,31 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
         })),
       },
       targetYearLevels: {
+        create: announcementInfo.yearLevelIds.map((yearLevelId) => ({
+          yearLevel: { connect: { id: yearLevelId } },
+        })),
+      },
+    },
+    update: {
+      title: announcementInfo.title,
+      contentPlain: announcementInfo.contentPlain,
+      contentHtml: announcementInfo.contentHtml,
+      contentJson: announcementInfo.contentJson,
+      categoryId: announcementInfo.categoryId,
+      targetSchools: {
+        deleteMany: {},
+        create: announcementInfo.schoolIds.map((schoolId) => ({
+          school: { connect: { id: schoolId } },
+        })),
+      },
+      targetRegions: {
+        deleteMany: {},
+        create: announcementInfo.regionIds.map((regionId) => ({
+          region: { connect: { id: regionId } },
+        })),
+      },
+      targetYearLevels: {
+        deleteMany: {},
         create: announcementInfo.yearLevelIds.map((yearLevelId) => ({
           yearLevel: { connect: { id: yearLevelId } },
         })),

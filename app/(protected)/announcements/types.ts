@@ -32,6 +32,7 @@ export type YearLevel = {
 }
 
 export type NewAnnouncement = {
+  id?: string
   title: string
   contentPlain: string
   contentHtml: string
