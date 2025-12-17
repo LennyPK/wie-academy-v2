@@ -14,7 +14,7 @@ interface RichTextEditorProps {
   onChangePlainText: (content: string) => void
   onChangeJSON: (json: object) => void
   onChangeHTML: (content: string) => void
-  initialContent?: string
+  initialContent?: object
   className?: string
   // onImageUpload?: (file: File) => Promise<string>
 }

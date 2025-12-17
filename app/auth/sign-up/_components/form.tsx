@@ -21,7 +21,8 @@ import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
-import { useTransition } from "react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
@@ -38,7 +39,8 @@ export default function SignUpForm({
   schools,
   ...props
 }: React.ComponentProps<"div"> & SignUpFormProps) {
-  const [isTransitioning, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -57,42 +59,45 @@ export default function SignUpForm({
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      startTransition(async () => {
-        if (!value.dob) {
-          return
-        }
+      setIsLoading(true)
 
-        // TODO: Handle redirect
-        await authClient.signUp.email(
-          {
-            email: value.email,
-            password: value.password,
-            name: `${value.firstName} ${value.lastName}`,
-            firstName: value.firstName,
-            lastName: value.lastName,
-            birthDate: value.dob,
-            schoolId: Number(value.school),
-            regionId: Number(value.region),
-            yearId: Number(value.yearLevel),
-            // image: null,
-            callbackURL: "/dashboard",
+      if (!value.dob) {
+        return
+      }
+
+      // TODO: Handle redirect
+      await authClient.signUp.email(
+        {
+          email: value.email,
+          password: value.password,
+          name: `${value.firstName} ${value.lastName}`,
+          firstName: value.firstName,
+          lastName: value.lastName,
+          birthDate: value.dob,
+          schoolId: Number(value.school),
+          regionId: Number(value.region),
+          yearId: Number(value.yearLevel),
+          // image: null,
+          callbackURL: "/dashboard",
+        },
+        {
+          onRequest: () => {
+            toast.loading("Creating your account...")
           },
-          {
-            onRequest: () => {
-              toast.loading("Creating your account...")
-            },
-            onSuccess: () => {
-              toast.dismiss()
-              toast.success("Check your email to verify your account.")
-              // TODO: Add redirect to approval pending page
-            },
-            onError: (ctx) => {
-              toast.dismiss()
-              toast.error(ctx.error.message)
-            },
-          }
-        )
-      })
+          onSuccess: () => {
+            toast.dismiss()
+            toast.success("Check your email to verify your account.")
+            router.push(ROUTES.VERIFY)
+            // TODO: Add redirect to approval pending page
+          },
+          onError: (ctx) => {
+            toast.dismiss()
+            toast.error(ctx.error.message)
+            setIsLoading(false)
+          },
+        }
+      )
+      // })
     },
   })
 
@@ -371,7 +376,7 @@ export default function SignUpForm({
               </form.Field>
 
               <Field>
-                <Button type="submit" className="cursor-pointer" disabled={isTransitioning}>
+                <Button type="submit" className="cursor-pointer" disabled={isLoading}>
                   Sign Up
                 </Button>
                 <FieldDescription className="text-center">

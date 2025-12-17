@@ -2,10 +2,8 @@
 
 import { useIsMobile } from "@/hooks/use-mobile"
 
+import { RenderTipTap } from "@/components/editor/render"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { formatRelative } from "date-fns"
-// import parse from "html-react-parser"
 import { Dialog, DialogContent, DialogHeader, DialogOverlay } from "@/components/ui/dialog"
 import {
   Drawer,
@@ -14,8 +12,10 @@ import {
   DrawerOverlay,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Role } from "@/prisma/enums"
 import { DialogTitle } from "@radix-ui/react-dialog"
+import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, Clock, Pencil } from "lucide-react"
 import { Announcement } from "../types"
 import CategoryBadge from "./category-badge"
@@ -24,10 +24,8 @@ interface AnnouncementDetailProps {
   announcement: Announcement | null
   open: boolean
   setOpen: (open: boolean) => void
-  // isRead: boolean
   userRole: string
   onToggleRead: (announcementId: string) => Promise<void>
-  // onEdit: (announcement: Announcement) => void
   onEdit: (announcementId: string) => Promise<void>
 }
 
@@ -43,18 +41,6 @@ export default function AnnouncementDetail({
 
   const isRead = announcement ? announcement.interactions.some((i) => i.isRead) : false
   const isAdmin = userRole === Role.ADMIN
-
-  // const handleToggleRead = useCallback(() => {
-  //   if (announcement) {
-  //     onToggleRead(announcement.id)
-  //   }
-  // }, [announcement, onToggleRead])
-
-  // const handleEdit = useCallback(() => {
-  //   if (announcement) {
-  //     onEdit(announcement)
-  //   }
-  // }, [announcement, onEdit])
 
   if (!announcement) return null
 
@@ -75,7 +61,6 @@ export default function AnnouncementDetail({
             <Button
               variant={isRead ? "ghost" : "default"}
               size="icon"
-              // onClick={() => onToggleRead(announcement.id)}
               onClick={handleToggleRead}
               className="flex-1 cursor-pointer gap-1.5"
             >
@@ -92,7 +77,6 @@ export default function AnnouncementDetail({
               <Button
                 variant="ghost"
                 size="icon"
-                // onClick={() => onEdit(announcement.id)}
                 onClick={handleEdit}
                 className="flex-1 cursor-pointer gap-1.5"
               >
@@ -175,17 +159,18 @@ export default function AnnouncementDetail({
   )
 
   const bodyContent = (
-    <div className="overflow-y-auto pt-2 [&_h1]:text-4xl [&_h2]:text-3xl [&_h3]:text-2xl [&_h4]:text-xl [&_h5]:text-lg [&_h6]:text-base [&_p]:my-2">
-      {/* TODO: {parse(html)} */}
-      {announcement.contentPlain}
-    </div>
+    <RenderTipTap
+      content={
+        announcement.contentJson ? JSON.parse(JSON.stringify(announcement?.contentJson)) : undefined
+      }
+    />
   )
 
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerOverlay className="backdrop-blur-xs" />
-        <DrawerContent>
+        <DrawerContent className="bg-card">
           <DrawerHeader className="text-center">{header}</DrawerHeader>
           <div className="px-5">
             {actions}
@@ -210,55 +195,3 @@ export default function AnnouncementDetail({
     </Dialog>
   )
 }
-
-// function RenderHTML({ html, className }: { html: string; className?: string }) {
-//   return (
-//     <div
-//       className={cn(
-//         "overflow-y-auto [&_h1]:text-4xl [&_h2]:text-3xl [&_h3]:text-2xl [&_h4]:text-xl [&_h5]:text-lg [&_h6]:text-base [&_p]:my-2",
-//         className
-//       )}
-//     >
-//       {/* {parse(html)} */}
-//       {html}
-//     </div>
-//   )
-// }
-
-// function ModalTitle({ announcement }: { announcement: Announcement }) {
-//   return <span className="text-2xl font-bold">{announcement?.title}</span>
-// }
-
-// function ModalDescription({ announcement }: { announcement: Announcement }) {
-//   return (
-//     <div className="mt-4 flex flex-col gap-2">
-//       <div className="mb-4 flex justify-center md:justify-start">
-//         <CategoryBadge category={announcement.category} className="w-fit" />
-//       </div>
-//       <div className="space-y-1.5">
-//         <div className="text-center text-sm font-medium text-muted-foreground md:text-left">
-//           {announcement.author ? `By: ${announcement.author.name}` : "[deleted]"}
-//         </div>
-//         {announcement.createdAt && (
-//           <div className="flex items-center justify-center md:justify-start">
-//             <Clock className="mr-1 h-3.5 w-3.5 text-muted-foreground" />
-//             <span className="text-sm text-muted-foreground">
-//               {announcement.updatedAt && announcement.updatedAt > announcement.createdAt
-//                 ? formatRelative(announcement.updatedAt, new Date())
-//                 : formatRelative(announcement.createdAt, new Date())}
-//             </span>
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   )
-// }
-
-// function ModalContent({ announcement }: { announcement: Announcement }) {
-//   return (
-//     <RenderHTML
-//       html={announcement?.contentHtml || ""}
-//       className="md:no-scrollbar mt-2 border-t px-4 pt-2 md:flex-1 md:px-0"
-//     />
-//   )
-// }

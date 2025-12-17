@@ -40,49 +40,17 @@ interface FormCreateProps {
 }
 
 export default function Form({ setOpen, announcement }: FormCreateProps) {
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   console.log("announcement in form:", announcement)
 
-  // const [editorContent, setEditorContent] = useState({
-  //   plain: announcement?.contentPlain ?? "",
-  //   html: announcement?.contentHtml ?? "",
-  //   json: announcement?.contentJson ?? {},
-  // })
   const [editorContent, setEditorContent] = useState({
     plain: announcement?.contentPlain ?? "",
     html: announcement?.contentHtml ?? "",
     json: announcement?.contentJson ?? {},
   })
 
-  // Keep a ref for the latest editor content so onSubmit can read freshest value
-  // const editorContentRef = useRef(editorContent)
-
-  // // Debounced update to reduce re-renders when typing quickly in the editor
-  // const debouncedUpdate = useDebouncedCallback(
-  //   (next: Partial<typeof editorContent>) => {
-  //     setEditorContent((prev) => ({ ...prev, ...next }))
-  //     editorContentRef.current = { ...editorContentRef.current, ...next }
-  //   },
-  //   // 200ms is a reasonable default for typing responsiveness
-  //   200
-  // )
-
-  // const initialValues = {
-  //   title: announcement?.title ?? "",
-  //   category: announcement?.category?.id ? String(announcement.category.id) : "",
-  //   regions:
-  //     announcement?.targetRegions?.map((region: Region) => String(region.regionId)) ??
-  //     ([] as string[]),
-  //   schools:
-  //     announcement?.targetSchools?.map((school: School) => String(school.schoolId)) ??
-  //     ([] as string[]),
-  //   yearLevels:
-  //     announcement?.targetYearLevels?.map((yearLevel: YearLevel) =>
-  //       String(yearLevel.yearLevelId)
-  //     ) ?? ([] as string[]),
-  //   content: announcement?.contentPlain ?? "",
-  // }
   const initialValues = {
     title: announcement?.title ?? "",
     category: announcement?.categoryId ? String(announcement.category.id) : "",
@@ -104,26 +72,12 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      // Ensure any pending debounced editor updates are flushed so we read the
-      // freshest content immediately before submitting.
-      // try {
-      //   // use-debounce exposes a flush method on the debounced callback
-      //   // (see useDebouncedCallback.flush)
-      //   debouncedUpdate.flush?.()
-      // } catch {
-      //   // no-op if flush is not available for some reason
-      // }
+      setIsLoading(true)
+      toast.loading("Saving...")
 
-      // // Read latest content from the ref which is updated immediately on input
-      // const latestContent = editorContentRef.current
-
-      // TODO: Disable button when announcement is being saved
       const newAnnouncementInfo: NewAnnouncement = {
         id: announcement?.id ?? "",
         title: value.title.trim(),
-        // contentPlain: latestContent.plain.trim(),
-        // contentHtml: latestContent.html,
-        // contentJson: JSON.parse(JSON.stringify(latestContent.json)),
         contentPlain: editorContent.plain.trim(),
         contentHtml: editorContent.html,
         contentJson: JSON.parse(JSON.stringify(editorContent.json)),
@@ -134,8 +88,10 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
       }
 
       const newAnnouncement = await insertAnnouncement(newAnnouncementInfo)
-      toast.success(newAnnouncement.announcement.title)
+      toast.dismiss()
+      toast.success(`New announcement saved: ${newAnnouncement.announcement.title}`)
 
+      setIsLoading(false)
       setOpen(false)
 
       router.refresh()
@@ -353,17 +309,11 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
                 </div>
                 <RichTextEditor
                   placeholder="Type here..."
-                  initialContent={announcement?.contentHtml}
-                  // onChangeHTML={(html) => debouncedUpdate({ html })}
-                  // onChangeJSON={(json) => debouncedUpdate({ json })}
-                  // onChangePlainText={(plain) => {
-                  //   // write immediate plain text to a ref to keep latest content for submit
-                  //   editorContentRef.current = { ...editorContentRef.current, plain }
-                  //   // debounce state updates to avoid re-renders while typing
-                  //   debouncedUpdate({ plain })
-                  //   // update the form's content field but debounce the heavy state changes
-                  //   field.handleChange(plain)
-                  // }}
+                  initialContent={
+                    announcement?.contentJson
+                      ? JSON.parse(JSON.stringify(announcement?.contentJson))
+                      : undefined
+                  }
                   onChangeHTML={(html) => setEditorContent((prev) => ({ ...prev, html }))}
                   onChangeJSON={(json) => setEditorContent((prev) => ({ ...prev, json }))}
                   onChangePlainText={(plain) => {
@@ -371,15 +321,6 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
                     field.handleChange(plain)
                   }}
                 />
-                {/* <RichTextEditor
-                  placeholder="Type here..."
-                  onChangeHTML={(html) => setEditorContent((prev) => ({ ...prev, html }))}
-                  onChangeJSON={(json) => setEditorContent((prev) => ({ ...prev, json }))}
-                  onChangePlainText={(plain) => {
-                    setEditorContent((prev) => ({ ...prev, plain }))
-                    field.handleChange(plain)
-                  }}
-                /> */}
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             )
@@ -396,8 +337,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 cursor-pointer">
-              {/* Create Announcement */}
+            <Button type="submit" className="flex-1 cursor-pointer" disabled={isLoading}>
               Submit
             </Button>
           </div>
