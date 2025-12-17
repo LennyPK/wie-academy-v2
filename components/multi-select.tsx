@@ -40,16 +40,26 @@ function MultiSelect({
   values,
   defaultValues,
   onValuesChange,
+  onOpenChange,
 }: {
   children: ReactNode
   values?: string[]
   defaultValues?: string[]
   onValuesChange?: (values: string[]) => void
+  onOpenChange?: (open: boolean) => void
 }) {
   const [open, setOpen] = useState(false)
   const [internalValues, setInternalValues] = useState(new Set<string>(values ?? defaultValues))
   const selectedValues = values ? new Set(values) : internalValues
   const [items, setItems] = useState<Map<string, ReactNode>>(new Map())
+
+  const handleOpenChange = useCallback(
+    (newOpen: boolean) => {
+      setOpen(newOpen)
+      onOpenChange?.(newOpen)
+    },
+    [onOpenChange]
+  )
 
   function toggleValue(value: string) {
     const getNewSet = (prev: Set<string>) => {
@@ -76,14 +86,14 @@ function MultiSelect({
     <MultiSelectContext
       value={{
         open,
-        setOpen,
+        setOpen: handleOpenChange,
         selectedValues,
         toggleValue,
         items,
         onItemAdded,
       }}
     >
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         {children}
       </Popover>
     </MultiSelectContext>

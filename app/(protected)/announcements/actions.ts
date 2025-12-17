@@ -55,7 +55,7 @@ export async function markAsRead(announcementId: string, userId: string) {
   revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
-export async function createAnnouncement(announcementInfo: NewAnnouncement) {
+export async function insertAnnouncement(newAnnouncement: NewAnnouncement) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -63,51 +63,51 @@ export async function createAnnouncement(announcementInfo: NewAnnouncement) {
   }
 
   const announcement = await prisma.announcement.upsert({
-    where: { id: announcementInfo.id },
+    where: { id: newAnnouncement.id },
     create: {
-      title: announcementInfo.title,
-      contentPlain: announcementInfo.contentPlain,
-      contentHtml: announcementInfo.contentHtml,
-      contentJson: announcementInfo.contentJson,
-      categoryId: announcementInfo.categoryId,
+      title: newAnnouncement.title,
+      contentPlain: newAnnouncement.contentPlain,
+      contentHtml: newAnnouncement.contentHtml,
+      contentJson: newAnnouncement.contentJson,
+      categoryId: newAnnouncement.categoryId,
       authorId: session?.user.id ?? undefined,
       targetSchools: {
-        create: announcementInfo.schoolIds.map((schoolId) => ({
+        create: newAnnouncement.schoolIds.map((schoolId) => ({
           school: { connect: { id: schoolId } },
         })),
       },
       targetRegions: {
-        create: announcementInfo.regionIds.map((regionId) => ({
+        create: newAnnouncement.regionIds.map((regionId) => ({
           region: { connect: { id: regionId } },
         })),
       },
       targetYearLevels: {
-        create: announcementInfo.yearLevelIds.map((yearLevelId) => ({
+        create: newAnnouncement.yearLevelIds.map((yearLevelId) => ({
           yearLevel: { connect: { id: yearLevelId } },
         })),
       },
     },
     update: {
-      title: announcementInfo.title,
-      contentPlain: announcementInfo.contentPlain,
-      contentHtml: announcementInfo.contentHtml,
-      contentJson: announcementInfo.contentJson,
-      categoryId: announcementInfo.categoryId,
+      title: newAnnouncement.title,
+      contentPlain: newAnnouncement.contentPlain,
+      contentHtml: newAnnouncement.contentHtml,
+      contentJson: newAnnouncement.contentJson,
+      categoryId: newAnnouncement.categoryId,
       targetSchools: {
         deleteMany: {},
-        create: announcementInfo.schoolIds.map((schoolId) => ({
+        create: newAnnouncement.schoolIds.map((schoolId) => ({
           school: { connect: { id: schoolId } },
         })),
       },
       targetRegions: {
         deleteMany: {},
-        create: announcementInfo.regionIds.map((regionId) => ({
+        create: newAnnouncement.regionIds.map((regionId) => ({
           region: { connect: { id: regionId } },
         })),
       },
       targetYearLevels: {
         deleteMany: {},
-        create: announcementInfo.yearLevelIds.map((yearLevelId) => ({
+        create: newAnnouncement.yearLevelIds.map((yearLevelId) => ({
           yearLevel: { connect: { id: yearLevelId } },
         })),
       },
