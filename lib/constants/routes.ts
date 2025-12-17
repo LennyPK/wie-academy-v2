@@ -1,9 +1,10 @@
-export const routes = {
+export const ROUTES = {
   HOME: "/",
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
   SIGN_UP_SUCCESS: "/auth/sign-up-success",
   FORGOT_PASSWORD: "/auth/forgot-password",
+  VERIFY: "/auth/verify",
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
   ANNOUNCEMENTS: "/announcements",

@@ -9,9 +9,11 @@
  */
 
 export * from "./region"
+export * from "./school"
 export * from "./year-level"
 
 export type { RegionOption } from "./region"
+export type { SchoolOption } from "./school"
 export type { YearLevelOption } from "./year-level"
 
 /*

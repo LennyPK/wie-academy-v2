@@ -1,4 +1,4 @@
-export const badgeIds = {
+export const BADGE_IDS = {
   PROFILE_POLISHER_ID: 1,
   EVENT_ENGAGER_ID: 2,
   COMMUNITY_CONTRIBUTOR_ID: 3,

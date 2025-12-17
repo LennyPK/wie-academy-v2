@@ -1,9 +1,10 @@
 "use client"
 
+import { Combobox } from "@/components/combobox"
+import { DatePicker } from "@/components/date-picker"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DatePicker } from "@/components/ui/date-picker"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -13,29 +14,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { routes } from "@/constants"
+import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
-import { RegionOption, YearLevelOption } from "@/types"
+import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
-import { useTransition } from "react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
 type SignUpFormProps = {
   regions: RegionOption[]
   yearLevels: YearLevelOption[]
+  schools: SchoolOption[]
 }
 
 export default function SignUpForm({
   className,
   regions,
   yearLevels,
+  schools,
   ...props
 }: React.ComponentProps<"div"> & SignUpFormProps) {
-  const [isTransitioning, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -54,39 +59,45 @@ export default function SignUpForm({
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      startTransition(async () => {
-        if (!value.dob) {
-          return
-        }
+      setIsLoading(true)
 
-        // TODO: Handle redirect
-        await authClient.signUp.email(
-          {
-            email: value.email,
-            password: value.password,
-            name: `${value.firstName} ${value.lastName}`,
-            firstName: value.firstName,
-            lastName: value.lastName,
-            birthDate: value.dob,
-            school: value.school,
-            regionId: Number(value.region),
-            yearId: Number(value.yearLevel),
-            // image: null,
-            callbackURL: "/dashboard",
+      if (!value.dob) {
+        return
+      }
+
+      // TODO: Handle redirect
+      await authClient.signUp.email(
+        {
+          email: value.email,
+          password: value.password,
+          name: `${value.firstName} ${value.lastName}`,
+          firstName: value.firstName,
+          lastName: value.lastName,
+          birthDate: value.dob,
+          schoolId: Number(value.school),
+          regionId: Number(value.region),
+          yearId: Number(value.yearLevel),
+          // image: null,
+          callbackURL: "/dashboard",
+        },
+        {
+          onRequest: () => {
+            toast.loading("Creating your account...")
           },
-          {
-            onRequest: () => {
-              toast.loading("Creating your account...")
-            },
-            onSuccess: () => {
-              toast.success("Check your email to verify your account.")
-            },
-            onError: (ctx) => {
-              toast.error(ctx.error.message)
-            },
-          }
-        )
-      })
+          onSuccess: () => {
+            toast.dismiss()
+            toast.success("Check your email to verify your account.")
+            router.push(ROUTES.VERIFY)
+            // TODO: Add redirect to approval pending page
+          },
+          onError: (ctx) => {
+            toast.dismiss()
+            toast.error(ctx.error.message)
+            setIsLoading(false)
+          },
+        }
+      )
+      // })
     },
   })
 
@@ -186,38 +197,6 @@ export default function SignUpForm({
                 }}
               </form.Field>
 
-              <form.Field name="school">
-                {(field) => {
-                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>School</FieldLabel>
-                      <Select
-                        name={field.name}
-                        value={field.state.value}
-                        onValueChange={field.handleChange}
-                      >
-                        <SelectTrigger
-                          id={field.name}
-                          aria-invalid={isInvalid}
-                          className="cursor-pointer"
-                        >
-                          <SelectValue placeholder="Select School" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="school-1">School 1</SelectItem>
-                          <SelectItem value="school-2">School 2</SelectItem>
-                          <SelectItem value="school-3">School 3</SelectItem>
-                          <SelectItem value="school-4">School 4</SelectItem>
-                          <SelectItem value="school-5">School 5</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                    </Field>
-                  )
-                }}
-              </form.Field>
-
               <form.Field name="region">
                 {(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -244,6 +223,31 @@ export default function SignUpForm({
                           ))}
                         </SelectContent>
                       </Select>
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <form.Field name="school">
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>School</FieldLabel>
+                      <Combobox
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Select School"
+                        items={schools.map((school) => ({
+                          value: String(school.id),
+                          label: school.label,
+                        }))}
+                        value={field.state.value}
+                        onChange={field.handleChange}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
                       {isInvalid && <FieldError errors={field.state.meta.errors} />}
                     </Field>
                   )
@@ -282,6 +286,7 @@ export default function SignUpForm({
                 }}
               </form.Field>
 
+              {/* FIXME: Can't pick today's date if month/year selected from dropdown  */}
               <form.Field name="dob">
                 {(field) => {
                   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -371,11 +376,11 @@ export default function SignUpForm({
               </form.Field>
 
               <Field>
-                <Button type="submit" className="cursor-pointer" disabled={isTransitioning}>
+                <Button type="submit" className="cursor-pointer" disabled={isLoading}>
                   Sign Up
                 </Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <a href={routes.SIGN_IN}>Sign in</a>
+                  Already have an account? <a href={ROUTES.SIGN_IN}>Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

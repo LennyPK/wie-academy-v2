@@ -30,14 +30,18 @@ model User {
   approvalStatus ApprovalStatus? @default(PENDING)
 
   birthDate        DateTime?
-  school           String?
+  schoolId         Int?
   regionId         Int?
   yearId           Int?
   experiencePoints Int?               @default(0)
   interests        InterestsOnUsers[]
 
-  region    Region?    @relation(fields: [regionId], references: [id], onDelete: Restrict)
-  yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: Restrict)
+  school    School?    @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  region    Region?    @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  yearLevel YearLevel? @relation(fields: [yearId], references: [id], onDelete: SetNull)
+
+  announcementsAuthored    Announcement[]
+  announcementInteractions AnnouncementInteraction[]
 
   @@unique([email])
   @@map("user")
@@ -92,21 +96,32 @@ model Verification {
 }
 
 model Region {
-  id    Int    @id @default(autoincrement())
-  value String @unique
-  label String
-  users User[]
+  id            Int                      @id @default(autoincrement())
+  value         String                   @unique
+  label         String
+  users         User[]
+  announcements RegionsOnAnnouncements[]
 
   @@map("region")
 }
 
 model YearLevel {
-  id    Int    @id @default(autoincrement())
-  value String @unique
-  label String
-  users User[]
+  id            Int                         @id @default(autoincrement())
+  value         String                      @unique
+  label         String
+  users         User[]
+  announcements YearLevelsOnAnnouncements[]
 
   @@map("yearLevel")
+}
+
+model School {
+  id            Int                      @id
+  label         String
+  users         User[]
+  announcements SchoolsOnAnnouncements[]
+
+  @@map("school")
 }
 
 model Interest {
@@ -119,9 +134,9 @@ model Interest {
 }
 
 model InterestsOnUsers {
-  interest   Interest @relation(fields: [interestId], references: [id])
+  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
   interestId Int
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
 
   @@id([userId, interestId])
@@ -141,4 +156,76 @@ enum Role {
   MEMBER
 
   @@map("role")
+}
+
+model Announcement {
+  id           String   @id @default(uuid())
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  categoryId   Int      @default(1)
+  authorId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  targetRegions    RegionsOnAnnouncements[]
+  targetSchools    SchoolsOnAnnouncements[]
+  targetYearLevels YearLevelsOnAnnouncements[]
+
+  category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  author       User?                     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  interactions AnnouncementInteraction[]
+
+  @@map("announcement")
+}
+
+model AnnouncementCategory {
+  id            Int            @id @default(autoincrement())
+  value         String         @unique
+  label         String
+  announcements Announcement[]
+
+  @@map("announcementCategory")
+}
+
+model SchoolsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  schoolId       Int
+
+  @@id([announcementId, schoolId])
+  @@map("schoolsOnAnnouncements")
+}
+
+model RegionsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  region         Region       @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionId       Int
+
+  @@id([announcementId, regionId])
+  @@map("regionsOnAnnouncements")
+}
+
+model YearLevelsOnAnnouncements {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  yearLevel      YearLevel    @relation(fields: [yearLevelId], references: [id], onDelete: Cascade)
+  yearLevelId    Int
+
+  @@id([announcementId, yearLevelId])
+  @@map("yearLevelsOnAnnouncements")
+}
+
+model AnnouncementInteraction {
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  announcementId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  isRead         Boolean
+
+  @@id([announcementId, userId])
+  @@map("announcementInteraction")
 }

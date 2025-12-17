@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { format, getMonth, getYear, setMonth, setYear } from "date-fns"
-import { Input } from "./input"
+import { Input } from "./ui/input"
 
 interface DatePickerProps {
   id?: string
@@ -119,7 +119,7 @@ export function DatePicker({
             data-empty={!date}
             variant="outline"
             className={cn(
-              "w-48 cursor-pointer justify-between font-normal hover:bg-background data-[empty=true]:text-muted-foreground",
+              "w-48 cursor-pointer justify-between bg-card font-normal hover:bg-card data-[empty=true]:text-muted-foreground",
               className
             )}
             {...props}

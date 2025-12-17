@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { routes } from "@/constants"
+import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
 import { cn } from "@/lib/utils"
 import { useForm } from "@tanstack/react-form"
 import Image from "next/image"
 import Link from "next/link"
-import { useTransition } from "react"
+import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
-  const [isTransitioning, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -27,26 +27,31 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      startTransition(async () => {
-        await authClient.signIn.email(
-          {
-            email: value.email,
-            password: value.password,
-            callbackURL: "/dashboard",
+      // startTransition(async () => {
+      setIsLoading(true)
+
+      await authClient.signIn.email(
+        {
+          email: value.email,
+          password: value.password,
+          callbackURL: "/dashboard",
+        },
+        {
+          onRequest: () => {
+            toast.loading("Loading your account...")
           },
-          {
-            onRequest: () => {
-              toast.loading("Loading your account...")
-            },
-            onSuccess: () => {
-              toast.success("Successful sign in.")
-            },
-            onError: (ctx) => {
-              toast.error(ctx.error.message)
-            },
-          }
-        )
-      })
+          onSuccess: () => {
+            toast.dismiss()
+            toast.success("Successful sign in.")
+          },
+          onError: (ctx) => {
+            toast.dismiss()
+            toast.error(ctx.error.message)
+            setIsLoading(false)
+          },
+        }
+      )
+      // })
     },
   })
 
@@ -150,11 +155,11 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
               </div>
 
               <Field>
-                <Button type="submit" className="cursor-pointer" disabled={isTransitioning}>
+                <Button type="submit" className="cursor-pointer" disabled={isLoading}>
                   Sign In
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href={routes.SIGN_UP}>Sign up</a>
+                  Don&apos;t have an account? <a href={ROUTES.SIGN_UP}>Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
