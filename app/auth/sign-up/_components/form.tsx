@@ -78,7 +78,7 @@ export default function SignUpForm({
           regionId: Number(value.region),
           yearId: Number(value.yearLevel),
           // image: null,
-          callbackURL: "/dashboard",
+          callbackURL: ROUTES.PENDING_APPROVAL,
         },
         {
           onRequest: () => {
@@ -87,7 +87,7 @@ export default function SignUpForm({
           onSuccess: () => {
             toast.dismiss()
             toast.success("Check your email to verify your account.")
-            router.push(ROUTES.VERIFY)
+            router.push(ROUTES.VERIFY_EMAIL)
             // TODO: Add redirect to approval pending page
           },
           onError: (ctx) => {

@@ -34,7 +34,7 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
         {
           email: value.email,
           password: value.password,
-          callbackURL: "/dashboard",
+          callbackURL: `${ROUTES.PENDING_APPROVAL}?email=${encodeURIComponent(value.email)}`,
         },
         {
           onRequest: () => {
