@@ -1,3 +1,4 @@
+import Pagination from "@/components/pagination"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { Prisma } from "@/lib/generated/prisma/client"
@@ -9,7 +10,6 @@ import AnnouncementEmpty from "./_components/announcement-empty"
 import AnnouncementList from "./_components/announcement-list"
 import Filters from "./_components/filters"
 import { AnnouncementHeader } from "./_components/header"
-import Pagination from "./_components/pagination"
 
 interface SearchParams {
   query?: string
@@ -155,9 +155,6 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
 
   // Get the total number of pages
   const totalPages = Math.max(1, Math.ceil((count || 0) / pageSize))
-
-  console.log("Count:", count)
-  console.log("Total Pages:", totalPages)
 
   return (
     <div>

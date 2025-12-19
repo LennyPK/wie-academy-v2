@@ -15,13 +15,24 @@ import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
 interface FiltersProps {
+  categories: { id: number; label: string }[]
+
   searchQuery: string
-  readStatus: string
-  dateRange: string
+  status: string
+  category: string
+  sorting: string
   totalCount: number
 }
 
-export default function Filters({ searchQuery, readStatus, dateRange, totalCount }: FiltersProps) {
+export default function Filters({
+  categories,
+
+  searchQuery,
+  status,
+  category,
+  sorting,
+  totalCount,
+}: FiltersProps) {
   const router = useRouter()
   const pathName = usePathname()
   const searchParams = useSearchParams()
@@ -43,14 +54,14 @@ export default function Filters({ searchQuery, readStatus, dateRange, totalCount
     router.replace(`${pathName}?${params.toString()}`)
   }, 500)
 
-  const updateReadStatus = useCallback(
+  const updateStatus = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (value !== "all") {
-        params.set("readStatus", value)
+      if (value !== "upcoming") {
+        params.set("status", value)
       } else {
-        params.delete("readStatus")
+        params.delete("status")
       }
 
       // Reset pagination when filters change
@@ -61,14 +72,32 @@ export default function Filters({ searchQuery, readStatus, dateRange, totalCount
     [searchParams, router, pathName]
   )
 
-  const updateDateRange = useCallback(
+  const updateCategory = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (value !== "month") {
-        params.set("dateRange", value)
+      if (value !== "all") {
+        params.set("category", value)
       } else {
-        params.delete("dateRange")
+        params.delete("category")
+      }
+
+      // Reset pagination when filters change
+      params.delete("page")
+
+      router.replace(`${pathName}?${params.toString()}`)
+    },
+    [searchParams, router, pathName]
+  )
+
+  const updateSorting = useCallback(
+    (value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+
+      if (value !== "date_desc") {
+        params.set("sorting", value)
+      } else {
+        params.delete("sorting")
       }
 
       // Reset pagination when filters change
@@ -82,8 +111,9 @@ export default function Filters({ searchQuery, readStatus, dateRange, totalCount
   const clearFilters = useCallback(() => {
     const params = new URLSearchParams()
     params.delete("query")
-    params.delete("readStatus")
-    params.delete("dateRange")
+    params.delete("status")
+    params.delete("category")
+    params.delete("sorting")
     params.delete("page")
     setQuery("")
     router.replace(`${pathName}?${params.toString()}`)
@@ -96,7 +126,7 @@ export default function Filters({ searchQuery, readStatus, dateRange, totalCount
         <div className="relative">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
-            placeholder="Search announcements..."
+            placeholder="Search events..."
             className="pl-10"
             value={query}
             onChange={(e) => {
@@ -107,29 +137,41 @@ export default function Filters({ searchQuery, readStatus, dateRange, totalCount
         </div>
 
         <div className="flex flex-col gap-2 md:flex-row">
-          {/* Read Status Filter */}
-          <Select value={readStatus} onValueChange={updateReadStatus}>
+          {/* Status Filter */}
+          <Select value={status} onValueChange={updateStatus}>
             <SelectTrigger className="w-full md:flex-1">
-              <SelectValue placeholder="Read Status" />
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Announcements</SelectItem>
-              <SelectItem value="unread">Unread Only</SelectItem>
-              <SelectItem value="read">Read Only</SelectItem>
+              <SelectItem value="upcoming">Upcoming</SelectItem>
+              <SelectItem value="ongoing">Ongoing</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
 
-          {/* Date Filter */}
-          <Select value={dateRange} onValueChange={updateDateRange}>
+          {/* Category Filter */}
+          <Select value={category} onValueChange={updateCategory}>
             <SelectTrigger className="w-full md:flex-1">
-              <SelectValue placeholder="Date Range" />
+              <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">Last Month</SelectItem>
-              <SelectItem value="year">This Year</SelectItem>
-              <SelectItem value="all">All Time</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={String(category.id)}>
+                  {category.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Sorting Filter */}
+          <Select value={sorting} onValueChange={updateSorting}>
+            <SelectTrigger className="w-full md:flex-1">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="date_desc">Newest first</SelectItem>
+              <SelectItem value="date_asc">Oldest first</SelectItem>
             </SelectContent>
           </Select>
 
