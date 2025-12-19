@@ -13,7 +13,6 @@ import { prisma } from "@/lib/prisma/client"
 import { ApprovalStatus } from "@/lib/prisma/enums"
 import { AlertCircle, Clock, Home, Mail } from "lucide-react"
 import Link from "next/link"
-import { redirect } from "next/navigation"
 
 interface SearchParams {
   email: string
@@ -24,22 +23,29 @@ interface ApprovalPageProps {
 }
 
 export default async function ApprovalPage({ searchParams }: ApprovalPageProps) {
+  // FIXME: Email param needs to be replacecd with a token param
   const params = await searchParams
 
   const email = params?.email || ""
 
   if (!email) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    console.error("No email provided.")
+    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
 
   const user = await prisma.user.findUnique({ where: { email }, select: { approvalStatus: true } })
 
+  console.log("Fetched user for email:", email, user)
+
   if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    console.error("User not found.")
+    return <div>No User</div>
+    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
 
   if (user.approvalStatus === ApprovalStatus.APPROVED) {
-    redirect(ROUTES.DASHBOARD)
+    // redirect(ROUTES.DASHBOARD)
+    console.info("Your application has already been approved. Redirecting to dashboard.")
   }
 
   if (user.approvalStatus === ApprovalStatus.DECLINED) {

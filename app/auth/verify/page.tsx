@@ -10,34 +10,51 @@ import {
 } from "@/components/ui/card"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { Mail, RefreshCw } from "lucide-react"
+import { Mail } from "lucide-react"
+import Link from "next/link"
 import { redirect } from "next/navigation"
+import VerifyForm from "./_components/form"
 
-interface SearchParams {
-  email: string
-}
+// interface SearchParams {
+//   email: string
+// }
+
+// interface VerifyPageProps {
+//   searchParams?: Promise<SearchParams>
+// }
 
 interface VerifyPageProps {
-  searchParams?: Promise<SearchParams>
+  // searchParams?: Promise<SearchParams>
+  searchParams?: {
+    email?: string
+  }
 }
 
 export default async function VerifyPage({ searchParams }: VerifyPageProps) {
+  // FIXME: Email param needs to be replacecd with a token param
   const params = await searchParams
 
   const email = params?.email || ""
 
   if (!email) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    console.error("No email provided.")
   }
 
-  const user = await prisma.user.findUnique({ where: { email }, select: { emailVerified: true } })
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true, emailVerified: true },
+  })
 
   if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    console.error("User not found.")
+    return <div>No User</div>
   }
 
   if (user.emailVerified) {
-    redirect(`${ROUTES.PENDING_APPROVAL}?email=${encodeURIComponent(email)}`)
+    console.log("Email already verified, redirecting to pending approval.")
+    redirect(`${ROUTES.PENDING_APPROVAL}?email=${email}`)
   }
 
   return (
@@ -69,15 +86,10 @@ export default async function VerifyPage({ searchParams }: VerifyPageProps) {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button asChild variant="default" className="w-full">
-              <a href="/auth/resend-verification">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Resend Verification Email
-              </a>
-            </Button>
+            <VerifyForm email={email} />
 
             <Button asChild variant="outline" className="w-full bg-transparent">
-              <a href={ROUTES.HOME}>Back to Home</a>
+              <Link href={ROUTES.HOME}>Back to Home</Link>
             </Button>
           </CardFooter>
         </Card>
