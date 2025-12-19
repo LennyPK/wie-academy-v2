@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
+  // const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
@@ -27,14 +28,14 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      // startTransition(async () => {
       setIsLoading(true)
 
       await authClient.signIn.email(
         {
           email: value.email,
           password: value.password,
-          callbackURL: "/dashboard",
+          // callbackURL: ROUTES.VERIFY_EMAIL,
+          callbackURL: ROUTES.DASHBOARD,
         },
         {
           onRequest: () => {
@@ -43,6 +44,8 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
           onSuccess: () => {
             toast.dismiss()
             toast.success("Successful sign in.")
+            // router.push(`${ROUTES.VERIFY_EMAIL}?email=${encodeURIComponent(value.email)}`)
+            // FIXME: Email param needs to be replacecd with a token param
           },
           onError: (ctx) => {
             toast.dismiss()
@@ -51,7 +54,6 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
           },
         }
       )
-      // })
     },
   })
 

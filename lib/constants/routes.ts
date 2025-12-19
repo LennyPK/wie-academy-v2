@@ -2,9 +2,11 @@ export const ROUTES = {
   HOME: "/",
   SIGN_IN: "/auth/sign-in",
   SIGN_UP: "/auth/sign-up",
-  SIGN_UP_SUCCESS: "/auth/sign-up-success",
+  // SIGN_UP_SUCCESS: "/auth/sign-up-success",
   FORGOT_PASSWORD: "/auth/forgot-password",
-  VERIFY: "/auth/verify",
+  VERIFY_EMAIL: "/auth/verify",
+  PENDING_APPROVAL: "/auth/pending",
+  UNAUTHENTICATED_ERROR: "/auth/error",
   DASHBOARD: "/dashboard",
   PROFILE: "/profile",
   ANNOUNCEMENTS: "/announcements",
@@ -18,7 +20,6 @@ export const ROUTES = {
   CHAT: "/chat",
   LOGOUT: "/logout",
   ERROR: "/error",
-  UNAUTHENTICATED_ERROR: "/auth/error",
 }
 
 // type Primitive = string | number | boolean | null | undefined

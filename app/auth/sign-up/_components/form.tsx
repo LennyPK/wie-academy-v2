@@ -21,7 +21,6 @@ import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
@@ -39,8 +38,8 @@ export default function SignUpForm({
   schools,
   ...props
 }: React.ComponentProps<"div"> & SignUpFormProps) {
+  // const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -78,7 +77,8 @@ export default function SignUpForm({
           regionId: Number(value.region),
           yearId: Number(value.yearLevel),
           // image: null,
-          callbackURL: "/dashboard",
+          // callbackURL: ROUTES.VERIFY_EMAIL,
+          callbackURL: ROUTES.DASHBOARD,
         },
         {
           onRequest: () => {
@@ -87,8 +87,8 @@ export default function SignUpForm({
           onSuccess: () => {
             toast.dismiss()
             toast.success("Check your email to verify your account.")
-            router.push(ROUTES.VERIFY)
-            // TODO: Add redirect to approval pending page
+            // router.push(`${ROUTES.VERIFY_EMAIL}?email=${encodeURIComponent(value.email)}`)
+            // FIXME: Email param needs to be replacecd with a token param
           },
           onError: (ctx) => {
             toast.dismiss()
@@ -97,7 +97,6 @@ export default function SignUpForm({
           },
         }
       )
-      // })
     },
   })
 
