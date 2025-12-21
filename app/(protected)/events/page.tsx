@@ -6,9 +6,9 @@ import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import EventEmpty from "./_components/event-empty"
-import Filters from "./_components/filters"
-import { EventHeader } from "./_components/header"
+import EventEmpty from "./_components/empty"
+import EventFilters from "./_components/filters"
+import EventHeader from "./_components/header"
 
 interface SearchParams {
   query?: string
@@ -19,11 +19,11 @@ interface SearchParams {
   page?: string
 }
 
-interface EventsPageProps {
+interface EventPageProps {
   searchParams?: Promise<SearchParams>
 }
 
-export default async function EventsPage({ searchParams }: EventsPageProps) {
+export default async function EventPage({ searchParams }: EventPageProps) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -99,7 +99,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <EventHeader userRole={user.role} />
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        <Filters
+        <EventFilters
           categories={eventCategories}
           searchQuery={query}
           status={status}

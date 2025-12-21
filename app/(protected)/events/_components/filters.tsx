@@ -14,7 +14,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
-interface FiltersProps {
+interface EventFiltersProps {
   categories: { id: number; label: string }[]
 
   searchQuery: string
@@ -24,7 +24,7 @@ interface FiltersProps {
   totalCount: number
 }
 
-export default function Filters({
+export default function EventFilters({
   categories,
 
   searchQuery,
@@ -32,7 +32,7 @@ export default function Filters({
   category,
   sorting,
   totalCount,
-}: FiltersProps) {
+}: EventFiltersProps) {
   const router = useRouter()
   const pathName = usePathname()
   const searchParams = useSearchParams()

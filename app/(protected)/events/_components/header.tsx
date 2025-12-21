@@ -10,7 +10,7 @@ interface EventHeaderProps {
   userRole: Role
 }
 
-export function EventHeader({ userRole }: EventHeaderProps) {
+export default function EventHeader({ userRole }: EventHeaderProps) {
   const [open, setOpen] = useState(false)
 
   const handleModalClick = () => {
