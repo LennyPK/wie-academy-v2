@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Role } from "@/prisma/enums"
 import { Plus } from "lucide-react"
 import { useState } from "react"
-import AnnouncementForm from "./announcement-form"
+import AnnouncementFormModal from "./form-modal"
 
 interface AnnouncementHeaderProps {
   userRole: Role
 }
 
-export function AnnouncementHeader({ userRole }: AnnouncementHeaderProps) {
+export default function AnnouncementHeader({ userRole }: AnnouncementHeaderProps) {
   const [open, setOpen] = useState(false)
 
   const handleModalClick = () => {
@@ -35,7 +35,7 @@ export function AnnouncementHeader({ userRole }: AnnouncementHeaderProps) {
         </div>
       </header>
 
-      <AnnouncementForm open={open} setOpen={setOpen} />
+      <AnnouncementFormModal open={open} setOpen={setOpen} />
     </>
   )
 }

@@ -1,12 +1,8 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { Category } from "@/lib/types"
 import { cn } from "@/lib/utils"
-
-type Category = {
-  id: number
-  label: string
-}
 
 export default function CategoryBadge({
   category,

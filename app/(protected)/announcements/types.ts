@@ -42,9 +42,3 @@ export type NewAnnouncement = {
   regionIds: number[]
   yearLevelIds: number[]
 }
-
-export type AnnouncementCategory = {
-  id: number
-  value: string
-  label: string
-}

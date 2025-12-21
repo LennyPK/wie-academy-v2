@@ -16,22 +16,26 @@ import {
 } from "@/components/ui/drawer"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Announcement } from "../types"
-import Form from "./form"
+import AnnouncementForm from "./form"
 
-interface AnnouncementFormProps {
+interface AnnouncementFormModalProps {
   announcement?: Announcement | null
   open: boolean
   setOpen: (open: boolean) => void
 }
 
-export default function AnnouncementForm({ announcement, open, setOpen }: AnnouncementFormProps) {
+export default function AnnouncementFormModal({
+  announcement,
+  open,
+  setOpen,
+}: AnnouncementFormModalProps) {
   const isMobile = useIsMobile()
 
   const modalTitle = <span>{announcement ? "Edit Announcement" : "Create Announcement"}</span>
 
   const modalContent = (
     <div className="no-scrollbar overflow-y-auto">
-      <Form announcement={announcement} setOpen={setOpen} />
+      <AnnouncementForm announcement={announcement} setOpen={setOpen} />
     </div>
   )
 

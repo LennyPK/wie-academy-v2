@@ -14,14 +14,19 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
-interface FiltersProps {
+interface AnnouncementFiltersProps {
   searchQuery: string
   readStatus: string
   dateRange: string
   totalCount: number
 }
 
-export default function Filters({ searchQuery, readStatus, dateRange, totalCount }: FiltersProps) {
+export default function AnnouncementFilters({
+  searchQuery,
+  readStatus,
+  dateRange,
+  totalCount,
+}: AnnouncementFiltersProps) {
   const router = useRouter()
   const pathName = usePathname()
   const searchParams = useSearchParams()

@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { markAsRead, toggleRead } from "../actions"
 import { Announcement } from "../types"
-import AnnouncementCard from "./announcement-card"
-import AnnouncementDetail from "./announcement-detail"
-import AnnouncementForm from "./announcement-form"
+import AnnouncementCard from "./card"
+import AnnouncementDetail from "./detail"
+import AnnouncementFormModal from "./form-modal"
 
 interface AnnouncementListProps {
   userId: string
@@ -69,7 +69,7 @@ export default function AnnouncementList({
   }
 
   return (
-    <div className="space-y-6" role="list" aria-label="Announcements">
+    <div className="space-y-6" role="list" aria-label="announcements">
       <AnnouncementDetail
         open={detailOpen}
         setOpen={setDetailOpen}
@@ -79,7 +79,7 @@ export default function AnnouncementList({
         onEdit={handleEditClick}
       />
 
-      <AnnouncementForm announcement={announcement} open={editOpen} setOpen={setEditOpen} />
+      <AnnouncementFormModal announcement={announcement} open={editOpen} setOpen={setEditOpen} />
 
       {announcements &&
         announcements.map((announcement) => (

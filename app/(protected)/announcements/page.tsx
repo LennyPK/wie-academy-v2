@@ -6,10 +6,10 @@ import { prisma } from "@/lib/prisma/client"
 import { Role } from "@/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import AnnouncementEmpty from "./_components/announcement-empty"
-import AnnouncementList from "./_components/announcement-list"
-import Filters from "./_components/filters"
-import { AnnouncementHeader } from "./_components/header"
+import AnnouncementEmpty from "./_components/empty"
+import AnnouncementFilters from "./_components/filters"
+import AnnouncementHeader from "./_components/header"
+import AnnouncementList from "./_components/list"
 
 interface SearchParams {
   query?: string
@@ -18,11 +18,11 @@ interface SearchParams {
   page?: string
 }
 
-interface AnnouncementsPageProps {
+interface AnnouncementPageProps {
   searchParams?: Promise<SearchParams>
 }
 
-export default async function AnnouncementsPage({ searchParams }: AnnouncementsPageProps) {
+export default async function AnnouncementPage({ searchParams }: AnnouncementPageProps) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -161,7 +161,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
       <AnnouncementHeader userRole={user.role} />
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        <Filters
+        <AnnouncementFilters
           searchQuery={query}
           readStatus={readStatus}
           dateRange={dateRange}

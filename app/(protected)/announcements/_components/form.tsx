@@ -22,8 +22,7 @@ import {
 import { getAnnouncementCategories, getSchools } from "@/lib/database"
 import { getRegions } from "@/lib/database/regions"
 import { getYearLevels } from "@/lib/database/year-levels"
-import { AnnouncementCategory } from "@/lib/generated/prisma/client"
-import { RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
+import { Category, RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -34,12 +33,12 @@ import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
 
-interface FormCreateProps {
+interface AnnouncementFormProps {
   announcement?: Announcement | null
   setOpen: (open: boolean) => void
 }
 
-export default function Form({ setOpen, announcement }: FormCreateProps) {
+export default function AnnouncementForm({ setOpen, announcement }: AnnouncementFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -98,7 +97,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
     },
   })
 
-  const [categories, setCategories] = useState<AnnouncementCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [regions, setRegions] = useState<RegionOption[]>([])
   const [yearLevels, setYearLevels] = useState<YearLevelOption[]>([])
   const [schools, setSchools] = useState<SchoolOption[]>([])
