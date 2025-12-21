@@ -74,7 +74,7 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
       setIsLoading(true)
       toast.loading("Saving...")
 
-      const newAnnouncementInfo: NewAnnouncement = {
+      const announcementPayload: NewAnnouncement = {
         id: announcement?.id ?? "",
         title: value.title.trim(),
         contentPlain: editorContent.plain.trim(),
@@ -86,9 +86,9 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
         yearLevelIds: value.yearLevels.map((yearLevel) => Number(yearLevel)),
       }
 
-      const newAnnouncement = await insertAnnouncement(newAnnouncementInfo)
+      const newAnnouncement = await insertAnnouncement(announcementPayload)
       toast.dismiss()
-      toast.success(`New announcement saved: ${newAnnouncement.announcement.title}`)
+      toast.success(`New announcement saved: ${newAnnouncement.title}`)
 
       setIsLoading(false)
       setOpen(false)
