@@ -1,5 +1,6 @@
 "use client"
 
+import CategoryBadge from "@/components/category-badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ContextMenu,
@@ -13,7 +14,6 @@ import { cn, highlightText } from "@/utils"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, EyeOff } from "lucide-react"
 import { Announcement } from "../types"
-import CategoryBadge from "./category-badge"
 
 interface AnnouncementCardProps {
   userRole: string

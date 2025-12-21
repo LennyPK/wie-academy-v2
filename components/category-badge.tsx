@@ -2,13 +2,17 @@
 
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { AnnouncementCategory } from "../types"
+
+type Category = {
+  id: number
+  label: string
+}
 
 export default function CategoryBadge({
   category,
   className,
 }: {
-  category: AnnouncementCategory
+  category: Category
   className?: string
 }) {
   // TODO: Add icons to category badges

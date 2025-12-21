@@ -2,6 +2,7 @@
 
 import { useIsMobile } from "@/hooks/use-mobile"
 
+import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogOverlay } from "@/components/ui/dialog"
@@ -18,7 +19,6 @@ import { DialogTitle } from "@radix-ui/react-dialog"
 import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, Clock, Pencil } from "lucide-react"
 import { Announcement } from "../types"
-import CategoryBadge from "./category-badge"
 
 interface AnnouncementDetailProps {
   announcement: Announcement | null
