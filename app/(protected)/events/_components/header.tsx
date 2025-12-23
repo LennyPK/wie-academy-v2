@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Role } from "@/prisma/enums"
 import { Plus } from "lucide-react"
-import { useEffect, useState } from "react"
-import { toast } from "sonner"
+import { useState } from "react"
+import EventFormModal from "./form-modal"
 
 interface EventHeaderProps {
   userRole: Role
@@ -16,11 +16,6 @@ export default function EventHeader({ userRole }: EventHeaderProps) {
   const handleModalClick = () => {
     setOpen(true)
   }
-
-  // TODO: Remove after implementing form
-  useEffect(() => {
-    toast.success(`Form button clicked: ${open}`)
-  })
 
   return (
     <>
@@ -42,7 +37,7 @@ export default function EventHeader({ userRole }: EventHeaderProps) {
         </div>
       </header>
 
-      {/* <EventForm open={open} setOpen={setOpen} /> */}
+      <EventFormModal open={open} setOpen={setOpen} />
     </>
   )
 }
