@@ -164,7 +164,7 @@ export function DatePicker({
             autoFocus
             month={date}
             onMonthChange={setDate}
-            hidden={disableFutureDates ? { after: new Date() } : undefined}
+            disabled={disableFutureDates ? { after: new Date() } : undefined}
           />
         </PopoverContent>
       </Popover>
