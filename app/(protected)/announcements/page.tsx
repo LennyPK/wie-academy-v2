@@ -4,12 +4,18 @@ import { ROUTES } from "@/lib/constants"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
 import { Role } from "@/prisma/enums"
+import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import AnnouncementEmpty from "./_components/empty"
 import AnnouncementFilters from "./_components/filters"
 import AnnouncementHeader from "./_components/header"
 import AnnouncementList from "./_components/list"
+
+export const metadata: Metadata = {
+  title: "Announcements",
+  description: "Stay updated with the latest news.",
+}
 
 interface SearchParams {
   query?: string

@@ -1,5 +1,11 @@
 import { getRegions, getSchools, getYearLevels } from "@/db"
+import { Metadata } from "next"
 import SignUpForm from "./_components/form"
+
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description: "Create your account to start your journey.",
+}
 
 export default async function SignUpPage() {
   const regions = await getRegions()

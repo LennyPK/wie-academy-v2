@@ -22,7 +22,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "WiE Academy",
+  title: {
+    template: "%s | WiE Academy",
+    default: "WiE Academy", // a default is required when creating a template
+  },
   description:
     "Inspire, Connect, and Empower: Supporting high school women and non-binary students in STEM and engineering. Join our inclusive community to discover university pathways and make a positive impact on the world.",
 }

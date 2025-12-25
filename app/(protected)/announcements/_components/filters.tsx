@@ -98,7 +98,7 @@ export default function AnnouncementFilters({
     <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex-1 space-y-2">
         {/* Search Filter */}
-        <div className="relative">
+        <div className="relative text-sm md:text-base">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             placeholder="Search announcements..."
