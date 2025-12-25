@@ -317,120 +317,124 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
           </form.Field> */}
         </FieldGroup>
 
-        <FieldGroup className="md:grid md:grid-cols-2 md:grid-rows-2">
-          <form.Field name="startDate">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Start Date</FieldLabel>
-                  <DatePicker
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    endYear={getYear(new Date())}
-                    aria-invalid={isInvalid}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )
-            }}
-          </form.Field>
+        <FieldGroup className="md:grid md:grid-cols-2">
+          <FieldGroup id="startDateTime">
+            <form.Field name="startDate">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Start Date</FieldLabel>
+                    <DatePicker
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      endYear={getYear(new Date())}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-          <form.Field name="endDate">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>End Date</FieldLabel>
-                  <DatePicker
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={field.handleChange}
-                    onBlur={field.handleBlur}
-                    endYear={getYear(new Date())}
-                    aria-invalid={isInvalid}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )
-            }}
-          </form.Field>
+            <form.Field name="startTime">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                const timeString = field.state.value
+                  ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
+                  : ""
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="time"
+                      placeholder="Pick a time"
+                      value={timeString}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          field.handleChange(undefined)
+                          return
+                        }
 
-          <form.Field name="startTime">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-              const timeString = field.state.value
-                ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
-                : ""
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="time"
-                    placeholder="Pick a time"
-                    value={timeString}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => {
-                      if (!e.target.value) {
-                        field.handleChange(undefined)
-                        return
-                      }
+                        const [hours, minutes] = e.target.value.split(":").map(Number)
+                        const date = new Date()
+                        date.setHours(hours, minutes, 0, 0)
+                        field.handleChange(date)
+                      }}
+                      aria-invalid={isInvalid}
+                      className="text-sm"
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                )
+              }}
+            </form.Field>
+          </FieldGroup>
 
-                      const [hours, minutes] = e.target.value.split(":").map(Number)
-                      const date = new Date()
-                      date.setHours(hours, minutes, 0, 0)
-                      field.handleChange(date)
-                    }}
-                    aria-invalid={isInvalid}
-                    className="text-sm"
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )
-            }}
-          </form.Field>
+          <FieldGroup id="endDateTime">
+            <form.Field name="endDate">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>End Date</FieldLabel>
+                    <DatePicker
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      endYear={getYear(new Date())}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-          <form.Field name="endTime">
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
-              const timeString = field.state.value
-                ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
-                : ""
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>End Time</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="time"
-                    placeholder="Pick a time"
-                    value={timeString}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => {
-                      if (!e.target.value) {
-                        field.handleChange(undefined)
-                        return
-                      }
+            <form.Field name="endTime">
+              {(field) => {
+                const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+                const timeString = field.state.value
+                  ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
+                  : ""
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>End Time</FieldLabel>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="time"
+                      placeholder="Pick a time"
+                      value={timeString}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          field.handleChange(undefined)
+                          return
+                        }
 
-                      const [hours, minutes] = e.target.value.split(":").map(Number)
-                      const date = new Date()
-                      date.setHours(hours, minutes, 0, 0)
-                      field.handleChange(date)
-                    }}
-                    aria-invalid={isInvalid}
-                    className="text-sm"
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                </Field>
-              )
-            }}
-          </form.Field>
+                        const [hours, minutes] = e.target.value.split(":").map(Number)
+                        const date = new Date()
+                        date.setHours(hours, minutes, 0, 0)
+                        field.handleChange(date)
+                      }}
+                      aria-invalid={isInvalid}
+                      className="text-sm"
+                    />
+                    {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  </Field>
+                )
+              }}
+            </form.Field>
+          </FieldGroup>
         </FieldGroup>
 
         <Field>
