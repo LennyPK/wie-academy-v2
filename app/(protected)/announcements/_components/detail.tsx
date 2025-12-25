@@ -130,7 +130,7 @@ export default function AnnouncementDetail({
   const headerDescription = (
     <div className="flex justify-center gap-5 md:justify-start">
       <div className="text-center text-sm font-medium text-muted-foreground md:text-left">
-        {announcement.author ? `By: ${announcement.author.name}` : "[deleted]"}
+        {announcement.author ? announcement.author.name : "[deleted]"}
       </div>
       {announcement.createdAt && (
         <div className="flex items-center justify-center md:justify-start">

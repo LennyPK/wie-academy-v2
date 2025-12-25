@@ -68,9 +68,7 @@ export default function AnnouncementCard({
               {/* Category & Date Container */}
               <div className="flex flex-col gap-4 md:flex-row md:justify-between">
                 {/* Category badge */}
-                <div id={`announcement-${announcement.id}-category`}>
-                  <CategoryBadge category={announcement.category} className="w-fit" />
-                </div>
+                <CategoryBadge category={announcement.category} className="w-fit" />
 
                 {/* Created/Updated Date */}
                 <div
@@ -132,12 +130,17 @@ export default function AnnouncementCard({
                 id={`announcement-${announcement.id}-author`}
                 className="mt-2 text-sm font-medium text-muted-foreground"
               >
-                {announcement.author ? `By: ${announcement.author.name}` : "[deleted]"}
+                {announcement.author ? announcement.author.name : "[deleted]"}
               </div>
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-hidden">
-            <p className="line-clamp-2 text-sm md:text-base">
+            <p
+              className={cn(
+                "line-clamp-2 text-sm md:text-base",
+                isRead ? "text-muted-foreground" : "text-foreground"
+              )}
+            >
               {searchQuery
                 ? highlightText(announcement.contentPlain, searchQuery)
                 : announcement.contentPlain}

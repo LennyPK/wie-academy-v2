@@ -50,6 +50,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
   const query = params?.query?.trim() || ""
   const readStatus = params?.readStatus || "all"
   const dateRange = params?.dateRange || "month"
+
   const currentPage = Number(params?.page) || 1
   const pageSize = 5
 
