@@ -6,11 +6,11 @@ export const formSchema = z
     description: z.string().trim().min(1, "Content is required"),
     category: z.string().nonempty("Category is required"),
     location: z.string().trim().min(1, "Location is required"),
-    capacity: z.number().int().positive(),
-    startDate: z.date().refine((date) => !!date, { message: "Start date is required" }),
-    startTime: z.date().refine((time) => !!time, { message: "Start time is required" }),
-    endDate: z.date().refine((date) => !!date, { message: "End date is required" }),
-    endTime: z.date().refine((time) => !!time, { message: "End time is required" }),
+    capacity: z.number().int().min(0),
+    startDate: z.date("Start date is required"),
+    endDate: z.date("End date is required"),
+    startTime: z.date("Start time is required"),
+    endTime: z.date("End time is required"),
   })
   .superRefine((data, ctx) => {
     const start = new Date(
@@ -30,9 +30,27 @@ export const formSchema = z
       data.endTime.getSeconds()
     )
 
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid date/time" })
-    } else if (start >= end) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Start must be before end" })
+    if (start >= end) {
+      ctx.addIssue({
+        code: "custom",
+        message: " ",
+        path: ["endDate"],
+      })
+      ctx.addIssue({
+        code: "custom",
+        message: "End date must be after start date",
+        path: ["endTime"],
+      })
+
+      ctx.addIssue({
+        code: "custom",
+        message: " ",
+        path: ["startDate"],
+      })
+      ctx.addIssue({
+        code: "custom",
+        message: "Start date must be before end date",
+        path: ["startTime"],
+      })
     }
   })

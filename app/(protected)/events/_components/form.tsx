@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { getEventCategories } from "@/lib/database"
 import { Category } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
@@ -260,18 +261,32 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Capacity</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="number"
-                    placeholder="Capacity"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(parseInt(e.target.value))}
-                    aria-invalid={isInvalid}
-                    className="text-sm"
-                  />
+                  <div className="flex items-center justify-between">
+                    <FieldLabel htmlFor={field.name}>Capacity</FieldLabel>
+                    <Switch
+                      checked={field.state.value !== 0}
+                      onCheckedChange={(checked) => field.handleChange(checked ? 1 : 0)}
+                    />
+                  </div>
+                  {field.state.value === 0 && (
+                    <span className="flex h-full min-h-9 items-center text-sm text-muted-foreground">
+                      No capacity limit
+                    </span>
+                  )}
+                  {field.state.value !== 0 && (
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      type="number"
+                      placeholder="Capacity"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(parseInt(e.target.value))}
+                      min={0}
+                      aria-invalid={isInvalid}
+                      className="text-sm"
+                    />
+                  )}
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               )
@@ -282,8 +297,8 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
               return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Capacity</FieldLabel>
+                <Field>
+                  <FieldLabel htmlFor={field.name}>XP Rewarad</FieldLabel>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -348,6 +363,9 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
           <form.Field name="startTime">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+              const timeString = field.state.value
+                ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
+                : ""
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
@@ -356,9 +374,19 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
                     name={field.name}
                     type="time"
                     placeholder="Pick a time"
-                    value={field.state.value?.toISOString()}
+                    value={timeString}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(new Date(e.target.value))}
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        field.handleChange(undefined)
+                        return
+                      }
+
+                      const [hours, minutes] = e.target.value.split(":").map(Number)
+                      const date = new Date()
+                      date.setHours(hours, minutes, 0, 0)
+                      field.handleChange(date)
+                    }}
                     aria-invalid={isInvalid}
                     className="text-sm"
                   />
@@ -371,6 +399,9 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
           <form.Field name="endTime">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
+              const timeString = field.state.value
+                ? `${String(field.state.value.getHours()).padStart(2, "0")}:${String(field.state.value.getMinutes()).padStart(2, "0")}`
+                : ""
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>End Time</FieldLabel>
@@ -379,9 +410,19 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
                     name={field.name}
                     type="time"
                     placeholder="Pick a time"
-                    value={field.state.value?.toISOString()}
+                    value={timeString}
                     onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(new Date(e.target.value))}
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        field.handleChange(undefined)
+                        return
+                      }
+
+                      const [hours, minutes] = e.target.value.split(":").map(Number)
+                      const date = new Date()
+                      date.setHours(hours, minutes, 0, 0)
+                      field.handleChange(date)
+                    }}
                     aria-invalid={isInvalid}
                     className="text-sm"
                   />
