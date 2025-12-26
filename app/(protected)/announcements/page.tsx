@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 interface SearchParams {
   query?: string
   readStatus?: "all" | "read" | "unread"
-  dateRange?: "all" | "today" | "week" | "month" | "year"
+  dateRange?: "all" | "today" | "30_days" | "week" | "month" | "year"
   page?: string
 }
 
@@ -55,7 +55,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
 
   const query = params?.query?.trim() || ""
   const readStatus = params?.readStatus || "all"
-  const dateRange = params?.dateRange || "month"
+  const dateRange = params?.dateRange || "30_days"
 
   const currentPage = Number(params?.page) || 1
   const pageSize = 5
@@ -81,16 +81,20 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
         gte = new Date(now.getFullYear(), now.getMonth(), now.getDate())
         break
       case "week":
-        gte = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        const day = now.getDay()
+        gte = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day)
         break
       case "month":
-        gte = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        gte = new Date(now.getFullYear(), now.getMonth(), 1)
         break
       case "year":
-        gte = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+        gte = new Date(now.getFullYear(), 0, 1)
         break
+      case "30_days":
       default:
-        gte = new Date(0)
+        gte = new Date(now)
+        gte.setDate(gte.getDate() - 30)
+        break
     }
 
     where.updatedAt = { gte }

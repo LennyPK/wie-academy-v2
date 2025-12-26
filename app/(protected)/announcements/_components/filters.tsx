@@ -70,7 +70,7 @@ export default function AnnouncementFilters({
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (value !== "month") {
+      if (value !== "30_days") {
         params.set("dateRange", value)
       } else {
         params.delete("dateRange")
@@ -131,8 +131,9 @@ export default function AnnouncementFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="30_days">Last 30 Days</SelectItem>
               <SelectItem value="week">This Week</SelectItem>
-              <SelectItem value="month">Last Month</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
               <SelectItem value="year">This Year</SelectItem>
               <SelectItem value="all">All Time</SelectItem>
             </SelectContent>
