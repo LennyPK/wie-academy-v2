@@ -4,11 +4,18 @@ import { ROUTES } from "@/lib/constants"
 import { getEventCategories } from "@/lib/database"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
+import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import EventEmpty from "./_components/empty"
 import EventFilters from "./_components/filters"
 import EventHeader from "./_components/header"
+import EventList from "./_components/list"
+
+export const metadata: Metadata = {
+  title: "Events",
+  description: "Explore upcoming events and get involved in what's happening around you.",
+}
 
 interface SearchParams {
   query?: string
@@ -59,13 +66,46 @@ export default async function EventPage({ searchParams }: EventPageProps) {
   const where: Prisma.EventWhereInput = {}
 
   // Search Filter
-  // if (query) {
-  //   // Using OR at the top level so other filters (date, targeting, read status) are ANDed
-  //   where.OR = [
-  //     { title: { contains: query, mode: "insensitive" } },
-  //     { contentPlain: { contains: query, mode: "insensitive" } },
-  //   ]
-  // }
+  if (query) {
+    // Using OR at the top level so other filters (date, targeting, read status) are ANDed
+    where.OR = [
+      { title: { contains: query, mode: "insensitive" } },
+      { descriptionPlain: { contains: query, mode: "insensitive" } },
+    ]
+  }
+
+  // Status Filter
+  const now = new Date()
+
+  switch (status) {
+    case "upcoming":
+      where.startDateTime = { gt: now }
+      break
+    case "ongoing":
+      where.AND = [{ startDateTime: { lte: now } }, { endDateTime: { gte: now } }]
+      break
+    case "completed":
+      where.endDateTime = { lt: now }
+      break
+  }
+
+  // Category Filter
+  if (category !== "all") {
+    where.categoryId = { equals: parseInt(category) }
+  }
+
+  // Sorting Filter
+  let orderBy: Prisma.EventOrderByWithRelationInput
+
+  switch (sorting) {
+    case "date_asc":
+      orderBy = { startDateTime: "asc" }
+      break
+    case "date_desc":
+    default:
+      orderBy = { startDateTime: "desc" }
+      break
+  }
 
   const [events, eventCategories, count] = await Promise.all([
     prisma.event.findMany({
@@ -81,7 +121,7 @@ export default async function EventPage({ searchParams }: EventPageProps) {
         // targetSchools: { select: { schoolId: true } },
         // targetYearLevels: { select: { yearLevelId: true } },
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: orderBy,
       take: pageSize,
       skip: (currentPage - 1) * pageSize,
     }),
@@ -110,6 +150,8 @@ export default async function EventPage({ searchParams }: EventPageProps) {
 
         {/* No events found */}
         {events && events.length === 0 && <EventEmpty />}
+
+        <EventList userId={user.id} userRole={user.role} events={events} searchQuery={query} />
 
         <Pagination totalPages={totalPages} />
       </main>

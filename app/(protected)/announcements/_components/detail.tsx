@@ -84,7 +84,7 @@ export default function AnnouncementDetail({
                 <span className="sm:inline">Edit Announcement</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{"Edit Announcement"}</TooltipContent>
+            <TooltipContent>Edit Announcement</TooltipContent>
           </Tooltip>
         )}
 

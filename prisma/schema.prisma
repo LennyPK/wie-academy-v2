@@ -238,7 +238,7 @@ model Event {
   descriptionJson  Json
   categoryId       Int      @default(1)
   location         String
-  capacity         Int?
+  capacity         Int
   startDateTime    DateTime
   endDateTime      DateTime
   createdAt        DateTime @default(now())
@@ -257,3 +257,11 @@ model EventCategory {
 
   @@map("eventCategory")
 }
+
+// model EventRegistration {
+
+// }
+
+// model EventParticipation {
+
+// }
