@@ -229,3 +229,39 @@ model AnnouncementInteraction {
   @@id([announcementId, userId])
   @@map("announcementInteraction")
 }
+
+model Event {
+  id               String   @id @default(uuid())
+  title            String
+  descriptionPlain String
+  descriptionHtml  String
+  descriptionJson  Json
+  categoryId       Int      @default(1)
+  location         String
+  capacity         Int
+  startDateTime    DateTime
+  endDateTime      DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  category EventCategory @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+
+  @@map("event")
+}
+
+model EventCategory {
+  id     Int     @id @default(autoincrement())
+  value  String  @unique
+  label  String
+  events Event[]
+
+  @@map("eventCategory")
+}
+
+// model EventRegistration {
+
+// }
+
+// model EventParticipation {
+
+// }

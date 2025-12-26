@@ -22,8 +22,7 @@ import {
 import { getAnnouncementCategories, getSchools } from "@/lib/database"
 import { getRegions } from "@/lib/database/regions"
 import { getYearLevels } from "@/lib/database/year-levels"
-import { AnnouncementCategory } from "@/lib/generated/prisma/client"
-import { RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
+import { Category, RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -34,12 +33,12 @@ import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
 
-interface FormCreateProps {
+interface AnnouncementFormProps {
   announcement?: Announcement | null
   setOpen: (open: boolean) => void
 }
 
-export default function Form({ setOpen, announcement }: FormCreateProps) {
+export default function AnnouncementForm({ setOpen, announcement }: AnnouncementFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -75,7 +74,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
       setIsLoading(true)
       toast.loading("Saving...")
 
-      const newAnnouncementInfo: NewAnnouncement = {
+      const announcementPayload: NewAnnouncement = {
         id: announcement?.id ?? "",
         title: value.title.trim(),
         contentPlain: editorContent.plain.trim(),
@@ -87,9 +86,9 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
         yearLevelIds: value.yearLevels.map((yearLevel) => Number(yearLevel)),
       }
 
-      const newAnnouncement = await insertAnnouncement(newAnnouncementInfo)
+      const newAnnouncement = await insertAnnouncement(announcementPayload)
       toast.dismiss()
-      toast.success(`New announcement saved: ${newAnnouncement.announcement.title}`)
+      toast.success(`New announcement saved: ${newAnnouncement.title}`)
 
       setIsLoading(false)
       setOpen(false)
@@ -98,7 +97,7 @@ export default function Form({ setOpen, announcement }: FormCreateProps) {
     },
   })
 
-  const [categories, setCategories] = useState<AnnouncementCategory[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [regions, setRegions] = useState<RegionOption[]>([])
   const [yearLevels, setYearLevels] = useState<YearLevelOption[]>([])
   const [schools, setSchools] = useState<SchoolOption[]>([])

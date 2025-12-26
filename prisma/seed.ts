@@ -6,7 +6,13 @@ import { faker } from "@faker-js/faker"
 import { PrismaPg } from "@prisma/adapter-pg"
 import "dotenv/config"
 import { announcementData } from "./seed/announcements"
-import { announcementCategoryData, interestData, regionData, yearLevelData } from "./seed/constants"
+import {
+  announcementCategoryData,
+  eventCategoryData,
+  interestData,
+  regionData,
+  yearLevelData,
+} from "./seed/constants"
 import { getNZSchools } from "./seed/schools"
 
 const adapter = new PrismaPg({
@@ -45,15 +51,6 @@ const updateProgress = (items: number, current: number) => {
 export async function main() {
   console.log("starting to seed...")
 
-  console.log("...seeding users...")
-  for (const user of userData) {
-    await prisma.user.upsert({
-      where: { email: user.email },
-      update: {},
-      create: user,
-    })
-  }
-
   console.log("...seeding regions...")
   for (const region of regionData) {
     await prisma.region.upsert({
@@ -72,20 +69,7 @@ export async function main() {
     })
   }
 
-  console.log("...seeding schools...")
-  const schoolData = await getNZSchools()
-  let i = 0
-  for (const school of schoolData) {
-    if (i % 10 === 0) updateProgress(schoolData.length, i)
-    await prisma.school.upsert({
-      where: { id: school.id },
-      update: {},
-      create: school,
-    })
-    i++
-  }
-
-  console.log("\n...seeding interests...")
+  console.log("...seeding interests...")
   for (const interest of interestData) {
     await prisma.interest.upsert({
       where: { value: interest.value },
@@ -100,6 +84,37 @@ export async function main() {
       where: { value: announcementCategory.value },
       update: {},
       create: announcementCategory,
+    })
+  }
+
+  console.log("...seeding event categories...")
+  for (const eventCategory of eventCategoryData) {
+    await prisma.eventCategory.upsert({
+      where: { value: eventCategory.value },
+      update: {},
+      create: eventCategory,
+    })
+  }
+
+  console.log("...seeding schools...")
+  const schoolData = await getNZSchools()
+  let i = 0
+  for (const school of schoolData) {
+    if (i % 10 === 0) updateProgress(schoolData.length, i)
+    await prisma.school.upsert({
+      where: { id: school.id },
+      update: {},
+      create: school,
+    })
+    i++
+  }
+
+  console.log("...seeding users...")
+  for (const user of userData) {
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: {},
+      create: user,
     })
   }
 

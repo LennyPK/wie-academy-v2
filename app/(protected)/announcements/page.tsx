@@ -1,15 +1,21 @@
+import Pagination from "@/components/pagination"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
 import { Role } from "@/prisma/enums"
+import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import AnnouncementEmpty from "./_components/announcement-empty"
-import AnnouncementList from "./_components/announcement-list"
-import Filters from "./_components/filters"
-import { AnnouncementHeader } from "./_components/header"
-import Pagination from "./_components/pagination"
+import AnnouncementEmpty from "./_components/empty"
+import AnnouncementFilters from "./_components/filters"
+import AnnouncementHeader from "./_components/header"
+import AnnouncementList from "./_components/list"
+
+export const metadata: Metadata = {
+  title: "Announcements",
+  description: "Stay updated with the latest news.",
+}
 
 interface SearchParams {
   query?: string
@@ -18,11 +24,11 @@ interface SearchParams {
   page?: string
 }
 
-interface AnnouncementsPageProps {
+interface AnnouncementPageProps {
   searchParams?: Promise<SearchParams>
 }
 
-export default async function AnnouncementsPage({ searchParams }: AnnouncementsPageProps) {
+export default async function AnnouncementPage({ searchParams }: AnnouncementPageProps) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -50,6 +56,7 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
   const query = params?.query?.trim() || ""
   const readStatus = params?.readStatus || "all"
   const dateRange = params?.dateRange || "month"
+
   const currentPage = Number(params?.page) || 1
   const pageSize = 5
 
@@ -156,15 +163,12 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
   // Get the total number of pages
   const totalPages = Math.max(1, Math.ceil((count || 0) / pageSize))
 
-  console.log("Count:", count)
-  console.log("Total Pages:", totalPages)
-
   return (
     <div>
       <AnnouncementHeader userRole={user.role} />
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        <Filters
+        <AnnouncementFilters
           searchQuery={query}
           readStatus={readStatus}
           dateRange={dateRange}

@@ -55,7 +55,7 @@ export async function markAsRead(announcementId: string, userId: string) {
   revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
-export async function insertAnnouncement(newAnnouncement: NewAnnouncement) {
+export async function insertAnnouncement(announcementPayload: NewAnnouncement) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -63,51 +63,51 @@ export async function insertAnnouncement(newAnnouncement: NewAnnouncement) {
   }
 
   const announcement = await prisma.announcement.upsert({
-    where: { id: newAnnouncement.id },
+    where: { id: announcementPayload.id },
     create: {
-      title: newAnnouncement.title,
-      contentPlain: newAnnouncement.contentPlain,
-      contentHtml: newAnnouncement.contentHtml,
-      contentJson: newAnnouncement.contentJson,
-      categoryId: newAnnouncement.categoryId,
+      title: announcementPayload.title,
+      contentPlain: announcementPayload.contentPlain,
+      contentHtml: announcementPayload.contentHtml,
+      contentJson: announcementPayload.contentJson,
+      categoryId: announcementPayload.categoryId,
       authorId: session?.user.id ?? undefined,
       targetSchools: {
-        create: newAnnouncement.schoolIds.map((schoolId) => ({
+        create: announcementPayload.schoolIds.map((schoolId) => ({
           school: { connect: { id: schoolId } },
         })),
       },
       targetRegions: {
-        create: newAnnouncement.regionIds.map((regionId) => ({
+        create: announcementPayload.regionIds.map((regionId) => ({
           region: { connect: { id: regionId } },
         })),
       },
       targetYearLevels: {
-        create: newAnnouncement.yearLevelIds.map((yearLevelId) => ({
+        create: announcementPayload.yearLevelIds.map((yearLevelId) => ({
           yearLevel: { connect: { id: yearLevelId } },
         })),
       },
     },
     update: {
-      title: newAnnouncement.title,
-      contentPlain: newAnnouncement.contentPlain,
-      contentHtml: newAnnouncement.contentHtml,
-      contentJson: newAnnouncement.contentJson,
-      categoryId: newAnnouncement.categoryId,
+      title: announcementPayload.title,
+      contentPlain: announcementPayload.contentPlain,
+      contentHtml: announcementPayload.contentHtml,
+      contentJson: announcementPayload.contentJson,
+      categoryId: announcementPayload.categoryId,
       targetSchools: {
         deleteMany: {},
-        create: newAnnouncement.schoolIds.map((schoolId) => ({
+        create: announcementPayload.schoolIds.map((schoolId) => ({
           school: { connect: { id: schoolId } },
         })),
       },
       targetRegions: {
         deleteMany: {},
-        create: newAnnouncement.regionIds.map((regionId) => ({
+        create: announcementPayload.regionIds.map((regionId) => ({
           region: { connect: { id: regionId } },
         })),
       },
       targetYearLevels: {
         deleteMany: {},
-        create: newAnnouncement.yearLevelIds.map((yearLevelId) => ({
+        create: announcementPayload.yearLevelIds.map((yearLevelId) => ({
           yearLevel: { connect: { id: yearLevelId } },
         })),
       },
@@ -121,5 +121,5 @@ export async function insertAnnouncement(newAnnouncement: NewAnnouncement) {
     },
   })
 
-  return { announcement }
+  return announcement
 }
