@@ -146,7 +146,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     prisma.announcement.findMany({
       where,
       include: {
-        category: { select: { id: true, value: true, label: true } },
+        category: { select: { id: true, label: true } },
         author: { select: { name: true, image: true } },
         interactions: {
           where: { userId: user.id },
