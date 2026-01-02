@@ -120,11 +120,11 @@ export default function EventFilters({
   }, [router, pathName])
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex-1 space-y-2">
         {/* Search Filter */}
-        <div className="relative text-sm md:text-base">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+        <div className="relative text-sm sm:text-base">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground sm:h-5 sm:w-5" />
           <Input
             placeholder="Search events..."
             className="pl-10"
@@ -136,10 +136,10 @@ export default function EventFilters({
           />
         </div>
 
-        <div className="flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {/* Status Filter */}
           <Select value={status} onValueChange={updateStatus}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -151,7 +151,7 @@ export default function EventFilters({
 
           {/* Category Filter */}
           <Select value={category} onValueChange={updateCategory}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -166,7 +166,7 @@ export default function EventFilters({
 
           {/* Sorting Filter */}
           <Select value={sorting} onValueChange={updateSorting}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -176,7 +176,7 @@ export default function EventFilters({
           </Select>
 
           {/* Clear Filters */}
-          <Button className="md:ml-5" variant="outline" onClick={clearFilters}>
+          <Button className="sm:ml-5" variant="outline" onClick={clearFilters}>
             Clear Filters
           </Button>
         </div>

@@ -56,7 +56,7 @@ export default function AnnouncementCard({
         <Card
           key={announcement.id}
           className={cn(
-            "group relative flex h-[270px] flex-col border-0 backdrop-blur-sm transition-all duration-300 sm:h-[250px]",
+            "min-h-[250px] flex-col border-0 transition-all duration-300",
             "focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:outline-none",
             isRead
               ? "bg-muted"
@@ -72,10 +72,7 @@ export default function AnnouncementCard({
                 <CategoryBadge category={announcement.category} className="w-fit" />
 
                 {/* Created/Updated Date */}
-                <div
-                  id={`announcement-${announcement.id}-date`}
-                  className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground"
-                >
+                <div className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
                   {announcement.createdAt && (
                     <div className="flex items-center">
                       <Clock className="mr-1 h-4 w-4" />
@@ -90,10 +87,7 @@ export default function AnnouncementCard({
               </div>
 
               {/* Title and status dot */}
-              <div
-                id={`announcement-${announcement.id}-title`}
-                className="mt-4 flex items-start gap-2 sm:items-center"
-              >
+              <div className="mt-4 flex items-start gap-2 sm:items-center">
                 {/* Status Indicator */}
                 {!isRead && (
                   <TooltipProvider>
@@ -127,10 +121,7 @@ export default function AnnouncementCard({
               </div>
 
               {/* Author */}
-              <div
-                id={`announcement-${announcement.id}-author`}
-                className="mt-2 text-sm font-medium text-muted-foreground"
-              >
+              <div className="mt-2 text-sm font-medium text-muted-foreground">
                 {announcement.author ? announcement.author.name : "[deleted]"}
               </div>
             </div>

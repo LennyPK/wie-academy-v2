@@ -100,7 +100,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
 
       const newEvent = await insertEvent(eventPayload)
       toast.dismiss()
-      toast.success(`New event saved: ${newEvent.event.title}`)
+      toast.success(`New event saved: ${newEvent.title}`)
 
       setIsLoading(false)
       setOpen(false)
@@ -137,7 +137,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
   return (
     <form
       id="event-form"
-      className="space-y-6 px-4 py-4 md:px-1"
+      className="space-y-6 px-4 py-4 sm:px-1"
       onSubmit={(e) => {
         e.preventDefault()
         form.handleSubmit()
@@ -200,7 +200,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
           }}
         </form.Field>
 
-        <FieldGroup className="md:grid md:grid-cols-2 md:grid-rows-2">
+        <FieldGroup className="sm:grid sm:grid-cols-2 sm:grid-rows-2">
           <form.Field name="category">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -317,7 +317,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
           </form.Field> */}
         </FieldGroup>
 
-        <FieldGroup className="md:grid md:grid-cols-2">
+        <FieldGroup className="sm:grid sm:grid-cols-2">
           <FieldGroup id="startDateTime">
             <form.Field name="startDate">
               {(field) => {
@@ -438,7 +438,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
         </FieldGroup>
 
         <Field>
-          <div className="grid grid-rows-2 gap-4 md:grid-cols-2">
+          <div className="grid grid-rows-2 gap-4 sm:grid-cols-2">
             <Button
               type="button"
               variant="outline"

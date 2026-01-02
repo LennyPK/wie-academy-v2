@@ -40,5 +40,36 @@ export async function insertEvent(newEvent: NewEvent) {
     },
   })
 
-  return { event }
+  return event
+}
+
+export async function registerForEvent(eventId: string, userId: string, capacity: number) {
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.eventRegistration.findUnique({
+      where: { userId_eventId: { userId, eventId } },
+    })
+
+    // Already registered
+    if (existing) {
+      await tx.eventRegistration.delete({
+        where: { userId_eventId: { userId, eventId } },
+      })
+
+      return { status: "unregistered" as const }
+    }
+
+    // Not registered - check capacity
+    if (capacity !== 0) {
+      const registrationCount = await prisma.eventRegistration.count({ where: { eventId } })
+
+      if (registrationCount >= capacity) {
+        throw new Error("Event is full")
+      }
+    }
+
+    // Register
+    await tx.eventRegistration.create({ data: { userId, eventId } })
+
+    return { status: "registered" as const }
+  })
 }

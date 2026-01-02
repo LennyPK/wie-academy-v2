@@ -101,10 +101,10 @@ export default function MenuBar({ user }: MenuBarProps) {
           </Link>
 
           {/* DESKTOP NAVIGATION: Show on large screens */}
-          <DesktopHeader navItems={navItems} pathname={pathname} className="hidden md:flex" />
+          <DesktopHeader navItems={navItems} pathname={pathname} className="hidden sm:flex" />
         </div>
 
-        <div className="justify-start md:hidden">
+        <div className="justify-start sm:hidden">
           <h1 className="text-center text-xl font-bold">WiE Academy</h1>
         </div>
 
@@ -117,7 +117,7 @@ export default function MenuBar({ user }: MenuBarProps) {
             accountItems={accountItems}
             handleNavClick={handleNavClick}
             handleSignOut={handleSignOut}
-            className="hidden md:flex"
+            className="hidden sm:flex"
           />
 
           {/* MOBILE MENU: Show hamburger menu on mobile */}
@@ -130,7 +130,7 @@ export default function MenuBar({ user }: MenuBarProps) {
             accountItems={accountItems}
             handleNavClick={handleNavClick}
             handleSignOut={handleSignOut}
-            className="md:hidden"
+            className="sm:hidden"
           />
         </div>
       </div>

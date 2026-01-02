@@ -1,7 +1,9 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { registerForEvent } from "../actions"
 import { Event } from "../types"
 import EventCard from "./card"
 import EventDetail from "./detail"
@@ -17,13 +19,14 @@ interface EventListProps {
 }
 
 export default function EventList({
-  // userId,
+  userId,
   userRole,
   events,
   searchQuery,
   // loading,
   // error,
 }: EventListProps) {
+  const router = useRouter()
   const [detailOpen, setDetailOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [event, setEvent] = useState<Event | null>(null)
@@ -60,19 +63,31 @@ export default function EventList({
     setEvent(events.find((event) => event.id === eventId) || null)
   }
 
+  const handleRegisterClick = async (eventId: string, capacity: number) => {
+    await registerForEvent(eventId, userId, capacity)
+
+    router.refresh()
+  }
+
+  // const isRegistered = events.find()
+
   return (
     <div
-      className={cn("space-y-6", events.length && "grid-cols-2 md:grid")}
+      className={cn("space-y-6", events.length && "grid-cols-2 sm:grid")}
       role="list"
       aria-label="events"
     >
-      <EventDetail
-        open={detailOpen}
-        setOpen={setDetailOpen}
-        event={event}
-        userRole={userRole}
-        onEdit={handleEditClick}
-      />
+      {event && (
+        <EventDetail
+          open={detailOpen}
+          setOpen={setDetailOpen}
+          event={event}
+          userRole={userRole}
+          onEdit={handleEditClick}
+          onRegister={() => handleRegisterClick(event.id, event.capacity)}
+          isRegistered={event.registrations.length > 0}
+        />
+      )}
 
       <EventFormModal event={event} open={editOpen} setOpen={setEditOpen} />
 
@@ -85,7 +100,9 @@ export default function EventList({
             searchQuery={searchQuery}
             onClick={handleEventClick(event)}
             onEdit={handleEditClick}
-            // onToggleRead={() => onToggleRead(event.id, userId)}
+            onRegister={() => handleRegisterClick(event.id, event.capacity)}
+            isRegistered={event.registrations.length > 0}
+            isAttended={event.participations.length > 0}
           />
         ))}
     </div>
