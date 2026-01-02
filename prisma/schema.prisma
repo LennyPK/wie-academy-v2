@@ -42,6 +42,8 @@ model User {
 
   announcementsAuthored    Announcement[]
   announcementInteractions AnnouncementInteraction[]
+  eventRegistrations       EventRegistration[]
+  eventParticipations      EventParticipation[]
 
   @@unique([email])
   @@map("user")
@@ -134,10 +136,11 @@ model Interest {
 }
 
 model InterestsOnUsers {
-  interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
-  interestId Int
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
+  interestId Int
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interest Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
 
   @@id([userId, interestId])
   @@map("interestsOnUsers")
@@ -190,41 +193,45 @@ model AnnouncementCategory {
 }
 
 model SchoolsOnAnnouncements {
-  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   announcementId String
-  school         School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
   schoolId       Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   @@id([announcementId, schoolId])
   @@map("schoolsOnAnnouncements")
 }
 
 model RegionsOnAnnouncements {
-  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   announcementId String
-  region         Region       @relation(fields: [regionId], references: [id], onDelete: Cascade)
   regionId       Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  region       Region       @relation(fields: [regionId], references: [id], onDelete: Cascade)
 
   @@id([announcementId, regionId])
   @@map("regionsOnAnnouncements")
 }
 
 model YearLevelsOnAnnouncements {
-  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   announcementId String
-  yearLevel      YearLevel    @relation(fields: [yearLevelId], references: [id], onDelete: Cascade)
   yearLevelId    Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  yearLevel    YearLevel    @relation(fields: [yearLevelId], references: [id], onDelete: Cascade)
 
   @@id([announcementId, yearLevelId])
   @@map("yearLevelsOnAnnouncements")
 }
 
 model AnnouncementInteraction {
-  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
   announcementId String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
   isRead         Boolean
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([announcementId, userId])
   @@map("announcementInteraction")
@@ -244,7 +251,9 @@ model Event {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  category EventCategory @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  category       EventCategory        @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  registrations  EventRegistration[]
+  participations EventParticipation[]
 
   @@map("event")
 }
@@ -258,10 +267,35 @@ model EventCategory {
   @@map("eventCategory")
 }
 
-// model EventRegistration {
+model EventRegistration {
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
 
-// }
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-// model EventParticipation {
+  @@id([userId, eventId])
+  @@map("eventRegistration")
+}
 
-// }
+model EventParticipation {
+  userId            String
+  eventId           String
+  attendedAt        DateTime          @default(now())
+  participationType ParticipationType @default(ATTENDED)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@map("eventParticipation")
+}
+
+enum ParticipationType {
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+
+  @@map("participationType")
+}

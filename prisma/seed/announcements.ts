@@ -87,8 +87,8 @@ We’re excited to have you here. Start by completing your profile setup and exp
     },
     category: { connect: { value: "general" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 30 * 86_400_000),
-    updatedAt: new Date(Date.now() - 27 * 86_400_000),
+    createdAt: new Date(Date.now() - 30 * 86_400_000), // 30 days ago
+    updatedAt: new Date(Date.now() - 27 * 86_400_000), // 27 days ago
   },
 
   {
@@ -219,8 +219,8 @@ Click here to register`,
     },
     category: { connect: { value: "academic-support" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 25 * 86_400_000),
-    updatedAt: new Date(Date.now() - 25 * 86_400_000),
+    createdAt: new Date(Date.now() - 25 * 86_400_000), // 25 days ago
+    updatedAt: new Date(Date.now() - 25 * 86_400_000), // 25 days ago
   },
 
   {
@@ -262,8 +262,8 @@ Click here to register`,
     },
     category: { connect: { value: "competition" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 20 * 86_400_000),
-    updatedAt: new Date(Date.now() - 17 * 86_400_000),
+    createdAt: new Date(Date.now() - 20 * 86_400_000), // 20 days ago
+    updatedAt: new Date(Date.now() - 17 * 86_400_000), // 17 days ago
   },
 
   {
@@ -323,8 +323,8 @@ Friday, 3:30 pm.`,
     },
     category: { connect: { value: "social" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 15 * 86_400_000),
-    updatedAt: new Date(Date.now() - 15 * 86_400_000),
+    createdAt: new Date(Date.now() - 15 * 86_400_000), // 15 days ago
+    updatedAt: new Date(Date.now() - 15 * 86_400_000), // 15 days ago
   },
 
   {
@@ -366,8 +366,8 @@ Friday, 3:30 pm.`,
     },
     category: { connect: { value: "academic-support" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 13 * 86_400_000),
-    updatedAt: new Date(Date.now() - 11 * 86_400_000),
+    createdAt: new Date(Date.now() - 13 * 86_400_000), // 13 days ago
+    updatedAt: new Date(Date.now() - 11 * 86_400_000), // 11 days ago
   },
 
   {
@@ -422,8 +422,8 @@ Expect hands-on activities and a short engineering challenge.`,
     },
     category: { connect: { value: "school-visit" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 11 * 86_400_000),
-    updatedAt: new Date(Date.now() - 11 * 86_400_000),
+    createdAt: new Date(Date.now() - 11 * 86_400_000), // 11 days ago
+    updatedAt: new Date(Date.now() - 11 * 86_400_000), // 11 days ago
   },
 
   {
@@ -465,8 +465,8 @@ Expect hands-on activities and a short engineering challenge.`,
     },
     category: { connect: { value: "competition" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 8 * 86_400_000),
-    updatedAt: new Date(Date.now() - 7 * 86_400_000),
+    createdAt: new Date(Date.now() - 8 * 86_400_000), // 8 days ago
+    updatedAt: new Date(Date.now() - 7 * 86_400_000), // 7 days ago
   },
 
   {
@@ -521,8 +521,8 @@ Please review the changes before posting.`,
     },
     category: { connect: { value: "general" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 6 * 86_400_000),
-    updatedAt: new Date(Date.now() - 6 * 86_400_000),
+    createdAt: new Date(Date.now() - 6 * 86_400_000), // 6 days ago
+    updatedAt: new Date(Date.now() - 6 * 86_400_000), // 6 days ago
   },
 
   {
@@ -564,8 +564,8 @@ Please review the changes before posting.`,
     },
     category: { connect: { value: "academic-support" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 4 * 86_400_000),
-    updatedAt: new Date(Date.now() - 3 * 86_400_000),
+    createdAt: new Date(Date.now() - 4 * 86_400_000), // 4 days ago
+    updatedAt: new Date(Date.now() - 3 * 86_400_000), // 3 days ago
   },
 
   {
@@ -620,8 +620,8 @@ Includes HTML, CSS, and JavaScript basics.`,
     },
     category: { connect: { value: "workshop" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 3 * 86_400_000),
-    updatedAt: new Date(Date.now() - 3 * 86_400_000),
+    createdAt: new Date(Date.now() - 3 * 86_400_000), // 3 days ago
+    updatedAt: new Date(Date.now() - 3 * 86_400_000), // 3 days ago
   },
 
   {
@@ -663,8 +663,8 @@ Includes HTML, CSS, and JavaScript basics.`,
     },
     category: { connect: { value: "social" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 2 * 86_400_000),
-    updatedAt: new Date(Date.now() - 1 * 86_400_000 - 5_000_000),
+    createdAt: new Date(Date.now() - 2 * 86_400_000), // 2 days ago
+    updatedAt: new Date(Date.now() - 1 * 86_400_000 - 5_000_000), // 1 day ago
   },
 
   {
@@ -705,7 +705,7 @@ Live Q&A this Saturday.`,
     },
     category: { connect: { value: "other" } },
     author: { connect: { email: "alice@prisma.io" } },
-    createdAt: new Date(Date.now() - 1 * 86_400_000),
-    updatedAt: new Date(Date.now() - 1 * 86_400_000),
+    createdAt: new Date(Date.now() - 1 * 86_400_000), // 1 days ago
+    updatedAt: new Date(Date.now() - 1 * 86_400_000), // 1 days ago
   },
 ]
