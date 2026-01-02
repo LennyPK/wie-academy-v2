@@ -125,7 +125,7 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
   return (
     <form
       id="announcement-form"
-      className="space-y-6 px-4 py-4 md:px-1"
+      className="space-y-6 px-4 py-4 sm:px-1"
       onSubmit={(e) => {
         e.preventDefault()
         form.handleSubmit()
@@ -155,7 +155,7 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
           }}
         </form.Field>
 
-        <FieldGroup className="md:grid md:grid-cols-2 md:grid-rows-2">
+        <FieldGroup className="sm:grid sm:grid-cols-2 sm:grid-rows-2">
           <form.Field name="category">
             {(field) => {
               const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
@@ -327,7 +327,7 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
         </form.Field>
 
         <Field>
-          <div className="grid grid-rows-2 gap-4 md:grid-cols-2">
+          <div className="grid grid-rows-2 gap-4 sm:grid-cols-2">
             <Button
               type="button"
               variant="outline"

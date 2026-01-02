@@ -95,11 +95,11 @@ export default function AnnouncementFilters({
   }, [router, pathName])
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex-1 space-y-2">
         {/* Search Filter */}
-        <div className="relative text-sm md:text-base">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+        <div className="relative text-sm sm:text-base">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground sm:h-5 sm:w-5" />
           <Input
             placeholder="Search announcements..."
             className="pl-10"
@@ -111,10 +111,10 @@ export default function AnnouncementFilters({
           />
         </div>
 
-        <div className="flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {/* Read Status Filter */}
           <Select value={readStatus} onValueChange={updateReadStatus}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Read Status" />
             </SelectTrigger>
             <SelectContent>
@@ -126,7 +126,7 @@ export default function AnnouncementFilters({
 
           {/* Date Filter */}
           <Select value={dateRange} onValueChange={updateDateRange}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Date Range" />
             </SelectTrigger>
             <SelectContent>
@@ -140,7 +140,7 @@ export default function AnnouncementFilters({
           </Select>
 
           {/* Clear Filters */}
-          <Button className="md:ml-5" variant="outline" onClick={clearFilters}>
+          <Button className="sm:ml-5" variant="outline" onClick={clearFilters}>
             Clear Filters
           </Button>
         </div>

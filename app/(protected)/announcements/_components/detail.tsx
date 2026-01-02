@@ -14,10 +14,11 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 import { Role } from "@/prisma/enums"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { formatRelative } from "date-fns"
-import { BookCheck, BookOpenCheck, Clock, Pencil } from "lucide-react"
+import { BookCheck, BookOpenCheck, BookX, Clock, Edit } from "lucide-react"
 import { Announcement } from "../types"
 
 interface AnnouncementDetailProps {
@@ -62,10 +63,24 @@ export default function AnnouncementDetail({
               variant={isRead ? "ghost" : "default"}
               size="icon"
               onClick={handleToggleRead}
-              className="flex-1 cursor-pointer gap-1.5"
+              className={cn("group flex-1 cursor-pointer gap-2")}
             >
-              {isRead ? <BookCheck className="h-4 w-4" /> : <BookOpenCheck className="h-4 w-4" />}
-              <span className="sm:inline">{isRead ? "Read" : "Mark as read"}</span>
+              {isRead ? (
+                <>
+                  <BookCheck className="group-hover:hidden group-focus-visible:hidden" />
+                  <span className="group-hover:hidden group-focus-visible:hidden">Read</span>
+
+                  <BookX className="hidden group-hover:inline group-focus-visible:inline" />
+                  <span className="hidden group-hover:inline group-focus-visible:inline">
+                    Mark as Unread
+                  </span>
+                </>
+              ) : (
+                <>
+                  <BookOpenCheck />
+                  <span>Mark as Read</span>
+                </>
+              )}
             </Button>
           </TooltipTrigger>
           <TooltipContent>{isRead ? "Mark as unread" : "Mark as read"}</TooltipContent>
@@ -78,10 +93,10 @@ export default function AnnouncementDetail({
                 variant="ghost"
                 size="icon"
                 onClick={handleEdit}
-                className="flex-1 cursor-pointer gap-1.5"
+                className="flex-1 cursor-pointer gap-2"
               >
-                <Pencil className={"h-4 w-4 fill-current"} />
-                <span className="sm:inline">Edit Announcement</span>
+                <Edit />
+                <span>Edit Announcement</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Edit Announcement</TooltipContent>
@@ -128,13 +143,13 @@ export default function AnnouncementDetail({
   const headerTitle = <span className="text-2xl font-bold">{announcement.title}</span>
 
   const headerDescription = (
-    <div className="flex justify-center gap-5 md:justify-start">
-      <div className="text-center text-sm font-medium text-muted-foreground md:text-left">
+    <div className="flex justify-center gap-5 sm:justify-start">
+      <div className="text-center text-sm font-medium text-muted-foreground sm:text-left">
         {announcement.author ? announcement.author.name : "[deleted]"}
       </div>
       {announcement.createdAt && (
-        <div className="flex items-center justify-center md:justify-start">
-          <Clock className="mr-1 h-3 w-3 text-muted-foreground" />
+        <div className="flex items-center justify-center sm:justify-start">
+          <Clock className="mr-1 h-4 w-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             {announcement.updatedAt && announcement.updatedAt > announcement.createdAt
               ? formatRelative(announcement.updatedAt, new Date())
@@ -147,13 +162,13 @@ export default function AnnouncementDetail({
 
   const header = (
     <div>
-      <div className="mb-4 flex justify-center md:justify-start">
+      <div className="mb-4 flex justify-center sm:justify-start">
         <CategoryBadge category={announcement.category} className="w-fit" />
       </div>
-      <DrawerTitle className="md:hidden">{headerTitle}</DrawerTitle>
-      <div className="mt-2 md:hidden">{headerDescription}</div>
+      <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
+      <div className="mt-2 sm:hidden">{headerDescription}</div>
 
-      <DialogTitle className="hidden md:block">{headerTitle}</DialogTitle>
+      <DialogTitle className="hidden sm:block">{headerTitle}</DialogTitle>
       <div className="mt-2 hidden sm:block">{headerDescription}</div>
     </div>
   )
@@ -170,12 +185,10 @@ export default function AnnouncementDetail({
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerOverlay className="backdrop-blur-xs" />
-        <DrawerContent className="bg-card">
+        <DrawerContent className="bg-card px-5">
           <DrawerHeader className="text-center">{header}</DrawerHeader>
-          <div className="px-5">
-            {actions}
-            {bodyContent}
-          </div>
+          {actions}
+          <div className="overflow-y-auto">{bodyContent}</div>
         </DrawerContent>
       </Drawer>
     )
@@ -186,11 +199,13 @@ export default function AnnouncementDetail({
       <DialogOverlay className="backdrop-blur-xs" />
       <DialogContent
         aria-describedby={announcement.id}
-        className="no-scrollbar flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
+        className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
       >
         <DialogHeader>{header}</DialogHeader>
         {actions}
-        {bodyContent}
+        <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+          {bodyContent}
+        </div>
       </DialogContent>
     </Dialog>
   )
