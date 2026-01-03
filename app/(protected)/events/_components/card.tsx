@@ -180,19 +180,19 @@ export default function EventCard({
                 >
                   {isRegistered ? (
                     <>
-                      <UserRoundCheck className="h-5 w-5 group-hover:hidden group-focus-visible:hidden" />
+                      <UserRoundCheck className="group-hover:hidden group-focus-visible:hidden" />
                       <span className="group-hover:hidden group-focus-visible:hidden">
                         Registered
                       </span>
 
-                      <UserRoundX className="hidden h-5 w-5 group-hover:inline group-focus-visible:inline" />
+                      <UserRoundX className="hidden group-hover:inline group-focus-visible:inline" />
                       <span className="hidden group-hover:inline group-focus-visible:inline">
                         Unregister
                       </span>
                     </>
                   ) : (
                     <>
-                      <UserRoundPlus className="h-5 w-5" />
+                      <UserRoundPlus />
                       <span>Register</span>
                     </>
                   )}
@@ -208,18 +208,18 @@ export default function EventCard({
           (isRegistered ? (
             <>
               <ContextMenuItem onClick={handleRegister}>
-                <UserRoundX className="h-5 w-5" />
+                <UserRoundX />
                 <span>Unregister</span>
               </ContextMenuItem>
 
               <ContextMenuItem>
-                <CalendarPlus className="h-5 w-5" />
+                <CalendarPlus />
                 <span>Add to Calendar</span>
               </ContextMenuItem>
             </>
           ) : (
             <ContextMenuItem onClick={handleRegister}>
-              <UserRoundPlus className="h-5 w-5" />
+              <UserRoundPlus />
               <span>Register</span>
             </ContextMenuItem>
           ))}
@@ -230,12 +230,12 @@ export default function EventCard({
         {contextAdminVisible && (
           <>
             <ContextMenuItem onClick={handleEditClick}>
-              <Edit className="h-5 w-5" />
+              <Edit />
               <span>Edit</span>
             </ContextMenuItem>
 
             <ContextMenuItem>
-              <Users className="h-5 w-5" />
+              <Users />
               <span>View Attendees</span>
             </ContextMenuItem>
           </>

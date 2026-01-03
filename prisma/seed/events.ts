@@ -273,7 +273,7 @@ This event was all about building community — no pressure, no agenda, just peo
     },
     category: { connect: { value: "social" } },
     location: "Student Union Hall",
-    capacity: 0,
+    capacity: 1,
     startDateTime: new Date(Date.now() - 25 * 86_400_000), // 25 days ago
     endDateTime: new Date(Date.now() - 25 * 86_400_000 + 120 * 60_000), // 2 hrs after start
   },
@@ -390,7 +390,7 @@ By the end, participants built a small project and learned how the pieces fit to
     },
     category: { connect: { value: "academic-support" } },
     location: "Computer Lab B",
-    capacity: 0,
+    capacity: 2,
     startDateTime: new Date(Date.now() - 20 * 86_400_000), // 20 days ago
     endDateTime: new Date(Date.now() - 20 * 86_400_000 + 180 * 60_000), // 3 hrs after start
   },
@@ -512,7 +512,7 @@ The goal was to improve speed, accuracy, and confidence under pressure.`,
     },
     category: { connect: { value: "competition" } },
     location: "Room A203",
-    capacity: 0,
+    capacity: 3,
     startDateTime: new Date(Date.now() - 15 * 86_400_000), // 15 days ago
     endDateTime: new Date(Date.now() - 15 * 86_400_000 + 90 * 60_000), // 1.5 hrs after start
   },
@@ -635,7 +635,7 @@ The visit aimed to provide an honest and relatable perspective.`,
     },
     category: { connect: { value: "school-visit" } },
     location: "Lincoln High School",
-    capacity: 0,
+    capacity: 4,
     startDateTime: new Date(Date.now() - 10 * 86_400_000), // 10 days ago
     endDateTime: new Date(Date.now() - 10 * 86_400_000 + 180 * 60_000), // 3 hrs after start
   },
@@ -855,7 +855,7 @@ New members are encouraged to participate and learn.`,
     },
     category: { connect: { value: "workshop" } },
     location: "Engineering Lab",
-    capacity: 0,
+    capacity: 1,
     startDateTime: new Date(Date.now() - 30 * 60_000), // 30 mins ago
     endDateTime: new Date(Date.now() + 150 * 60_000), // 2 hrs 30 mins from now
   },
@@ -955,7 +955,7 @@ No schedule, no stress — just vibes.`,
     },
     category: { connect: { value: "social" } },
     location: "Student Lounge",
-    capacity: 0,
+    capacity: 2,
     startDateTime: new Date(Date.now() - 15 * 60_000), // 15 mins ago
     endDateTime: new Date(Date.now() + 135 * 60_000), // 2 hrs 15 mins from now
   },
@@ -1067,7 +1067,7 @@ Feedback and discussion are encouraged throughout.`,
     },
     category: { connect: { value: "competition" } },
     location: "Meeting Room 2",
-    capacity: 0,
+    capacity: 3,
     startDateTime: new Date(Date.now() - 10 * 60_000), // 10 mins ago
     endDateTime: new Date(Date.now() + 80 * 60_000), // 1 hr 20 mins from now
   },
@@ -1184,7 +1184,7 @@ Questions are welcome at any point.`,
     },
     category: { connect: { value: "school-visit" } },
     location: "Main Entrance",
-    capacity: 0,
+    capacity: 4,
     startDateTime: new Date(Date.now() - 30 * 60_000), // 30 mins ago
     endDateTime: new Date(Date.now() + 60 * 60_000), // 1 hr from now
   },
@@ -1419,7 +1419,7 @@ Bring your resume for hands-on feedback.`,
     },
     category: { connect: { value: "academic-support" } },
     location: "Career Center",
-    capacity: 0,
+    capacity: 2,
     startDateTime: new Date(Date.now() + 17 * 86_400_000), // 17 days from now
     endDateTime: new Date(Date.now() + 17 * 86_400_000 + 120 * 60_000), // 2 hrs from start
   },
@@ -1519,7 +1519,7 @@ Beginners are especially welcome.`,
     },
     category: { connect: { value: "workshop" } },
     location: "Computer Lab A",
-    capacity: 0,
+    capacity: 3,
     startDateTime: new Date(Date.now() + 20 * 86_400_000), // 20 days from now
     endDateTime: new Date(Date.now() + 20 * 86_400_000 + 180 * 60_000), // 3 hrs from start
   },
@@ -1636,7 +1636,7 @@ Prizes awarded to top teams.`,
     },
     category: { connect: { value: "social" } },
     location: "Cafeteria",
-    capacity: 0,
+    capacity: 4,
     startDateTime: new Date(Date.now() + 22 * 86_400_000), // 22 days from now
     endDateTime: new Date(Date.now() + 22 * 86_400_000 + 120 * 60_000), // 2 hrs from start
   },
@@ -1736,7 +1736,7 @@ Designed for a range of experience levels.`,
     },
     category: { connect: { value: "competition" } },
     location: "Science Building Room 310",
-    capacity: 0,
+    capacity: 5,
     startDateTime: new Date(Date.now() + 27 * 86_400_000), // 27 days from now
     endDateTime: new Date(Date.now() + 27 * 86_400_000 + 300 * 60_000), // 5 hrs from start
   },

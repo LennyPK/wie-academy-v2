@@ -25,8 +25,8 @@ import {
   Calendar,
   CalendarPlus,
   Clock,
+  Edit,
   MapPinIcon,
-  Pencil,
   UserRoundCheck,
   UserRoundPlus,
   UserRoundX,
@@ -58,11 +58,6 @@ export default function EventDetail({
   const isAdmin = userRole === Role.ADMIN
 
   if (!event) return null
-
-  //  const progressPercentage = (registeredCount / event.capacity) * 100
-  // const progressPercentage = (0 / event.capacity) * 100
-  // const isAlmostFull = progressPercentage >= 80
-  // const isFull = progressPercentage >= 100
 
   const isPast = new Date() > event.endDateTime
   const isLimitedCapacity = event.capacity !== 0
@@ -120,11 +115,8 @@ export default function EventDetail({
         ) : event.capacity === 0 ? (
           <Users className="h-5 w-5" />
         ) : (
-          // <div className="text-sm leading-none font-bold">{registered}</div>
           <div className="leading-none font-bold">{registrationPercentage.toFixed(0)}%</div>
         )}
-        {/* <div className="text-sm leading-none font-bold">{registered}</div>
-        <div className="text-[10px] leading-none text-muted-foreground">of {capacity}</div> */}
       </div>
     </div>
   )
@@ -145,17 +137,17 @@ export default function EventDetail({
             >
               {isRegistered ? (
                 <>
-                  <UserRoundCheck className="h-5 w-5 group-hover:hidden group-focus-visible:hidden" />
+                  <UserRoundCheck className="group-hover:hidden group-focus-visible:hidden" />
                   <span className="group-hover:hidden group-focus-visible:hidden">Registered</span>
 
-                  <UserRoundX className="hidden h-5 w-5 group-hover:inline group-focus-visible:inline" />
+                  <UserRoundX className="hidden group-hover:inline group-focus-visible:inline" />
                   <span className="hidden group-hover:inline group-focus-visible:inline">
                     Unregister
                   </span>
                 </>
               ) : (
                 <>
-                  <UserRoundPlus className="h-5 w-5" />
+                  <UserRoundPlus />
                   <span>Register</span>
                 </>
               )}
@@ -167,7 +159,7 @@ export default function EventDetail({
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" className={cn("flex flex-1 cursor-pointer items-center gap-2")}>
-              <CalendarPlus className="h-5 w-5" />
+              <CalendarPlus />
               <span className="hidden sm:inline">Add to Calendar</span>
               <span className="sm:hidden">Add</span>
             </Button>
@@ -176,97 +168,51 @@ export default function EventDetail({
         </Tooltip>
 
         {isAdmin && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEdit}
-                className="flex-1 cursor-pointer gap-2"
-              >
-                <Pencil className="h-5 w-5" />
-                <span className="hidden sm:inline">Edit Event</span>
-                <span className="sm:hidden">Edit</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit Event</TooltipContent>
-          </Tooltip>
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  onClick={handleEdit}
+                  className="flex-1 cursor-pointer gap-2"
+                >
+                  <Edit />
+                  <span className="hidden sm:inline">Edit Event</span>
+                  <span className="sm:hidden">Edit</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit Event</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  // onClick={handlePrint}
+                  className="flex-1 cursor-pointer gap-2"
+                >
+                  <Users />
+                  <span className="sm:hidden">Attendees</span>
+                  <span className="hidden sm:inline">View Attendees</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>View Attendees</TooltipContent>
+            </Tooltip>
+          </>
         )}
-
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" onClick={handleShare} className="gap-1.5">
-              <Share2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Share</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Share event</TooltipContent>
-        </Tooltip> */}
-
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" onClick={handleCopyLink} className="gap-1.5">
-              {copied ? (
-                <Check className="h-4 w-4 text-green-600" />
-              ) : (
-                <Link2 className="h-4 w-4" />
-              )}
-              <span className="hidden sm:inline">{copied ? "Copied!" : "Copy Link"}</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Copy link to clipboard</TooltipContent>
-        </Tooltip> */}
-
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost" size="sm" onClick={handlePrint} className="gap-1.5">
-              <Printer className="h-4 w-4" />
-              <span className="hidden sm:inline">Print</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Print event</TooltipContent>
-        </Tooltip> */}
       </div>
     </TooltipProvider>
   )
 
   const registrationCount = (
     <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
-      {/* <CapacityGauge registered={0} capacity={event.capacity} /> */}
-      {/* <CapacityGauge registered={10} capacity={10} /> */}
       {capacityGuage}
-      {/* {isPast ? `${event._count.participations} attendees` : event._count.registrations}{" "}
-      {event.capacity !== 0 && `/ ${event.capacity}`} registrations */}
       {isPast
         ? `${event._count.participations} attendees`
         : event.capacity === 0
           ? `${event._count.registrations} registrations`
           : `${event._count.registrations} / ${event.capacity} registrations`}
     </div>
-    // <>
-    //   <div className="mb-2 flex items-center justify-between">
-    //     <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
-    //       <Users className="h-4 w-4" />
-    //       <span>
-    //         {event.capacity === 0
-    //           ? `${/* event.registeredCount*/ 10} registrations`
-    //           : `${/* event.registeredCount*/ 10} / ${event.capacity} registrations`}
-    //       </span>
-    //     </div>
-    //     {event.capacity !== 0 && (
-    //       <span className="text-xs text-muted-foreground">{Math.round(progressPercentage)}%</span>
-    //     )}
-    //   </div>
-
-    //   <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-    //     <div
-    //       className={`h-full rounded-full transition-all duration-300 ${
-    //         isFull ? "bg-primary" : isAlmostFull ? "bg-primary/50" : "bg-secondary"
-    //       }`}
-    //       style={{ width: `${Math.min(progressPercentage, 100)}%` }}
-    //     />
-    //   </div>
-    // </>
   )
 
   const headerTitle = <span className="text-2xl font-bold">{event.title}</span>
@@ -315,10 +261,8 @@ export default function EventDetail({
         <CategoryBadge category={event.category} className="w-fit" />
       </div>
       <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
-      {/* <div className="mt-2 sm:hidden">{headerDescription}</div> */}
 
       <DialogTitle className="hidden sm:block">{headerTitle}</DialogTitle>
-      {/* <div className="mt-2 hidden sm:block">{headerDescription}</div> */}
     </div>
   )
 

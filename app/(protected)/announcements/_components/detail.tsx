@@ -61,7 +61,6 @@ export default function AnnouncementDetail({
             {/* FIXME: Button doesn't update when read status changes */}
             <Button
               variant={isRead ? "ghost" : "default"}
-              size="icon"
               onClick={handleToggleRead}
               className={cn("group flex-1 cursor-pointer gap-2")}
             >
@@ -89,12 +88,7 @@ export default function AnnouncementDetail({
         {isAdmin && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEdit}
-                className="flex-1 cursor-pointer gap-2"
-              >
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
                 <Edit />
                 <span>Edit Announcement</span>
               </Button>
