@@ -1,6 +1,5 @@
 "use client"
 
-import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { registerForEvent } from "../actions"
@@ -73,7 +72,8 @@ export default function EventList({
 
   return (
     <div
-      className={cn("space-y-6", events.length && "grid-cols-2 sm:grid")}
+      // className={cn("space-y-6", events.length && "grid-cols-2 sm:grid")}
+      className="flex flex-col gap-6 sm:grid sm:grid-cols-2"
       role="list"
       aria-label="events"
     >

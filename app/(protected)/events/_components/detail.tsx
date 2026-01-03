@@ -19,13 +19,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Role } from "@/lib/prisma/enums"
+import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import {
   Calendar,
+  CalendarPlus,
   Clock,
   MapPinIcon,
   Pencil,
   UserRoundCheck,
+  UserRoundPlus,
   UserRoundX,
   Users,
 } from "lucide-react"
@@ -37,14 +40,22 @@ interface EventDetailProps {
   setOpen: (open: boolean) => void
   userRole: string
   onEdit: (eventId: string) => Promise<void>
+  onRegister: () => Promise<void>
+  isRegistered: boolean
 }
 
-export default function EventDetail({ event, open, setOpen, userRole, onEdit }: EventDetailProps) {
+export default function EventDetail({
+  event,
+  open,
+  setOpen,
+  userRole,
+  onEdit,
+  onRegister,
+  isRegistered,
+}: EventDetailProps) {
   const isMobile = useIsMobile()
 
   const isAdmin = userRole === Role.ADMIN
-
-  const isRegistered = false
 
   if (!event) return null
 
@@ -53,19 +64,30 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
   // const isAlmostFull = progressPercentage >= 80
   // const isFull = progressPercentage >= 100
 
+  const isPast = new Date() > event.endDateTime
+  const isLimitedCapacity = event.capacity !== 0
+
+  const handleRegister = async () => {
+    onRegister()
+  }
+
   const handleEdit = async () => {
     onEdit(event.id)
   }
 
-  const percentage = Math.min((0 / event.capacity) * 100, 100)
+  const registrationPercentage = Math.min((event._count.registrations / event.capacity) * 100, 100)
+  const isAlmostFull = registrationPercentage >= 80
+  const isFull = registrationPercentage >= 100
   const radius = 22
   const circumference = 2 * Math.PI * radius
-  const strokeDashoffset = circumference - (percentage / 100) * circumference
-  const getRadialColor = () => {
-    if (percentage >= 100) return "#ef4444" // red
-    if (percentage >= 80) return "#f97316" // orange
-    return "#8b5cf6" // purple accent
-  }
+  const strokeDashoffset = circumference - (registrationPercentage / 100) * circumference
+  const progressColor = !isLimitedCapacity
+    ? "text-primary"
+    : isFull
+      ? "text-destructive"
+      : isAlmostFull
+        ? "text-amber-500"
+        : "text-primary"
 
   const capacityGuage = (
     <div className="relative inline-flex items-center justify-center">
@@ -75,7 +97,7 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
           cy="32"
           r={radius}
           stroke="currentColor"
-          strokeWidth="4"
+          strokeWidth="5"
           fill="none"
           className="text-muted/20"
         />
@@ -83,21 +105,23 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
           cx="32"
           cy="32"
           r={radius}
-          stroke={getRadialColor()}
-          strokeWidth="4"
+          stroke="currentColor"
+          strokeWidth="5"
           fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          className="transition-all duration-500"
+          className={cn("transition-all duration-500", progressColor)}
         />
       </svg>
       <div className="absolute flex flex-col items-center text-sm">
-        {event.capacity === 0 ? (
+        {isPast ? (
+          <Users className="h-5 w-5" />
+        ) : event.capacity === 0 ? (
           <Users className="h-5 w-5" />
         ) : (
           // <div className="text-sm leading-none font-bold">{registered}</div>
-          <div className="leading-none font-bold">{percentage.toFixed(0)}%</div>
+          <div className="leading-none font-bold">{registrationPercentage.toFixed(0)}%</div>
         )}
         {/* <div className="text-sm leading-none font-bold">{registered}</div>
         <div className="text-[10px] leading-none text-muted-foreground">of {capacity}</div> */}
@@ -110,22 +134,45 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
       <div className="mt-4 flex items-center gap-1 border-y border-border py-3">
         <Tooltip>
           <TooltipTrigger asChild>
-            {/* FIXME: Button doesn't update when read status changes */}
+            {/* FIXME: Button doesn't update when registration status changes */}
             <Button
               variant={isRegistered ? "ghost" : "default"}
-              size="icon"
-              // onClick={handleToggleRead}
-              className="flex-1 cursor-pointer gap-1.5"
+              onClick={handleRegister}
+              className={cn(
+                "group flex flex-1 cursor-pointer items-center gap-2",
+                isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
+              )}
             >
               {isRegistered ? (
-                <UserRoundX className="h-4 w-4" />
+                <>
+                  <UserRoundCheck className="h-5 w-5 group-hover:hidden group-focus-visible:hidden" />
+                  <span className="group-hover:hidden group-focus-visible:hidden">Registered</span>
+
+                  <UserRoundX className="hidden h-5 w-5 group-hover:inline group-focus-visible:inline" />
+                  <span className="hidden group-hover:inline group-focus-visible:inline">
+                    Unregister
+                  </span>
+                </>
               ) : (
-                <UserRoundCheck className="h-4 w-4" />
+                <>
+                  <UserRoundPlus className="h-5 w-5" />
+                  <span>Register</span>
+                </>
               )}
-              <span className="sm:inline">{isRegistered ? "Unregister" : "Register"}</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>{isRegistered ? "Unregister" : "Register"}</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" className={cn("flex flex-1 cursor-pointer items-center gap-2")}>
+              <CalendarPlus className="h-5 w-5" />
+              <span className="hidden sm:inline">Add to Calendar</span>
+              <span className="sm:hidden">Add</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Add to Calendar</TooltipContent>
         </Tooltip>
 
         {isAdmin && (
@@ -135,10 +182,11 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
                 variant="ghost"
                 size="icon"
                 onClick={handleEdit}
-                className="flex-1 cursor-pointer gap-1.5"
+                className="flex-1 cursor-pointer gap-2"
               >
-                <Pencil className={"h-4 w-4 fill-current"} />
-                <span className="sm:inline">Edit Event</span>
+                <Pencil className="h-5 w-5" />
+                <span className="hidden sm:inline">Edit Event</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Edit Event</TooltipContent>
@@ -183,15 +231,21 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
   )
 
   const registrationCount = (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
       {/* <CapacityGauge registered={0} capacity={event.capacity} /> */}
       {/* <CapacityGauge registered={10} capacity={10} /> */}
       {capacityGuage}
-      {0} {event.capacity !== 0 && `/ ${event.capacity}`} registrations
+      {/* {isPast ? `${event._count.participations} attendees` : event._count.registrations}{" "}
+      {event.capacity !== 0 && `/ ${event.capacity}`} registrations */}
+      {isPast
+        ? `${event._count.participations} attendees`
+        : event.capacity === 0
+          ? `${event._count.registrations} registrations`
+          : `${event._count.registrations} / ${event.capacity} registrations`}
     </div>
     // <>
     //   <div className="mb-2 flex items-center justify-between">
-    //     <div className="flex items-center gap-2 text-sm text-muted-foreground md:text-base">
+    //     <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
     //       <Users className="h-4 w-4" />
     //       <span>
     //         {event.capacity === 0
@@ -218,37 +272,37 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
   const headerTitle = <span className="text-2xl font-bold">{event.title}</span>
 
   const details = (
-    <div className="mx-5 mt-5 mb-10 flex flex-col gap-4 text-sm text-muted-foreground md:text-base">
-      <div className="grid grid-cols-2">
+    <div className="mx-5 mt-5 mb-10 flex flex-col gap-4 text-sm text-muted-foreground sm:text-base">
+      <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-0">
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-bold md:text-sm">Start</span>
+          <span className="text-xs font-bold sm:text-sm">Start</span>
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-5 w-5" />
             <span>{format(event.startDateTime, "EEEE, PP")}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
+            <Clock className="h-5 w-5" />
             <span>{format(event.startDateTime, "p")}</span>
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-bold md:text-sm">End</span>
+          <span className="text-xs font-bold sm:text-sm">End</span>
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-5 w-5" />
             <span>{format(event.endDateTime, "EEEE, PP")}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
+            <Clock className="h-5 w-5" />
             <span>{format(event.endDateTime, "p")}</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-bold md:text-sm">Location</span>
+        <span className="text-xs font-bold sm:text-sm">Location</span>
         <div className="flex items-center gap-2">
-          <MapPinIcon className="h-4 w-4" />
+          <MapPinIcon className="h-5 w-5" />
           <span>{event.location}</span>
         </div>
       </div>
@@ -257,13 +311,13 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
 
   const header = (
     <div>
-      <div className="mb-4 flex justify-center md:justify-start">
+      <div className="mb-4 flex justify-center sm:justify-start">
         <CategoryBadge category={event.category} className="w-fit" />
       </div>
-      <DrawerTitle className="md:hidden">{headerTitle}</DrawerTitle>
-      {/* <div className="mt-2 md:hidden">{headerDescription}</div> */}
+      <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
+      {/* <div className="mt-2 sm:hidden">{headerDescription}</div> */}
 
-      <DialogTitle className="hidden md:block">{headerTitle}</DialogTitle>
+      <DialogTitle className="hidden sm:block">{headerTitle}</DialogTitle>
       {/* <div className="mt-2 hidden sm:block">{headerDescription}</div> */}
     </div>
   )
@@ -291,10 +345,10 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerOverlay className="backdrop-blur-xs" />
-        <DrawerContent className="bg-card">
+        <DrawerContent className="bg-card px-5">
           <DrawerHeader className="text-center">{header}</DrawerHeader>
-          <div className="px-5">
-            {actions}
+          {actions}
+          <div className="overflow-y-auto">
             {registrationCount}
             {content}
           </div>
@@ -308,12 +362,14 @@ export default function EventDetail({ event, open, setOpen, userRole, onEdit }: 
       <DialogOverlay className="backdrop-blur-xs" />
       <DialogContent
         aria-describedby={event.id}
-        className="no-scrollbar flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
+        className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
       >
         <DialogHeader>{header}</DialogHeader>
         {actions}
-        {registrationCount}
-        {content}
+        <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+          {registrationCount}
+          {content}
+        </div>
       </DialogContent>
     </Dialog>
   )

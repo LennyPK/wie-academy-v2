@@ -1,18 +1,30 @@
 "use client"
 
 import CategoryBadge from "@/components/category-badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Separator } from "@/components/ui/separator"
 import { Role } from "@/lib/prisma/enums"
 import { cn, highlightText } from "@/lib/utils"
 import { format } from "date-fns"
-import { Calendar, Clock, Edit, MapPinIcon, UserRoundCheck, Users } from "lucide-react"
+import {
+  Calendar,
+  CalendarPlus,
+  Clock,
+  Edit,
+  MapPinIcon,
+  UserRoundCheck,
+  UserRoundPlus,
+  UserRoundX,
+  Users,
+} from "lucide-react"
 import { Event } from "../types"
 
 interface EventCardProps {
@@ -21,6 +33,9 @@ interface EventCardProps {
   searchQuery?: string
   onClick: () => Promise<void>
   onEdit: (eventId: string) => Promise<void>
+  onRegister: () => Promise<void>
+  isRegistered: boolean
+  isAttended: boolean
 }
 
 export default function EventCard({
@@ -29,12 +44,27 @@ export default function EventCard({
   searchQuery,
   onClick,
   onEdit,
+  onRegister,
+  isRegistered,
+  isAttended,
 }: EventCardProps) {
   const isPast = new Date() > event.endDateTime
-  //  const progressPercentage = (registeredCount / event.capacity) * 100
-  const progressPercentage = (0 / event.capacity) * 100
-  const isAlmostFull = progressPercentage >= 80
-  const isFull = progressPercentage >= 100
+  const isLimitedCapacity = event.capacity !== 0
+
+  const registrationPercentage = Math.min((event._count.registrations / event.capacity) * 100, 100)
+  const isAlmostFull = registrationPercentage >= 80
+  const isFull = registrationPercentage >= 100
+
+  const progressColor = !isLimitedCapacity
+    ? "bg-primary"
+    : isFull
+      ? "bg-destructive"
+      : isAlmostFull
+        ? "bg-amber-500"
+        : "bg-primary"
+
+  const contextRegistrationVisible = !isPast
+  const contextAdminVisible = userRole === Role.ADMIN
 
   const handleEventClick = () => {
     onClick()
@@ -45,17 +75,30 @@ export default function EventCard({
     onEdit(event.id)
   }
 
+  const handleRegister = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onRegister()
+  }
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <Card key={event.id} onClick={handleEventClick}>
+        <Card
+          key={event.id}
+          className={cn(
+            "border-0 transition-all duration-300",
+            "focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:outline-none",
+            isPast ? "bg-muted" : "bg-card"
+          )}
+          onClick={handleEventClick}
+        >
           <CardHeader>
             <CategoryBadge category={event.category} className="w-fit" />
 
             <CardTitle
               id={event.id}
               className={cn(
-                "line-clamp-2 text-lg font-semibold md:line-clamp-1 md:text-xl",
+                "line-clamp-2 text-lg font-semibold sm:line-clamp-1 sm:text-xl",
                 isPast ? "text-muted-foreground" : "text-primary"
               )}
             >
@@ -63,7 +106,7 @@ export default function EventCard({
             </CardTitle>
             <CardDescription
               className={cn(
-                "line-clamp-2 text-sm md:text-base",
+                "line-clamp-2 text-sm sm:text-base",
                 isPast ? "text-muted-foreground" : "text-foreground"
               )}
             >
@@ -73,64 +116,129 @@ export default function EventCard({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col gap-2 overflow-hidden">
-            <div className="grid grid-cols-2 text-sm text-muted-foreground md:text-base">
+            <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:grid sm:grid-cols-2 sm:gap-0 sm:text-base">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
+                <Calendar className="h-5 w-5" />
                 <span>{format(event.startDateTime, "EEEE, PP")}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <Clock className="h-5 w-5" />
                 <span>{format(event.startDateTime, "p")}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPinIcon className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+              <MapPinIcon className="h-5 w-5" />
               <span>{event.location}</span>
             </div>
 
             <Separator className="my-2" />
 
-            <div className="mb-2 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground md:text-base">
-                <Users className="h-4 w-4" />
-                <span>
-                  {event.capacity === 0
-                    ? `${/* event.registeredCount*/ 10} registrations`
-                    : `${/* event.registeredCount*/ 10} / ${event.capacity} registrations`}
-                </span>
+            {isPast ? (
+              <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+                <Users className="h-5 w-5" />
+                <span>{event._count.participations} attendees</span>
               </div>
-              {event.capacity !== 0 && (
-                <span className="text-xs text-muted-foreground">
-                  {Math.round(progressPercentage)}%
-                </span>
-              )}
-            </div>
+            ) : (
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+                  <Users className="h-5 w-5" />
+                  <span>
+                    {event.capacity === 0
+                      ? `${event._count.registrations} registrations`
+                      : `${event._count.registrations} / ${event.capacity} registrations`}
+                  </span>
+                </div>
+                {event.capacity !== 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {Math.round(registrationPercentage)}%
+                  </span>
+                )}
+              </div>
+            )}
 
-            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className={`h-full rounded-full transition-all duration-300 ${
-                  isFull ? "bg-primary" : isAlmostFull ? "bg-primary/50" : "bg-secondary"
-                }`}
-                style={{ width: `${Math.min(progressPercentage, 100)}%` }}
-              />
-            </div>
+            {isPast ? (
+              <Button disabled variant="outline">
+                {isAttended ? "Attended" : "Event Ended"}
+              </Button>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <div className={cn("h-2 overflow-hidden rounded-full bg-muted")}>
+                  <div
+                    className={cn("h-full rounded-full transition-all duration-300", progressColor)}
+                    style={{ width: `${Math.min(registrationPercentage, 100)}%` }}
+                  />
+                </div>
+
+                <Button
+                  variant={isRegistered ? "ghost" : "default"}
+                  className={cn(
+                    "group flex flex-1 cursor-pointer items-center gap-2",
+                    isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
+                  )}
+                  onClick={handleRegister}
+                >
+                  {isRegistered ? (
+                    <>
+                      <UserRoundCheck className="h-5 w-5 group-hover:hidden group-focus-visible:hidden" />
+                      <span className="group-hover:hidden group-focus-visible:hidden">
+                        Registered
+                      </span>
+
+                      <UserRoundX className="hidden h-5 w-5 group-hover:inline group-focus-visible:inline" />
+                      <span className="hidden group-hover:inline group-focus-visible:inline">
+                        Unregister
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <UserRoundPlus className="h-5 w-5" />
+                      <span>Register</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </ContextMenuTrigger>
       <ContextMenuContent>
         {/* Register option */}
-        <ContextMenuItem>
-          <UserRoundCheck className="h-4 w-4" />
-          <span>Register</span>
-        </ContextMenuItem>
+        {contextRegistrationVisible &&
+          (isRegistered ? (
+            <>
+              <ContextMenuItem onClick={handleRegister}>
+                <UserRoundX className="h-5 w-5" />
+                <span>Unregister</span>
+              </ContextMenuItem>
+
+              <ContextMenuItem>
+                <CalendarPlus className="h-5 w-5" />
+                <span>Add to Calendar</span>
+              </ContextMenuItem>
+            </>
+          ) : (
+            <ContextMenuItem onClick={handleRegister}>
+              <UserRoundPlus className="h-5 w-5" />
+              <span>Register</span>
+            </ContextMenuItem>
+          ))}
+
+        {contextRegistrationVisible && contextAdminVisible && <ContextMenuSeparator />}
 
         {/* Edit option */}
-        {userRole !== Role.MEMBER && (
-          <ContextMenuItem onClick={handleEditClick}>
-            <Edit className="h-4 w-4" />
-            <span>Edit</span>
-          </ContextMenuItem>
+        {contextAdminVisible && (
+          <>
+            <ContextMenuItem onClick={handleEditClick}>
+              <Edit className="h-5 w-5" />
+              <span>Edit</span>
+            </ContextMenuItem>
+
+            <ContextMenuItem>
+              <Users className="h-5 w-5" />
+              <span>View Attendees</span>
+            </ContextMenuItem>
+          </>
         )}
       </ContextMenuContent>
     </ContextMenu>

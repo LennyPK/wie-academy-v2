@@ -42,9 +42,6 @@ export default async function EventPage({ searchParams }: EventPageProps) {
     select: {
       id: true,
       role: true,
-      school: { select: { id: true, label: true } },
-      region: { select: { id: true, label: true } },
-      yearLevel: { select: { id: true, label: true } },
     },
   })
 
@@ -58,10 +55,12 @@ export default async function EventPage({ searchParams }: EventPageProps) {
   const query = params?.query?.trim() || ""
   const status = params?.status || "upcoming"
   const category = params?.category || "all"
-  const sorting = params?.sorting || "date_desc"
+
+  const defaultSorting = status === "completed" ? "date_desc" : "date_asc"
+  const sorting = params?.sorting || defaultSorting
 
   const currentPage = Number(params?.page) || 1
-  const pageSize = 5
+  const pageSize = 6
 
   const where: Prisma.EventWhereInput = {}
 
@@ -111,15 +110,21 @@ export default async function EventPage({ searchParams }: EventPageProps) {
     prisma.event.findMany({
       where,
       include: {
-        category: { select: { id: true, value: true, label: true } },
-        // author: { select: { name: true, image: true } },
-        // interactions: {
-        //   where: { userId: user.id },
-        //   select: { isRead: true },
-        // },
-        // targetRegions: { select: { regionId: true } },
-        // targetSchools: { select: { schoolId: true } },
-        // targetYearLevels: { select: { yearLevelId: true } },
+        category: { select: { id: true, label: true } },
+        registrations: {
+          where: { userId: user.id },
+          select: { userId: true },
+        },
+        participations: {
+          where: { userId: user.id },
+          select: { userId: true },
+        },
+        _count: {
+          select: {
+            registrations: true,
+            participations: true,
+          },
+        },
       },
       orderBy: orderBy,
       take: pageSize,
