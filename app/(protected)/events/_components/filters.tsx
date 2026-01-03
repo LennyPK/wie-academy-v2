@@ -38,6 +38,7 @@ export default function EventFilters({
   const searchParams = useSearchParams()
 
   const [query, setQuery] = useState(searchQuery)
+  const defaultSorting = status === "completed" ? "date_desc" : "date_asc"
 
   const updateQuery = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -64,6 +65,7 @@ export default function EventFilters({
         params.delete("status")
       }
 
+      params.delete("sorting")
       // Reset pagination when filters change
       params.delete("page")
 
@@ -94,10 +96,10 @@ export default function EventFilters({
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (value !== "date_desc") {
-        params.set("sorting", value)
-      } else {
+      if (value === defaultSorting) {
         params.delete("sorting")
+      } else {
+        params.set("sorting", value)
       }
 
       // Reset pagination when filters change
@@ -105,7 +107,7 @@ export default function EventFilters({
 
       router.replace(`${pathName}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [defaultSorting, searchParams, router, pathName]
   )
 
   const clearFilters = useCallback(() => {
@@ -170,8 +172,17 @@ export default function EventFilters({
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="date_desc">Newest first</SelectItem>
-              <SelectItem value="date_asc">Oldest first</SelectItem>
+              {status === "completed" ? (
+                <>
+                  <SelectItem value="date_desc">Recent first</SelectItem>
+                  <SelectItem value="date_asc">Oldest first</SelectItem>
+                </>
+              ) : (
+                <>
+                  <SelectItem value="date_asc">Recent first</SelectItem>
+                  <SelectItem value="date_desc">Oldest first</SelectItem>
+                </>
+              )}
             </SelectContent>
           </Select>
 
