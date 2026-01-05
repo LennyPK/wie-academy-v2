@@ -22,11 +22,15 @@ import { Role } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import {
+  BadgeCheck,
   Calendar,
+  CalendarOff,
   CalendarPlus,
   Clock,
   Edit,
   MapPinIcon,
+  QrCode,
+  UserLock,
   UserRoundCheck,
   UserRoundPlus,
   UserRoundX,
@@ -42,6 +46,7 @@ interface EventDetailProps {
   onEdit: (eventId: string) => Promise<void>
   onRegister: () => Promise<void>
   isRegistered: boolean
+  isAttended: boolean
 }
 
 export default function EventDetail({
@@ -52,15 +57,19 @@ export default function EventDetail({
   onEdit,
   onRegister,
   isRegistered,
+  isAttended,
 }: EventDetailProps) {
   const isMobile = useIsMobile()
-
-  const isAdmin = userRole === Role.ADMIN
 
   if (!event) return null
 
   const isPast = new Date() > event.endDateTime
+  const isAdmin = userRole === Role.ADMIN
   const isLimitedCapacity = event.capacity !== 0
+  const isRegistrationDisabled =
+    event._count.registrations >= event.capacity &&
+    event.capacity !== 0 &&
+    event.registrations.length === 0
 
   const handleRegister = async () => {
     onRegister()
@@ -121,9 +130,75 @@ export default function EventDetail({
     </div>
   )
 
-  const actions = (
-    <TooltipProvider>
-      <div className="mt-4 flex items-center gap-1 border-y border-border py-3">
+  const actions = (() => {
+    if (isAdmin) {
+      return (
+        <>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
+                <Edit />
+                <span className="hidden sm:inline">Edit Event</span>
+                <span className="sm:hidden">Edit</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Edit Event</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
+                <Users />
+                <span className="sm:hidden">Attendees</span>
+                <span className="hidden sm:inline">View Attendees</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>View Attendees</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
+                <QrCode />
+                <span className="sm:hidden">QR Code</span>
+                <span className="hidden sm:inline">View QR Code</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>View QR Code</TooltipContent>
+          </Tooltip>
+        </>
+      )
+    }
+
+    if (isPast) {
+      return (
+        <Button className="flex-1" variant="ghost" disabled>
+          {isAttended ? (
+            <>
+              <BadgeCheck />
+              <span>Attended</span>
+            </>
+          ) : (
+            <>
+              <CalendarOff />
+              <span>Event Ended</span>
+            </>
+          )}
+        </Button>
+      )
+    }
+
+    if (isRegistrationDisabled) {
+      return (
+        <Button variant="ghost" disabled className="flex flex-1 cursor-pointer items-center gap-2">
+          <UserLock />
+          <span>Event Full</span>
+        </Button>
+      )
+    }
+
+    return (
+      <>
         <Tooltip>
           <TooltipTrigger asChild>
             {/* FIXME: Button doesn't update when registration status changes */}
@@ -158,7 +233,11 @@ export default function EventDetail({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" className={cn("flex flex-1 cursor-pointer items-center gap-2")}>
+            <Button
+              variant="ghost"
+              hidden={!isRegistered}
+              className={cn("flex flex-1 cursor-pointer items-center gap-2")}
+            >
               <CalendarPlus />
               <span className="hidden sm:inline">Add to Calendar</span>
               <span className="sm:hidden">Add</span>
@@ -166,46 +245,12 @@ export default function EventDetail({
           </TooltipTrigger>
           <TooltipContent>Add to Calendar</TooltipContent>
         </Tooltip>
-
-        {isAdmin && (
-          <>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  onClick={handleEdit}
-                  className="flex-1 cursor-pointer gap-2"
-                >
-                  <Edit />
-                  <span className="hidden sm:inline">Edit Event</span>
-                  <span className="sm:hidden">Edit</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Edit Event</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  // onClick={handlePrint}
-                  className="flex-1 cursor-pointer gap-2"
-                >
-                  <Users />
-                  <span className="sm:hidden">Attendees</span>
-                  <span className="hidden sm:inline">View Attendees</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>View Attendees</TooltipContent>
-            </Tooltip>
-          </>
-        )}
-      </div>
-    </TooltipProvider>
-  )
+      </>
+    )
+  })()
 
   const registrationCount = (
-    <div className="flex items-center justify-center gap-2 text-sm sm:text-base">
+    <div className="my-4 flex items-center justify-center gap-2 text-sm sm:my-0 sm:mb-4 sm:text-base">
       {capacityGuage}
       {isPast
         ? `${event._count.participations} attendees`
@@ -291,7 +336,9 @@ export default function EventDetail({
         <DrawerOverlay className="backdrop-blur-xs" />
         <DrawerContent className="bg-card px-5">
           <DrawerHeader className="text-center">{header}</DrawerHeader>
-          {actions}
+          <TooltipProvider>
+            <div className="flex items-center gap-1 border-y border-border py-3">{actions}</div>
+          </TooltipProvider>
           <div className="overflow-y-auto">
             {registrationCount}
             {content}
@@ -309,7 +356,10 @@ export default function EventDetail({
         className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
       >
         <DialogHeader>{header}</DialogHeader>
-        {actions}
+
+        <TooltipProvider>
+          <div className="mt-4 flex items-center gap-1 border-y border-border py-3">{actions}</div>
+        </TooltipProvider>
         <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
           {registrationCount}
           {content}

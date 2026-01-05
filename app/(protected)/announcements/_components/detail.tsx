@@ -90,7 +90,8 @@ export default function AnnouncementDetail({
             <TooltipTrigger asChild>
               <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
                 <Edit />
-                <span>Edit Announcement</span>
+                <span className="hidden sm:inline">Edit Announcement</span>
+                <span className="sm:hidden">Edit</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Edit Announcement</TooltipContent>

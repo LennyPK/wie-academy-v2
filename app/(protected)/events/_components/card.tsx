@@ -149,10 +149,22 @@ export default function EventCard({
       )
     }
 
+    if (isRegistrationDisabled) {
+      return (
+        <Button
+          variant="outline"
+          disabled
+          className="flex flex-1 cursor-pointer items-center gap-2"
+        >
+          <UserLock />
+          <span>Event Full</span>
+        </Button>
+      )
+    }
+
     return (
       <Button
-        variant={isRegistrationDisabled ? "outline" : isRegistered ? "ghost" : "default"}
-        disabled={isRegistrationDisabled}
+        variant={isRegistered ? "ghost" : "default"}
         className={cn(
           "group flex flex-1 cursor-pointer items-center gap-2",
           isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
@@ -160,15 +172,6 @@ export default function EventCard({
         onClick={handleRegister}
       >
         {(() => {
-          if (isRegistrationDisabled) {
-            return (
-              <>
-                <UserLock />
-                <span>Event Full</span>
-              </>
-            )
-          }
-
           if (isRegistered) {
             return (
               <>
@@ -232,6 +235,8 @@ export default function EventCard({
           <UserRoundX />
           <span>Unregister</span>
         </ContextMenuItem>
+
+        <ContextMenuSeparator />
 
         <ContextMenuItem>
           <CalendarPlus />

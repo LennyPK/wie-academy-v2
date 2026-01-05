@@ -86,6 +86,7 @@ export default function EventList({
           onEdit={handleEditClick}
           onRegister={() => handleRegisterClick(event.id, event.capacity)}
           isRegistered={event.registrations.length > 0}
+          isAttended={event.participations.length > 0}
         />
       )}
 
