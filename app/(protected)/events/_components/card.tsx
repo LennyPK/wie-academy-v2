@@ -15,11 +15,15 @@ import { Role } from "@/lib/prisma/enums"
 import { cn, highlightText } from "@/lib/utils"
 import { format } from "date-fns"
 import {
+  BadgeCheck,
   Calendar,
+  CalendarOff,
   CalendarPlus,
   Clock,
   Edit,
   MapPinIcon,
+  QrCode,
+  UserLock,
   UserRoundCheck,
   UserRoundPlus,
   UserRoundX,
@@ -49,22 +53,24 @@ export default function EventCard({
   isAttended,
 }: EventCardProps) {
   const isPast = new Date() > event.endDateTime
+  const isAdmin = userRole === Role.ADMIN
   const isLimitedCapacity = event.capacity !== 0
+  const isRegistrationDisabled =
+    event._count.registrations >= event.capacity &&
+    event.capacity !== 0 &&
+    event.registrations.length === 0
 
   const registrationPercentage = Math.min((event._count.registrations / event.capacity) * 100, 100)
-  const isAlmostFull = registrationPercentage >= 80
-  const isFull = registrationPercentage >= 100
+  const isNearCapacity = registrationPercentage >= 80
+  const isAtCapacity = registrationPercentage >= 100
 
   const progressColor = !isLimitedCapacity
     ? "bg-primary"
-    : isFull
+    : isAtCapacity
       ? "bg-destructive"
-      : isAlmostFull
+      : isNearCapacity
         ? "bg-amber-500"
         : "bg-primary"
-
-  const contextRegistrationVisible = !isPast
-  const contextAdminVisible = userRole === Role.ADMIN
 
   const handleEventClick = () => {
     onClick()
@@ -79,6 +85,168 @@ export default function EventCard({
     e.stopPropagation()
     onRegister()
   }
+
+  const userCount = isPast ? (
+    <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+      <Users className="h-5 w-5" />
+      <span>{event._count.participations} attendees</span>
+    </div>
+  ) : (
+    <div className="mb-2 flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+          <Users className="h-5 w-5" />
+          <span>
+            {event.capacity === 0
+              ? `${event._count.registrations} registrations`
+              : `${event._count.registrations} / ${event.capacity} registrations`}
+          </span>
+        </div>
+        {event.capacity !== 0 && (
+          <span className="text-xs text-muted-foreground">
+            {Math.round(registrationPercentage)}%
+          </span>
+        )}
+      </div>
+
+      <div className={cn("h-2 overflow-hidden rounded-full bg-muted")}>
+        <div
+          className={cn("h-full rounded-full transition-all duration-300", progressColor)}
+          style={{ width: `${Math.min(registrationPercentage, 100)}%` }}
+        />
+      </div>
+    </div>
+  )
+
+  const actions = (() => {
+    if (isAdmin) {
+      return (
+        <Button
+          variant={isPast ? "outline" : "default"}
+          className="flex cursor-pointer items-center gap-2"
+        >
+          <QrCode />
+          <span>QR Code</span>
+        </Button>
+      )
+    }
+
+    if (isPast) {
+      return (
+        <Button disabled variant="outline">
+          {isAttended ? (
+            <>
+              <BadgeCheck />
+              <span>Attended</span>
+            </>
+          ) : (
+            <>
+              <CalendarOff />
+              <span>Event Ended</span>
+            </>
+          )}
+        </Button>
+      )
+    }
+
+    return (
+      <Button
+        variant={isRegistrationDisabled ? "outline" : isRegistered ? "ghost" : "default"}
+        disabled={isRegistrationDisabled}
+        className={cn(
+          "group flex flex-1 cursor-pointer items-center gap-2",
+          isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
+        )}
+        onClick={handleRegister}
+      >
+        {(() => {
+          if (isRegistrationDisabled) {
+            return (
+              <>
+                <UserLock />
+                <span>Event Full</span>
+              </>
+            )
+          }
+
+          if (isRegistered) {
+            return (
+              <>
+                <UserRoundCheck className="group-hover:hidden group-focus-visible:hidden" />
+                <span className="group-hover:hidden group-focus-visible:hidden">Registered</span>
+
+                <UserRoundX className="hidden group-hover:inline group-focus-visible:inline" />
+                <span className="hidden group-hover:inline group-focus-visible:inline">
+                  Unregister
+                </span>
+              </>
+            )
+          }
+
+          return (
+            <>
+              <UserRoundPlus />
+              <span>Register</span>
+            </>
+          )
+        })()}
+      </Button>
+    )
+  })()
+
+  const contextMenu = (() => {
+    if (isAdmin) {
+      return (
+        <ContextMenuContent>
+          <ContextMenuItem onClick={handleEditClick}>
+            <Edit />
+            <span>Edit</span>
+          </ContextMenuItem>
+
+          <ContextMenuSeparator />
+
+          <ContextMenuItem>
+            <Users />
+            <span>View Attendees</span>
+          </ContextMenuItem>
+
+          <ContextMenuItem>
+            <QrCode />
+            <span>QR Code</span>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      )
+    }
+
+    if (isPast) {
+      return
+    }
+
+    if (isRegistrationDisabled) {
+      return
+    }
+
+    return isRegistered ? (
+      <ContextMenuContent>
+        <ContextMenuItem onClick={handleRegister}>
+          <UserRoundX />
+          <span>Unregister</span>
+        </ContextMenuItem>
+
+        <ContextMenuItem>
+          <CalendarPlus />
+          <span>Add to Calendar</span>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    ) : (
+      <ContextMenuContent>
+        <ContextMenuItem onClick={handleRegister}>
+          <UserRoundPlus />
+          <span>Register</span>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    )
+  })()
 
   return (
     <ContextMenu>
@@ -134,113 +302,13 @@ export default function EventCard({
 
             <Separator className="my-2" />
 
-            {isPast ? (
-              <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
-                <Users className="h-5 w-5" />
-                <span>{event._count.participations} attendees</span>
-              </div>
-            ) : (
-              <div className="mb-2 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
-                  <Users className="h-5 w-5" />
-                  <span>
-                    {event.capacity === 0
-                      ? `${event._count.registrations} registrations`
-                      : `${event._count.registrations} / ${event.capacity} registrations`}
-                  </span>
-                </div>
-                {event.capacity !== 0 && (
-                  <span className="text-xs text-muted-foreground">
-                    {Math.round(registrationPercentage)}%
-                  </span>
-                )}
-              </div>
-            )}
+            {userCount}
 
-            {isPast ? (
-              <Button disabled variant="outline">
-                {isAttended ? "Attended" : "Event Ended"}
-              </Button>
-            ) : (
-              <div className="flex flex-col gap-4">
-                <div className={cn("h-2 overflow-hidden rounded-full bg-muted")}>
-                  <div
-                    className={cn("h-full rounded-full transition-all duration-300", progressColor)}
-                    style={{ width: `${Math.min(registrationPercentage, 100)}%` }}
-                  />
-                </div>
-
-                <Button
-                  variant={isRegistered ? "ghost" : "default"}
-                  className={cn(
-                    "group flex flex-1 cursor-pointer items-center gap-2",
-                    isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
-                  )}
-                  onClick={handleRegister}
-                >
-                  {isRegistered ? (
-                    <>
-                      <UserRoundCheck className="group-hover:hidden group-focus-visible:hidden" />
-                      <span className="group-hover:hidden group-focus-visible:hidden">
-                        Registered
-                      </span>
-
-                      <UserRoundX className="hidden group-hover:inline group-focus-visible:inline" />
-                      <span className="hidden group-hover:inline group-focus-visible:inline">
-                        Unregister
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <UserRoundPlus />
-                      <span>Register</span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
+            {actions}
           </CardContent>
         </Card>
       </ContextMenuTrigger>
-      <ContextMenuContent>
-        {/* Register option */}
-        {contextRegistrationVisible &&
-          (isRegistered ? (
-            <>
-              <ContextMenuItem onClick={handleRegister}>
-                <UserRoundX />
-                <span>Unregister</span>
-              </ContextMenuItem>
-
-              <ContextMenuItem>
-                <CalendarPlus />
-                <span>Add to Calendar</span>
-              </ContextMenuItem>
-            </>
-          ) : (
-            <ContextMenuItem onClick={handleRegister}>
-              <UserRoundPlus />
-              <span>Register</span>
-            </ContextMenuItem>
-          ))}
-
-        {contextRegistrationVisible && contextAdminVisible && <ContextMenuSeparator />}
-
-        {/* Edit option */}
-        {contextAdminVisible && (
-          <>
-            <ContextMenuItem onClick={handleEditClick}>
-              <Edit />
-              <span>Edit</span>
-            </ContextMenuItem>
-
-            <ContextMenuItem>
-              <Users />
-              <span>View Attendees</span>
-            </ContextMenuItem>
-          </>
-        )}
-      </ContextMenuContent>
+      {contextMenu}
     </ContextMenu>
   )
 }

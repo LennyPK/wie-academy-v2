@@ -91,7 +91,7 @@ export default function ProfileDropdown({
           <button
             onClick={handleSignOut}
             className={cn(
-              "flex items-center space-x-3 rounded-md px-3 py-3 text-sm font-medium transition-colors",
+              "flex w-full items-center space-x-3 rounded-md px-3 py-3 text-sm font-medium transition-colors",
               "text-destructive hover:bg-destructive hover:text-destructive-foreground"
             )}
           >
