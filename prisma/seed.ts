@@ -13,6 +13,7 @@ import {
   regionData,
   yearLevelData,
 } from "./seed/constants"
+import { eventData } from "./seed/events"
 import { getNZSchools } from "./seed/schools"
 
 const adapter = new PrismaPg({
@@ -124,6 +125,15 @@ export async function main() {
       where: { id: announcement.id },
       update: {},
       create: announcement,
+    })
+  }
+
+  console.log("...seeding events...")
+  for (const event of eventData) {
+    await prisma.event.upsert({
+      where: { id: event.id },
+      update: {},
+      create: event,
     })
   }
 

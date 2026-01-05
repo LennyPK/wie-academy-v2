@@ -9,7 +9,7 @@ export type Event = {
   descriptionJson: JsonValue
 
   categoryId: number
-  category: { id: number; value: string; label: string }
+  category: { id: number; label: string }
 
   location: string
   capacity: number
@@ -19,6 +19,11 @@ export type Event = {
 
   createdAt: Date
   updatedAt: Date
+
+  registrations: { userId: string }[]
+  participations: { userId: string }[]
+
+  _count: { registrations: number; participations: number }
 }
 
 export type NewEvent = {

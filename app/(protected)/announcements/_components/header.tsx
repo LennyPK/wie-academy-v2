@@ -27,7 +27,7 @@ export default function AnnouncementHeader({ userRole }: AnnouncementHeaderProps
           </div>
           {userRole === Role.ADMIN && (
             <Button className="gap-2" onClick={handleModalClick}>
-              <Plus className="h-4 w-4" />
+              <Plus />
               <span className="hidden sm:inline">Create Announcement</span>
               <span className="sm:hidden">Create</span>
             </Button>

@@ -64,7 +64,7 @@ export default function AnnouncementList({
     )
   }
 
-  const onToggleRead = async (announcementId: string, userId: string) => {
+  const onToggleRead = async (announcementId: string) => {
     await toggleRead(announcementId, userId)
   }
 
@@ -75,7 +75,7 @@ export default function AnnouncementList({
         setOpen={setDetailOpen}
         announcement={announcement}
         userRole={userRole}
-        onToggleRead={(id) => onToggleRead(id, userId)}
+        onToggleRead={(id) => onToggleRead(id)}
         onEdit={handleEditClick}
       />
 
@@ -89,7 +89,7 @@ export default function AnnouncementList({
             announcement={announcement}
             onClick={handleAnnouncementClick(announcement)}
             onEdit={handleEditClick}
-            onToggleRead={() => onToggleRead(announcement.id, userId)}
+            onToggleRead={() => onToggleRead(announcement.id)}
             searchQuery={searchQuery}
           />
         ))}

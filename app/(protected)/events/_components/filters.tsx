@@ -38,6 +38,7 @@ export default function EventFilters({
   const searchParams = useSearchParams()
 
   const [query, setQuery] = useState(searchQuery)
+  const defaultSorting = status === "completed" ? "date_desc" : "date_asc"
 
   const updateQuery = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -64,6 +65,7 @@ export default function EventFilters({
         params.delete("status")
       }
 
+      params.delete("sorting")
       // Reset pagination when filters change
       params.delete("page")
 
@@ -94,10 +96,10 @@ export default function EventFilters({
     (value: string) => {
       const params = new URLSearchParams(searchParams.toString())
 
-      if (value !== "date_desc") {
-        params.set("sorting", value)
-      } else {
+      if (value === defaultSorting) {
         params.delete("sorting")
+      } else {
+        params.set("sorting", value)
       }
 
       // Reset pagination when filters change
@@ -105,7 +107,7 @@ export default function EventFilters({
 
       router.replace(`${pathName}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [defaultSorting, searchParams, router, pathName]
   )
 
   const clearFilters = useCallback(() => {
@@ -120,11 +122,11 @@ export default function EventFilters({
   }, [router, pathName])
 
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex-1 space-y-2">
         {/* Search Filter */}
-        <div className="relative text-sm md:text-base">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+        <div className="relative text-sm sm:text-base">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground sm:h-5 sm:w-5" />
           <Input
             placeholder="Search events..."
             className="pl-10"
@@ -136,10 +138,10 @@ export default function EventFilters({
           />
         </div>
 
-        <div className="flex flex-col gap-2 md:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {/* Status Filter */}
           <Select value={status} onValueChange={updateStatus}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -151,7 +153,7 @@ export default function EventFilters({
 
           {/* Category Filter */}
           <Select value={category} onValueChange={updateCategory}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -166,17 +168,26 @@ export default function EventFilters({
 
           {/* Sorting Filter */}
           <Select value={sorting} onValueChange={updateSorting}>
-            <SelectTrigger className="w-full md:flex-1">
+            <SelectTrigger className="w-full sm:flex-1">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="date_desc">Newest first</SelectItem>
-              <SelectItem value="date_asc">Oldest first</SelectItem>
+              {status === "completed" ? (
+                <>
+                  <SelectItem value="date_desc">Recent first</SelectItem>
+                  <SelectItem value="date_asc">Oldest first</SelectItem>
+                </>
+              ) : (
+                <>
+                  <SelectItem value="date_asc">Recent first</SelectItem>
+                  <SelectItem value="date_desc">Oldest first</SelectItem>
+                </>
+              )}
             </SelectContent>
           </Select>
 
           {/* Clear Filters */}
-          <Button className="md:ml-5" variant="outline" onClick={clearFilters}>
+          <Button className="sm:ml-5" variant="outline" onClick={clearFilters}>
             Clear Filters
           </Button>
         </div>

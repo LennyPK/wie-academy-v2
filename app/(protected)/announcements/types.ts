@@ -9,7 +9,7 @@ export type Announcement = {
   contentJson: JsonValue
 
   categoryId: number
-  category: { id: number; value: string; label: string }
+  category: { id: number; label: string }
 
   authorId: string | null
   author: { image: string | null; name: string } | null

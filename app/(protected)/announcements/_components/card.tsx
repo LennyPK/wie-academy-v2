@@ -6,6 +6,7 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -55,7 +56,7 @@ export default function AnnouncementCard({
         <Card
           key={announcement.id}
           className={cn(
-            "group relative flex h-[270px] flex-col border-0 backdrop-blur-sm transition-all duration-300 md:h-[250px]",
+            "min-h-[250px] flex-col border-0 transition-all duration-300",
             "focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:outline-none",
             isRead
               ? "bg-muted"
@@ -66,15 +67,12 @@ export default function AnnouncementCard({
           <CardHeader>
             <div className="flex flex-col">
               {/* Category & Date Container */}
-              <div className="flex flex-col gap-4 md:flex-row md:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
                 {/* Category badge */}
                 <CategoryBadge category={announcement.category} className="w-fit" />
 
                 {/* Created/Updated Date */}
-                <div
-                  id={`announcement-${announcement.id}-date`}
-                  className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground"
-                >
+                <div className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
                   {announcement.createdAt && (
                     <div className="flex items-center">
                       <Clock className="mr-1 h-4 w-4" />
@@ -89,17 +87,14 @@ export default function AnnouncementCard({
               </div>
 
               {/* Title and status dot */}
-              <div
-                id={`announcement-${announcement.id}-title`}
-                className="mt-4 flex items-start gap-2 md:items-center"
-              >
+              <div className="mt-4 flex items-start gap-2 sm:items-center">
                 {/* Status Indicator */}
                 {!isRead && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div
-                          className={`mt-[0.6rem] h-2 w-2 shrink-0 cursor-default rounded-full md:mt-0 ${
+                          className={`mt-[0.6rem] h-2 w-2 shrink-0 cursor-default rounded-full sm:mt-0 ${
                             updated ? "bg-secondary" : "bg-primary"
                           }`}
                         />
@@ -115,7 +110,7 @@ export default function AnnouncementCard({
                 <CardTitle
                   id={announcement.id}
                   className={cn(
-                    "line-clamp-2 text-lg font-semibold md:line-clamp-1 md:text-xl",
+                    "line-clamp-2 text-lg font-semibold sm:line-clamp-1 sm:text-xl",
                     isRead ? "text-muted-foreground" : "text-primary"
                   )}
                 >
@@ -126,10 +121,7 @@ export default function AnnouncementCard({
               </div>
 
               {/* Author */}
-              <div
-                id={`announcement-${announcement.id}-author`}
-                className="mt-2 text-sm font-medium text-muted-foreground"
-              >
+              <div className="mt-2 text-sm font-medium text-muted-foreground">
                 {announcement.author ? announcement.author.name : "[deleted]"}
               </div>
             </div>
@@ -137,7 +129,7 @@ export default function AnnouncementCard({
           <CardContent className="flex-1 overflow-hidden">
             <p
               className={cn(
-                "line-clamp-2 text-sm md:text-base",
+                "line-clamp-2 text-sm sm:text-base",
                 isRead ? "text-muted-foreground" : "text-foreground"
               )}
             >
@@ -153,12 +145,12 @@ export default function AnnouncementCard({
         <ContextMenuItem onClick={handleToggleReadStatus}>
           {isRead ? (
             <>
-              <EyeOff className="h-4 w-4" />
+              <EyeOff />
               <span>Mark as Unread</span>
             </>
           ) : (
             <>
-              <Eye className="h-4 w-4" />
+              <Eye />
               <span>Mark as Read</span>
             </>
           )}
@@ -166,10 +158,13 @@ export default function AnnouncementCard({
 
         {/* Edit option */}
         {userRole !== Role.MEMBER && (
-          <ContextMenuItem onClick={handleEditClick}>
-            <Edit className="h-4 w-4" />
-            <span>Edit</span>
-          </ContextMenuItem>
+          <>
+            <ContextMenuSeparator />
+            <ContextMenuItem onClick={handleEditClick}>
+              <Edit />
+              <span>Edit</span>
+            </ContextMenuItem>
+          </>
         )}
       </ContextMenuContent>
     </ContextMenu>

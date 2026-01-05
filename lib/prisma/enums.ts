@@ -1,1 +1,1 @@
-export { ApprovalStatus, Role } from "@/generated/enums"
+export { ApprovalStatus, ParticipationType, Role } from "@/generated/enums"
