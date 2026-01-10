@@ -16,25 +16,25 @@ import { useDebouncedCallback } from "use-debounce"
 
 interface EventFiltersProps {
   categories: { id: number; label: string }[]
+  totalCount: number
 
   searchQuery: string
   status: string
   category: string
   sorting: string
-  totalCount: number
 }
 
 export default function EventFilters({
   categories,
+  totalCount,
 
   searchQuery,
   status,
   category,
   sorting,
-  totalCount,
 }: EventFiltersProps) {
   const router = useRouter()
-  const pathName = usePathname()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const [query, setQuery] = useState(searchQuery)
@@ -52,7 +52,7 @@ export default function EventFilters({
     // Reset pagination when filters change
     params.delete("page")
 
-    router.replace(`${pathName}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`)
   }, 500)
 
   const updateStatus = useCallback(
@@ -69,9 +69,9 @@ export default function EventFilters({
       // Reset pagination when filters change
       params.delete("page")
 
-      router.replace(`${pathName}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [searchParams, router, pathname]
   )
 
   const updateCategory = useCallback(
@@ -87,9 +87,9 @@ export default function EventFilters({
       // Reset pagination when filters change
       params.delete("page")
 
-      router.replace(`${pathName}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [searchParams, router, pathname]
   )
 
   const updateSorting = useCallback(
@@ -105,9 +105,9 @@ export default function EventFilters({
       // Reset pagination when filters change
       params.delete("page")
 
-      router.replace(`${pathName}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
-    [defaultSorting, searchParams, router, pathName]
+    [defaultSorting, searchParams, router, pathname]
   )
 
   const clearFilters = useCallback(() => {
@@ -118,8 +118,8 @@ export default function EventFilters({
     params.delete("sorting")
     params.delete("page")
     setQuery("")
-    router.replace(`${pathName}?${params.toString()}`)
-  }, [router, pathName])
+    router.replace(`${pathname}?${params.toString()}`)
+  }, [router, pathname])
 
   return (
     <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

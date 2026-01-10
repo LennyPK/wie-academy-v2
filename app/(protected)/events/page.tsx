@@ -146,11 +146,11 @@ export default async function EventPage({ searchParams }: EventPageProps) {
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
         <EventFilters
           categories={eventCategories}
+          totalCount={count}
           searchQuery={query}
           status={status}
           category={category}
           sorting={sorting}
-          totalCount={count}
         />
 
         {/* No events found */}

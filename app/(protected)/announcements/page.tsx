@@ -173,10 +173,10 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
         <AnnouncementFilters
+          totalCount={count}
           searchQuery={query}
           readStatus={readStatus}
           dateRange={dateRange}
-          totalCount={count}
         />
 
         {/* No announcements found */}
