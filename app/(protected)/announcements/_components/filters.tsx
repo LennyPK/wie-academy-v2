@@ -15,20 +15,22 @@ import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
 interface AnnouncementFiltersProps {
+  totalCount: number
+
   searchQuery: string
   readStatus: string
   dateRange: string
-  totalCount: number
 }
 
 export default function AnnouncementFilters({
+  totalCount,
+
   searchQuery,
   readStatus,
   dateRange,
-  totalCount,
 }: AnnouncementFiltersProps) {
   const router = useRouter()
-  const pathName = usePathname()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const [query, setQuery] = useState(searchQuery)
@@ -45,7 +47,7 @@ export default function AnnouncementFilters({
     // Reset pagination when filters change
     params.delete("page")
 
-    router.replace(`${pathName}?${params.toString()}`)
+    router.replace(`${pathname}?${params.toString()}`)
   }, 500)
 
   const updateReadStatus = useCallback(
@@ -61,9 +63,9 @@ export default function AnnouncementFilters({
       // Reset pagination when filters change
       params.delete("page")
 
-      router.replace(`${pathName}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [searchParams, router, pathname]
   )
 
   const updateDateRange = useCallback(
@@ -79,9 +81,9 @@ export default function AnnouncementFilters({
       // Reset pagination when filters change
       params.delete("page")
 
-      router.replace(`${pathName}?${params.toString()}`)
+      router.replace(`${pathname}?${params.toString()}`)
     },
-    [searchParams, router, pathName]
+    [searchParams, router, pathname]
   )
 
   const clearFilters = useCallback(() => {
@@ -91,8 +93,8 @@ export default function AnnouncementFilters({
     params.delete("dateRange")
     params.delete("page")
     setQuery("")
-    router.replace(`${pathName}?${params.toString()}`)
-  }, [router, pathName])
+    router.replace(`${pathname}?${params.toString()}`)
+  }, [router, pathname])
 
   return (
     <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
