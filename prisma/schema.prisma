@@ -44,6 +44,7 @@ model User {
   announcementInteractions AnnouncementInteraction[]
   eventRegistrations       EventRegistration[]
   eventParticipations      EventParticipation[]
+  postsAuthored            Post[]
 
   @@unique([email])
   @@map("user")
@@ -298,4 +299,35 @@ enum ParticipationType {
   CANCELLED
 
   @@map("participationType")
+}
+
+model Post {
+  id           String  @id @default(uuid())
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  isAnonymous  Boolean
+  isPrivate    Boolean
+
+  categoryId Int     @default(1)
+  authorId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category PostCategory @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  author   User?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  // interactions PostInteraction[]
+
+  @@map("post")
+}
+
+model PostCategory {
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  label String
+  posts Post[]
+
+  @@map("postCategory")
 }

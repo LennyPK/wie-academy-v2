@@ -10,6 +10,7 @@ import {
   announcementCategoryData,
   eventCategoryData,
   interestData,
+  postCategoryData,
   regionData,
   yearLevelData,
 } from "./seed/constants"
@@ -94,6 +95,15 @@ export async function main() {
       where: { value: eventCategory.value },
       update: {},
       create: eventCategory,
+    })
+  }
+
+  console.log("...seeding post categories...")
+  for (const postCategory of postCategoryData) {
+    await prisma.postCategory.upsert({
+      where: { value: postCategory.value },
+      update: {},
+      create: postCategory,
     })
   }
 
