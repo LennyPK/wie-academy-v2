@@ -18,10 +18,7 @@ export function highlightText(text: string, query: string): ReactNode {
   const trimmedQuery = query.trim().toLowerCase()
   return parts.map((part, i) =>
     part.toLowerCase() === trimmedQuery ? (
-      <mark
-        key={i}
-        className="rounded bg-purple-100 px-0.5 text-purple-900 dark:bg-purple-900/20 dark:text-purple-200"
-      >
+      <mark key={i} className="rounded bg-accent text-accent-foreground">
         {part}
       </mark>
     ) : (
