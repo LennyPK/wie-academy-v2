@@ -60,3 +60,13 @@ export const eventCategoryData: Prisma.EventCategoryCreateInput[] = [
   { value: "school-visit", label: "School Visit" },
   { value: "other", label: "Other" },
 ]
+
+export const postCategoryData: Prisma.EventCategoryCreateInput[] = [
+  { value: "question", label: "Question" },
+  { value: "discussion", label: "Discussion" },
+  { value: "help", label: "Help" },
+  { value: "project", label: "Project" },
+  { value: "announcement", label: "Announcement" },
+  { value: "resources", label: "Resources" },
+  { value: "other", label: "Other" },
+]

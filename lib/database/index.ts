@@ -1,11 +1,13 @@
 export * from "./announcement-categories"
 export * from "./event-categories"
+export * from "./post-categories"
 export * from "./regions"
 export * from "./schools"
 export * from "./year-levels"
 
 export { getAnnouncementCategories } from "./announcement-categories"
 export { getEventCategories } from "./event-categories"
+export { getPostCategories } from "./post-categories"
 export { getRegions } from "./regions"
 export { getSchools } from "./schools"
 export { getYearLevels } from "./year-levels"
