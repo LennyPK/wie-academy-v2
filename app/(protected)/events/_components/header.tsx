@@ -13,7 +13,7 @@ interface EventHeaderProps {
 export default function EventHeader({ userRole }: EventHeaderProps) {
   const [open, setOpen] = useState(false)
 
-  const handleModalClick = () => {
+  const handleCreateClick = () => {
     setOpen(true)
   }
 
@@ -28,7 +28,7 @@ export default function EventHeader({ userRole }: EventHeaderProps) {
             </p>
           </div>
           {userRole === Role.ADMIN && (
-            <Button className="gap-2" onClick={handleModalClick}>
+            <Button className="gap-2" onClick={handleCreateClick}>
               <Plus />
               <span className="hidden sm:inline">Create Event</span>
               <span className="sm:hidden">Create</span>

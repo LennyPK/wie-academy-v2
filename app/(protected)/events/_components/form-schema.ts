@@ -3,7 +3,7 @@ import * as z from "zod"
 export const formSchema = z
   .object({
     title: z.string().trim().min(1, "Title is required").max(100),
-    description: z.string().trim().min(1, "Content is required"),
+    description: z.string().trim().min(1, "Description is required"),
     category: z.string().nonempty("Category is required"),
     location: z.string().trim().min(1, "Location is required"),
     capacity: z.number().int().min(0),

@@ -109,9 +109,18 @@ export default function EventCard({
         )}
       </div>
 
-      <div className={cn("h-2 overflow-hidden rounded-full bg-muted")}>
+      <div
+        className={cn(
+          "h-2 overflow-hidden rounded-full bg-muted",
+          event.capacity === 0 && "bg-transparent"
+        )}
+      >
         <div
-          className={cn("h-full rounded-full transition-all duration-300", progressColor)}
+          className={cn(
+            "h-full rounded-full transition-all duration-300",
+            progressColor,
+            event.capacity === 0 && "bg-transparent"
+          )}
           style={{ width: `${Math.min(registrationPercentage, 100)}%` }}
         />
       </div>
