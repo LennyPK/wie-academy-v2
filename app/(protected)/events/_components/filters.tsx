@@ -111,15 +111,18 @@ export default function EventFilters({
   )
 
   const clearFilters = useCallback(() => {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(searchParams.toString())
+
     params.delete("query")
     params.delete("status")
     params.delete("category")
     params.delete("sorting")
     params.delete("page")
+
     setQuery("")
+
     router.replace(`${pathname}?${params.toString()}`)
-  }, [router, pathname])
+  }, [router, pathname, searchParams])
 
   return (
     <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
