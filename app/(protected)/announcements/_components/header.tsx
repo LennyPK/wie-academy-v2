@@ -13,7 +13,7 @@ interface AnnouncementHeaderProps {
 export default function AnnouncementHeader({ userRole }: AnnouncementHeaderProps) {
   const [open, setOpen] = useState(false)
 
-  const handleModalClick = () => {
+  const handleCreateClick = () => {
     setOpen(true)
   }
 
@@ -26,7 +26,7 @@ export default function AnnouncementHeader({ userRole }: AnnouncementHeaderProps
             <p className="mt-1 text-sm text-muted-foreground">Stay updated with the latest news.</p>
           </div>
           {userRole === Role.ADMIN && (
-            <Button className="gap-2" onClick={handleModalClick}>
+            <Button className="gap-2" onClick={handleCreateClick}>
               <Plus />
               <span className="hidden sm:inline">Create Announcement</span>
               <span className="sm:hidden">Create</span>
