@@ -1,7 +1,7 @@
 "use client"
 
 import CategoryBadge from "@/components/category-badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -74,8 +74,8 @@ export default function AnnouncementCard({
                 {/* Created/Updated Date */}
                 <div className="flex flex-wrap items-center gap-x-4 text-sm text-muted-foreground">
                   {announcement.createdAt && (
-                    <div className="flex items-center">
-                      <Clock className="mr-1 h-4 w-4" />
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
                       <span className="flex items-center">
                         {announcement.updatedAt > announcement.createdAt
                           ? formatRelative(announcement.updatedAt, new Date())
@@ -121,9 +121,9 @@ export default function AnnouncementCard({
               </div>
 
               {/* Author */}
-              <div className="mt-2 text-sm font-medium text-muted-foreground">
+              <CardDescription className="mt-2 font-medium">
                 {announcement.author ? announcement.author.name : "[deleted]"}
-              </div>
+              </CardDescription>
             </div>
           </CardHeader>
           <CardContent className="flex-1 overflow-hidden">

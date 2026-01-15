@@ -60,6 +60,8 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
   const currentPage = Number(params?.page) || 1
   const pageSize = 5
 
+  // FIXME: OR is intentionally only set once.
+  // If you add another OR-based filter, refactor to AND[] composition.
   const where: Prisma.AnnouncementWhereInput = {}
 
   // Search Filter
