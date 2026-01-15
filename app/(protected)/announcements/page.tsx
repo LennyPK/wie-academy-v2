@@ -60,17 +60,17 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
   const currentPage = Number(params?.page) || 1
   const pageSize = 5
 
-  // FIXME: OR is intentionally only set once.
-  // If you add another OR-based filter, refactor to AND[] composition.
-  const where: Prisma.AnnouncementWhereInput = {}
+  const conditions: Prisma.AnnouncementWhereInput[] = []
 
   // Search Filter
   if (query) {
     // Using OR at the top level so other filters (date, targeting, read status) are ANDed
-    where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { contentPlain: { contains: query, mode: "insensitive" } },
-    ]
+    conditions.push({
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { contentPlain: { contains: query, mode: "insensitive" } },
+      ],
+    })
   }
 
   // Date Filter
@@ -99,7 +99,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
         break
     }
 
-    where.updatedAt = { gte }
+    conditions.push({ updatedAt: { gte } })
   }
 
   // Read Status Filter
@@ -107,9 +107,9 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     const isRead = readStatus === "read"
 
     if (isRead) {
-      where.interactions = { some: { userId: user.id, isRead: true } }
+      conditions.push({ interactions: { some: { userId: user.id, isRead: true } } })
     } else {
-      where.interactions = { none: { userId: user.id, isRead: true } }
+      conditions.push({ interactions: { none: { userId: user.id, isRead: true } } })
     }
   }
 
@@ -143,6 +143,8 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     //   //   },
     //   // ]
   }
+
+  const where: Prisma.AnnouncementWhereInput = conditions.length > 0 ? { AND: conditions } : {}
 
   const [announcements, count] = await Promise.all([
     prisma.announcement.findMany({
