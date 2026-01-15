@@ -62,6 +62,8 @@ export default async function EventPage({ searchParams }: EventPageProps) {
   const currentPage = Number(params?.page) || 1
   const pageSize = 6
 
+  // FIXME: OR is intentionally only set once.
+  // If you add another OR-based filter, refactor to AND[] composition.
   const where: Prisma.EventWhereInput = {}
 
   // Search Filter
