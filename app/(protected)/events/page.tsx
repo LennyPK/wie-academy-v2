@@ -62,17 +62,16 @@ export default async function EventPage({ searchParams }: EventPageProps) {
   const currentPage = Number(params?.page) || 1
   const pageSize = 6
 
-  // FIXME: OR is intentionally only set once.
-  // If you add another OR-based filter, refactor to AND[] composition.
-  const where: Prisma.EventWhereInput = {}
+  const conditions: Prisma.EventWhereInput[] = []
 
   // Search Filter
   if (query) {
-    // Using OR at the top level so other filters (date, targeting, read status) are ANDed
-    where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { descriptionPlain: { contains: query, mode: "insensitive" } },
-    ]
+    conditions.push({
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { descriptionPlain: { contains: query, mode: "insensitive" } },
+      ],
+    })
   }
 
   // Status Filter
@@ -80,19 +79,19 @@ export default async function EventPage({ searchParams }: EventPageProps) {
 
   switch (status) {
     case "upcoming":
-      where.startDateTime = { gt: now }
+      conditions.push({ startDateTime: { gt: now } })
       break
     case "ongoing":
-      where.AND = [{ startDateTime: { lte: now } }, { endDateTime: { gte: now } }]
+      conditions.push({ AND: [{ startDateTime: { lte: now } }, { endDateTime: { gte: now } }] })
       break
     case "completed":
-      where.endDateTime = { lt: now }
+      conditions.push({ endDateTime: { lt: now } })
       break
   }
 
   // Category Filter
   if (category !== "all") {
-    where.categoryId = { equals: parseInt(category) }
+    conditions.push({ categoryId: { equals: parseInt(category) } })
   }
 
   // Sorting Filter
@@ -107,6 +106,8 @@ export default async function EventPage({ searchParams }: EventPageProps) {
       orderBy = { startDateTime: "desc" }
       break
   }
+
+  const where: Prisma.EventWhereInput = conditions.length > 0 ? { AND: conditions } : {}
 
   const [events, eventCategories, count] = await Promise.all([
     prisma.event.findMany({
