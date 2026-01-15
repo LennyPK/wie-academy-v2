@@ -28,5 +28,5 @@ export function RenderTipTap({ content }: { content: object }) {
     },
   })
 
-  return <EditorContent className="min-w-full overflow-hidden rounded-md" editor={editor} />
+  return <EditorContent className="render min-w-full overflow-hidden rounded-md" editor={editor} />
 }

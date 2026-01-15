@@ -33,6 +33,7 @@
   --editor-border-strong: hsl(240 5% 65%);
 
   /* Spacing System */
+  --editor-spacing-0: 0rem;
   --editor-spacing-1: 0.25rem;
   --editor-spacing-2: 0.5rem;
   --editor-spacing-3: 0.75rem;
@@ -435,4 +436,11 @@
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+.render .ProseMirror {
+  max-width: none;
+  margin: 0;
+  padding: var(--editor-spacing-0) var(--editor-spacing-0);
+  min-height: auto;
 }
