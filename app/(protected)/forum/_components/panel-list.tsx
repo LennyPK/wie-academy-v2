@@ -1,19 +1,22 @@
 "use client"
 
 import Pagination from "@/components/pagination"
-import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { ResizablePanel } from "@/components/ui/resizable"
+import { cn } from "@/lib/utils"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ComponentProps } from "react"
 import { Post } from "../types"
+import ForumCard from "./card"
 import ForumEmptyList from "./empty-list"
 
 interface ForumPanelListProps extends ComponentProps<typeof ResizablePanel> {
+  userId: string
   posts: Post[]
   totalPages: number
 }
 
 export default function ForumPanelList({
+  userId,
   posts,
   totalPages,
   children,
@@ -21,6 +24,9 @@ export default function ForumPanelList({
 }: ForumPanelListProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  const searchQuery = searchParams.get("query") ?? ""
+  const selectedPostId = searchParams.get("postId") ?? undefined
 
   const handleCardClick = (postId: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -32,21 +38,25 @@ export default function ForumPanelList({
   }
 
   return (
-    <ResizablePanel {...panelProps}>
+    <ResizablePanel {...panelProps} className="space-y-6">
       {/* No posts found */}
       {posts && posts.length === 0 && <ForumEmptyList />}
 
       {/* TODO: Add post cards here */}
       {posts.map((post) => (
-        <Card key={post.id} onClick={() => handleCardClick}>
-          <CardHeader>
-            <CardTitle>{post.title}</CardTitle>
-          </CardHeader>
-        </Card>
+        <ForumCard
+          key={post.id}
+          userId={userId}
+          post={post}
+          searchQuery={searchQuery}
+          onClick={() => handleCardClick(post.id)}
+          className={cn(
+            selectedPostId === post.id
+              ? "bg-secondary"
+              : "cursor-pointer hover:bg-accent hover:shadow-lg"
+          )}
+        />
       ))}
-      {/* {Array.from({ length: 10 }).map((_, index) => (
-                  <Card key={index} />
-                ))} */}
 
       {children}
 

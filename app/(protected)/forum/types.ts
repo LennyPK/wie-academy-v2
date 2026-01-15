@@ -15,7 +15,13 @@ export type Post = {
   category: { id: number; label: string }
 
   authorId: string | null
-  author: { image: string | null; name: string } | null
+  author: {
+    id: string
+    image: string | null
+    name: string
+    firstName: string
+    lastName: string
+  } | null
 
   createdAt: Date
   updatedAt: Date

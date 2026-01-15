@@ -98,8 +98,6 @@ export default function ForumForm({ post }: ForumFormProps) {
       setIsLoading(false)
 
       openPost(newPost.id)
-
-      router.refresh()
     },
   })
 
