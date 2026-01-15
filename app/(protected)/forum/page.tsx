@@ -4,6 +4,7 @@ import { ROUTES } from "@/lib/constants"
 import { getPostCategories } from "@/lib/database"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
+import { Role } from "@/lib/prisma/enums"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -38,6 +39,15 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
     redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
 
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { id: true, role: true },
+  })
+
+  if (!user) {
+    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  }
+
   // Extract search params with defaults
   const params = await searchParams
 
@@ -50,28 +60,35 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
   const postId = params?.postId
   const mode = params?.mode
 
-  const where: Prisma.PostWhereInput = {}
+  const conditions: Prisma.PostWhereInput[] = []
 
   // Search Filter
   if (query) {
-    // Using OR at the top level so other filters (date, targeting, read status) are ANDed
-    where.OR = [
-      { title: { contains: query, mode: "insensitive" } },
-      { contentPlain: { contains: query, mode: "insensitive" } },
-    ]
+    conditions.push({
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { contentPlain: { contains: query, mode: "insensitive" } },
+      ],
+    })
   }
 
   // Category Filter
   if (category !== "all") {
-    where.categoryId = { equals: parseInt(category) }
+    conditions.push({ categoryId: { equals: parseInt(category) } })
   }
+
+  if (user.role !== Role.ADMIN) {
+    conditions.push({ OR: [{ isPrivate: false }, { authorId: user.id }] })
+  }
+
+  const where: Prisma.PostWhereInput = conditions.length > 0 ? { AND: conditions } : {}
 
   const [posts, postCategories, count] = await Promise.all([
     prisma.post.findMany({
       where,
       include: {
         category: { select: { id: true, label: true } },
-        author: { select: { image: true, name: true } },
+        author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
       },
       orderBy: { updatedAt: "desc" },
       take: pageSize,
@@ -103,15 +120,22 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
         <ResizablePanelGroup direction="horizontal" className="gap-5">
           <ForumPanelList
             defaultSize={40}
-            minSize={20}
+            minSize={35}
             maxSize={50}
+            userId={user.id}
             posts={posts}
             totalPages={totalPages}
           />
 
           <ResizableHandle />
 
-          <ForumPanelContent mode={mode} post={selectedPost} />
+          <ForumPanelContent
+            defaultSize={60}
+            userId={user.id}
+            userRole={user.role}
+            mode={mode}
+            post={selectedPost}
+          />
         </ResizablePanelGroup>
       </main>
     </div>
