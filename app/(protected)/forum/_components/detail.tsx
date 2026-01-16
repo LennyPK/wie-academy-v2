@@ -2,6 +2,7 @@
 
 import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
+import RichTextEditor from "@/components/editor/rich-text-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -90,9 +91,11 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
           <div className="flex justify-between text-sm text-muted-foreground">
             <div className="flex gap-2">
               <CategoryBadge category={post.category} />
-              <Badge className="rounded-md border bg-secondary py-1 font-bold text-secondary-foreground uppercase select-none">
-                Private
-              </Badge>
+              {post.isPrivate && (
+                <Badge className="rounded-md border bg-secondary py-1 font-bold text-secondary-foreground uppercase select-none">
+                  Private
+                </Badge>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -144,6 +147,18 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
           <span>0 views</span>
         </div>
       </div>
+
+      <RichTextEditor
+        placeholder="Join the conversation"
+        initialContent={undefined}
+        className="small-editor rounded-md p-3"
+        editorClassName="mb-3"
+        onChangePlainText={() => {}}
+        onChangeHTML={() => {}}
+        onChangeJSON={() => {}}
+      />
+
+      {/* TODO: Add anonymous toggle and "post reply" button */}
     </div>
   )
 }

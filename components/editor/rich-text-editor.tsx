@@ -16,6 +16,7 @@ interface RichTextEditorProps {
   onChangeHTML: (content: string) => void
   initialContent?: object
   className?: string
+  editorClassName?: string
   // onImageUpload?: (file: File) => Promise<string>
 }
 
@@ -26,6 +27,7 @@ export default function RichTextEditor({
   onChangeJSON,
   initialContent,
   className,
+  editorClassName,
   // onImageUpload,
 }: RichTextEditorProps) {
   const editor = useEditor({
@@ -70,7 +72,7 @@ export default function RichTextEditor({
       <Toolbar editor={editor} />
       <EditorContent
         editor={editor}
-        className="min-w-full overflow-hidden rounded-md border border-input"
+        className={cn("min-w-full overflow-hidden rounded-md border border-input", editorClassName)}
       />
     </div>
   )

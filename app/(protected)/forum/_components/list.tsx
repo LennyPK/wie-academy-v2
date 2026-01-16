@@ -1,27 +1,19 @@
 "use client"
 
 import Pagination from "@/components/pagination"
-import { ResizablePanel } from "@/components/ui/resizable"
 import { cn } from "@/lib/utils"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ComponentProps } from "react"
 import { Post } from "../types"
 import ForumCard from "./card"
 import ForumEmptyList from "./empty-list"
 
-interface ForumPanelListProps extends ComponentProps<typeof ResizablePanel> {
+interface ForumListProps {
   userId: string
   posts: Post[]
   totalPages: number
 }
 
-export default function ForumPanelList({
-  userId,
-  posts,
-  totalPages,
-  children,
-  ...panelProps
-}: ForumPanelListProps) {
+export default function ForumList({ userId, posts, totalPages }: ForumListProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -38,11 +30,10 @@ export default function ForumPanelList({
   }
 
   return (
-    <ResizablePanel {...panelProps} className="space-y-6">
+    <div className="space-y-6">
       {/* No posts found */}
       {posts && posts.length === 0 && <ForumEmptyList />}
 
-      {/* TODO: Add post cards here */}
       {posts.map((post) => (
         <ForumCard
           key={post.id}
@@ -58,9 +49,7 @@ export default function ForumPanelList({
         />
       ))}
 
-      {children}
-
       <Pagination totalPages={totalPages} />
-    </ResizablePanel>
+    </div>
   )
 }
