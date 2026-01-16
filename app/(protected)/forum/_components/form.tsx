@@ -116,7 +116,7 @@ export default function ForumForm({ post }: ForumFormProps) {
       <CardContent>
         <form
           id="post-form"
-          className="space-y-6 px-4 py-4 sm:px-1"
+          className="space-y-6 px-1 py-4"
           onSubmit={(e) => {
             e.preventDefault()
             form.handleSubmit()
@@ -178,7 +178,7 @@ export default function ForumForm({ post }: ForumFormProps) {
               }}
             </form.Field>
 
-            <FieldGroup className="grid grid-cols-2">
+            <FieldGroup className="flex sm:grid sm:grid-cols-2">
               {/* <FieldGroup className="grid grid-cols-2 gap-x-10"> */}
               <form.Field name="isAnonymous" validators={{ onChangeListenTo: ["isPrivate"] }}>
                 {(field) => {
