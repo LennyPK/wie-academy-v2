@@ -88,7 +88,7 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
     <div>
       <Card>
         <CardHeader>
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:justify-between">
             <div className="flex gap-2">
               <CategoryBadge category={post.category} />
               {post.isPrivate && (

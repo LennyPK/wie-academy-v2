@@ -48,7 +48,7 @@ export default function ForumCard({
       onClick={handlePostClick}
     >
       <CardHeader>
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <CategoryBadge category={post.category} />
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
