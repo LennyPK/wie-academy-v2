@@ -1,13 +1,11 @@
 "use client"
 
-import { ResizablePanel } from "@/components/ui/resizable"
-import { ComponentProps } from "react"
 import { Post } from "../types"
 import ForumDetail from "./detail"
 import ForumEmptyContent from "./empty-content"
 import ForumForm from "./form"
 
-interface ForumPanelContentProps extends ComponentProps<typeof ResizablePanel> {
+interface ForumContentProps {
   userId: string
   userRole: string
 
@@ -15,24 +13,20 @@ interface ForumPanelContentProps extends ComponentProps<typeof ResizablePanel> {
   post?: Post
 }
 
-export default function ForumPanelContent({
+export default function ForumContent({
   userId,
   userRole,
 
   mode,
   post,
-  children,
-  ...panelProps
-}: ForumPanelContentProps) {
+}: ForumContentProps) {
   return (
-    <ResizablePanel {...panelProps}>
+    <div>
       {!post && !mode && <ForumEmptyContent />}
 
       {mode === "create" && <ForumForm />}
 
       {post && !mode && <ForumDetail userId={userId} userRole={userRole} post={post} />}
-
-      {children}
-    </ResizablePanel>
+    </div>
   )
 }

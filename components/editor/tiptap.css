@@ -444,3 +444,10 @@
   padding: var(--editor-spacing-0) var(--editor-spacing-0);
   min-height: auto;
 }
+
+.small-editor .ProseMirror {
+  /* max-width: none;
+  margin: 0;
+  padding: var(--editor-spacing-0) var(--editor-spacing-0); */
+  min-height: 10vh;
+}

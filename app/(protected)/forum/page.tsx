@@ -1,4 +1,4 @@
-import { ResizableHandle, ResizablePanelGroup } from "@/components/ui/resizable"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { getPostCategories } from "@/lib/database"
@@ -8,10 +8,11 @@ import { Role } from "@/lib/prisma/enums"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import BackButton from "./_components/back-button"
+import ForumContent from "./_components/content"
 import ForumFilters from "./_components/filters"
 import ForumHeader from "./_components/header"
-import ForumPanelContent from "./_components/panel-content"
-import ForumPanelList from "./_components/panel-list"
+import ForumList from "./_components/list"
 
 export const metadata: Metadata = {
   title: "Forum",
@@ -106,38 +107,56 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
   const selectedPost = posts.find((post) => post.id === postId)
 
   return (
-    <div>
-      <ForumHeader />
+    <>
+      <div className="hidden sm:block">
+        <ForumHeader />
 
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
-        <ForumFilters
-          categories={postCategories}
-          totalCount={count}
-          searchQuery={query}
-          category={category}
-        />
-
-        <ResizablePanelGroup direction="horizontal" className="gap-5">
-          <ForumPanelList
-            defaultSize={40}
-            minSize={35}
-            maxSize={50}
-            userId={user.id}
-            posts={posts}
-            totalPages={totalPages}
+        <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+          <ForumFilters
+            categories={postCategories}
+            totalCount={count}
+            searchQuery={query}
+            category={category}
           />
 
-          <ResizableHandle />
+          <ResizablePanelGroup direction="horizontal" className="gap-5">
+            <ResizablePanel defaultSize={40} minSize={35} maxSize={50}>
+              <ForumList userId={user.id} posts={posts} totalPages={totalPages} />
+            </ResizablePanel>
 
-          <ForumPanelContent
-            defaultSize={60}
-            userId={user.id}
-            userRole={user.role}
-            mode={mode}
-            post={selectedPost}
-          />
-        </ResizablePanelGroup>
-      </main>
-    </div>
+            <ResizableHandle />
+
+            <ResizablePanel defaultSize={60}>
+              <ForumContent userId={user.id} userRole={user.role} mode={mode} post={selectedPost} />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </main>
+      </div>
+
+      <div className="sm:hidden">
+        {selectedPost || !!mode ? (
+          <div className="px-4">
+            <BackButton />
+
+            <ForumContent userId={user.id} userRole={user.role} mode={mode} post={selectedPost} />
+          </div>
+        ) : (
+          <>
+            <ForumHeader />
+
+            <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+              <ForumFilters
+                categories={postCategories}
+                totalCount={count}
+                searchQuery={query}
+                category={category}
+              />
+
+              <ForumList userId={user.id} posts={posts} totalPages={totalPages} />
+            </main>
+          </>
+        )}
+      </div>
+    </>
   )
 }
