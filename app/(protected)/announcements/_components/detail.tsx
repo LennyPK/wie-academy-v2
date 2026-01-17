@@ -4,11 +4,20 @@ import { useIsMobile } from "@/hooks/use-mobile"
 
 import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogOverlay } from "@/components/ui/dialog"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+} from "@/components/ui/dialog"
 import {
   Drawer,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerTitle,
@@ -18,7 +27,7 @@ import { cn } from "@/lib/utils"
 import { Role } from "@/prisma/enums"
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { formatRelative } from "date-fns"
-import { BookCheck, BookOpenCheck, BookX, Clock, Edit } from "lucide-react"
+import { BookCheck, BookOpenCheck, BookX, ChevronDown, Clock, Edit } from "lucide-react"
 import { Announcement } from "../types"
 
 interface AnnouncementDetailProps {
@@ -28,6 +37,10 @@ interface AnnouncementDetailProps {
   userRole: string
   onToggleRead: (announcementId: string) => Promise<void>
   onEdit: (announcementId: string) => Promise<void>
+
+  regions: { id: number; label: string }[]
+  schools: { id: number; label: string }[]
+  yearLevels: { id: number; label: string }[]
 }
 
 export default function AnnouncementDetail({
@@ -37,6 +50,10 @@ export default function AnnouncementDetail({
   userRole,
   onToggleRead,
   onEdit,
+
+  regions,
+  schools,
+  yearLevels,
 }: AnnouncementDetailProps) {
   const isMobile = useIsMobile()
 
@@ -176,6 +193,58 @@ export default function AnnouncementDetail({
     />
   )
 
+  const regionLabels = announcement.targetRegions.map(
+    (targetRegion) => regions.find((region) => region.id === targetRegion.regionId)?.label
+  )
+
+  const schoolLabels = announcement.targetSchools.map(
+    (targetSchool) => schools.find((school) => school.id === targetSchool.schoolId)?.label
+  )
+
+  const yearLevelLabels = announcement.targetYearLevels.map(
+    (targetYearLevel) =>
+      yearLevels.find((yearLevel) => yearLevel.id === targetYearLevel.yearLevelId)?.label
+  )
+
+  const targetingGroup = (label: string, values: (string | undefined)[], fallback: string) => (
+    <Collapsible className="space-y-1">
+      <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 transition-colors hover:text-foreground">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <div className="flex items-center gap-2">
+          {values.length > 0 && (
+            <Badge variant="outline" className="text-xs font-normal">
+              {values.length}
+            </Badge>
+          )}
+          <ChevronDown className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="space-y-2">
+        <div className="flex flex-wrap gap-2 pb-2">
+          {values.length > 0 ? (
+            values.map((value) => (
+              <Badge key={value} variant="secondary" className="px-2 text-xs font-normal">
+                {value}
+              </Badge>
+            ))
+          ) : (
+            <span className="text-xs text-muted-foreground">{fallback}</span>
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  )
+
+  const targeting = (
+    <div className="w-full text-xs sm:text-sm">
+      {targetingGroup("Regions", regionLabels, "All regions")}
+
+      {targetingGroup("Schools", schoolLabels, "All schools")}
+
+      {targetingGroup("Year Levels", yearLevelLabels, "All year levels")}
+    </div>
+  )
+
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
@@ -184,6 +253,7 @@ export default function AnnouncementDetail({
           <DrawerHeader className="text-center">{header}</DrawerHeader>
           {actions}
           <div className="overflow-y-auto">{bodyContent}</div>
+          <DrawerFooter>{targeting}</DrawerFooter>
         </DrawerContent>
       </Drawer>
     )
@@ -201,6 +271,7 @@ export default function AnnouncementDetail({
         <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
           {bodyContent}
         </div>
+        <DialogFooter className="sm:justify-start">{targeting}</DialogFooter>
       </DialogContent>
     </Dialog>
   )

@@ -64,7 +64,6 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
 
   // Search Filter
   if (query) {
-    // Using OR at the top level so other filters (date, targeting, read status) are ANDed
     conditions.push({
       OR: [
         { title: { contains: query, mode: "insensitive" } },
@@ -114,39 +113,61 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
   }
 
   // Targeting
-  // TODO: Fix targeting logic
   if (user.role === Role.MEMBER) {
-    //   const orConditions: Prisma.AnnouncementWhereInput[] = []
-    // if (user.region) {
-    //   where.targetRegions = { some: { region: user.region } }
-    //   //     orConditions.push({ targetRegions: { some: { regionId: user.region.id } } })
-    // }
-    // if (user.school) {
-    //   where.targetSchools = { some: { school: user.school } }
-    //   //     orConditions.push({ targetSchools: { some: { school: user.school } } })
-    // }
-    // if (user.yearLevel) {
-    //   where.targetYearLevels = { some: { yearLevel: user.yearLevel } }
-    // }
-    //   if (orConditions.length > 0) {
-    //     whereConditions.push({ OR: orConditions })
-    //   }
-    //   // where.AND = [
-    //   //   {
-    //   //     OR: [{ targetSchools: { isEmpty: true } }, { targetSchools: { has: user.school } }],
-    //   //   },
-    //   //   {
-    //   //     OR: [{ targetRegions: { isEmpty: true } }, { targetRegions: { has: user.region.id } }],
-    //   //   },
-    //   //   {
-    //   //     OR: [{ targetYears: { isEmpty: true } }, { targetYears: { has: user.yearLevel.id } }],
-    //   //   },
-    //   // ]
+    const targetingConditions: Prisma.AnnouncementWhereInput[] = []
+
+    // Regions
+    if (user.region) {
+      targetingConditions.push({
+        OR: [
+          // Announcement has no region targeting => visible to all
+          { targetRegions: { none: {} } },
+
+          // Announcement targets user's region
+          { targetRegions: { some: { regionId: user.region.id } } },
+        ],
+      })
+    } else {
+      // User has no region → only announcements with no region targeting
+      targetingConditions.push({
+        targetRegions: { none: {} },
+      })
+    }
+
+    // Schools
+    if (user.school) {
+      targetingConditions.push({
+        OR: [
+          { targetSchools: { none: {} } },
+          { targetSchools: { some: { schoolId: user.school.id } } },
+        ],
+      })
+    } else {
+      targetingConditions.push({
+        targetSchools: { none: {} },
+      })
+    }
+
+    // Year Levels
+    if (user.yearLevel) {
+      targetingConditions.push({
+        OR: [
+          { targetYearLevels: { none: {} } },
+          { targetYearLevels: { some: { yearLevelId: user.yearLevel.id } } },
+        ],
+      })
+    } else {
+      targetingConditions.push({
+        targetYearLevels: { none: {} },
+      })
+    }
+
+    conditions.push({ AND: targetingConditions })
   }
 
   const where: Prisma.AnnouncementWhereInput = conditions.length > 0 ? { AND: conditions } : {}
 
-  const [announcements, count] = await Promise.all([
+  const [announcements, count, regions, schools, yearLevels] = await Promise.all([
     prisma.announcement.findMany({
       where,
       include: {
@@ -166,6 +187,10 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     }),
 
     prisma.announcement.count({ where }),
+
+    prisma.region.findMany({ select: { id: true, label: true } }),
+    prisma.school.findMany({ select: { id: true, label: true } }),
+    prisma.yearLevel.findMany({ select: { id: true, label: true } }),
   ])
 
   // Get the total number of pages
@@ -190,9 +215,10 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
           userId={user.id}
           userRole={user.role}
           announcements={announcements}
-          // onToggleRead={}
-          // onMarkSeen={}
           searchQuery={query}
+          regions={regions}
+          schools={schools}
+          yearLevels={yearLevels}
         />
 
         {/* Pagination */}
