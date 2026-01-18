@@ -12,10 +12,6 @@ interface AnnouncementListProps {
   userRole: string
   announcements: Announcement[]
   searchQuery: string
-
-  regions: { id: number; label: string }[]
-  schools: { id: number; label: string }[]
-  yearLevels: { id: number; label: string }[]
 }
 
 export default function AnnouncementList({
@@ -23,10 +19,6 @@ export default function AnnouncementList({
   userRole,
   announcements,
   searchQuery,
-
-  regions,
-  schools,
-  yearLevels,
 }: AnnouncementListProps) {
   const [detailOpen, setDetailOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
@@ -76,9 +68,6 @@ export default function AnnouncementList({
         userRole={userRole}
         onToggleRead={(id) => onToggleRead(id)}
         onEdit={handleEditClick}
-        regions={regions}
-        schools={schools}
-        yearLevels={yearLevels}
       />
 
       <AnnouncementFormModal announcement={announcement} open={editOpen} setOpen={setEditOpen} />

@@ -15,9 +15,9 @@ export type Announcement = {
   author: { image: string | null; name: string } | null
 
   interactions: { isRead: boolean }[]
-  targetRegions: { regionId: number }[]
-  targetSchools: { schoolId: number }[]
-  targetYearLevels: { yearLevelId: number }[]
+  targetRegions: { region: { id: number; label: string } }[]
+  targetSchools: { school: { id: number; label: string } }[]
+  targetYearLevels: { yearLevel: { id: number; label: string } }[]
 
   createdAt: Date
   updatedAt: Date

@@ -167,7 +167,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
 
   const where: Prisma.AnnouncementWhereInput = conditions.length > 0 ? { AND: conditions } : {}
 
-  const [announcements, count, regions, schools, yearLevels] = await Promise.all([
+  const [announcements, count] = await Promise.all([
     prisma.announcement.findMany({
       where,
       include: {
@@ -177,9 +177,9 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
           where: { userId: user.id },
           select: { isRead: true },
         },
-        targetRegions: { select: { regionId: true } },
-        targetSchools: { select: { schoolId: true } },
-        targetYearLevels: { select: { yearLevelId: true } },
+        targetRegions: { select: { region: { select: { id: true, label: true } } } },
+        targetSchools: { select: { school: { select: { id: true, label: true } } } },
+        targetYearLevels: { select: { yearLevel: { select: { id: true, label: true } } } },
       },
       orderBy: { updatedAt: "desc" },
       take: pageSize,
@@ -187,10 +187,6 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     }),
 
     prisma.announcement.count({ where }),
-
-    prisma.region.findMany({ select: { id: true, label: true } }),
-    prisma.school.findMany({ select: { id: true, label: true } }),
-    prisma.yearLevel.findMany({ select: { id: true, label: true } }),
   ])
 
   // Get the total number of pages
@@ -216,9 +212,6 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
           userRole={user.role}
           announcements={announcements}
           searchQuery={query}
-          regions={regions}
-          schools={schools}
-          yearLevels={yearLevels}
         />
 
         {/* Pagination */}

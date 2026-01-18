@@ -37,10 +37,6 @@ interface AnnouncementDetailProps {
   userRole: string
   onToggleRead: (announcementId: string) => Promise<void>
   onEdit: (announcementId: string) => Promise<void>
-
-  regions: { id: number; label: string }[]
-  schools: { id: number; label: string }[]
-  yearLevels: { id: number; label: string }[]
 }
 
 export default function AnnouncementDetail({
@@ -50,10 +46,6 @@ export default function AnnouncementDetail({
   userRole,
   onToggleRead,
   onEdit,
-
-  regions,
-  schools,
-  yearLevels,
 }: AnnouncementDetailProps) {
   const isMobile = useIsMobile()
 
@@ -193,19 +185,6 @@ export default function AnnouncementDetail({
     />
   )
 
-  const regionLabels = announcement.targetRegions.map(
-    (targetRegion) => regions.find((region) => region.id === targetRegion.regionId)?.label
-  )
-
-  const schoolLabels = announcement.targetSchools.map(
-    (targetSchool) => schools.find((school) => school.id === targetSchool.schoolId)?.label
-  )
-
-  const yearLevelLabels = announcement.targetYearLevels.map(
-    (targetYearLevel) =>
-      yearLevels.find((yearLevel) => yearLevel.id === targetYearLevel.yearLevelId)?.label
-  )
-
   const targetingGroup = (label: string, values: (string | undefined)[], fallback: string) => (
     <Collapsible className="space-y-1">
       <CollapsibleTrigger className="group flex w-full items-center justify-between py-2 transition-colors hover:text-foreground">
@@ -237,11 +216,23 @@ export default function AnnouncementDetail({
 
   const targeting = (
     <div className="w-full text-xs sm:text-sm">
-      {targetingGroup("Regions", regionLabels, "All regions")}
+      {targetingGroup(
+        "Regions",
+        announcement.targetRegions.map((targetRegion) => targetRegion.region.label),
+        "All regions"
+      )}
 
-      {targetingGroup("Schools", schoolLabels, "All schools")}
+      {targetingGroup(
+        "Schools",
+        announcement.targetSchools.map((targetSchool) => targetSchool.school.label),
+        "All schools"
+      )}
 
-      {targetingGroup("Year Levels", yearLevelLabels, "All year levels")}
+      {targetingGroup(
+        "Year Levels",
+        announcement.targetYearLevels.map((targetYearLevel) => targetYearLevel.yearLevel.label),
+        "All year levels"
+      )}
     </div>
   )
 
