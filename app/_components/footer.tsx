@@ -6,9 +6,8 @@ import Link from "next/link"
 const navigation = [
   { name: "About Us", href: "#" },
   { name: "Events", href: "#" },
-  { name: "Join Us", href: "#" },
-  { name: "Contact Us", href: "#" },
   { name: "Outreach Workshops", href: "#" },
+  { name: "Contact Us", href: "#" },
 ]
 
 const socials = [
@@ -43,7 +42,7 @@ export default function Footer() {
   return (
     <div>
       <div className="flex w-full flex-col items-center justify-center gap-5 bg-primary py-24 sm:py-32">
-        <div>
+        <div className="flex flex-wrap items-center justify-center">
           {navigation.map((item) => (
             <Button asChild key={item.name} variant="link" className="text-primary-foreground">
               <Link href={item.href}>{item.name}</Link>
@@ -51,7 +50,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="flex gap-5">
+        <div className="mx-auto flex gap-5">
           {socials.map((item) => (
             <Button asChild key={item.name} variant="link" className="text-primary-foreground">
               <Link href={item.href}>
@@ -72,7 +71,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="flex w-full items-center justify-center bg-muted-foreground py-5">
+      <div className="flex w-full flex-wrap items-center justify-center bg-muted-foreground py-5">
         {uoa.map((item) => (
           <Button asChild key={item.name} variant="link" className="text-primary-foreground">
             <Link href={item.href}>{item.name}</Link>
