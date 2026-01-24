@@ -9,10 +9,10 @@ import { Role } from "@/lib/prisma/enums"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import ForumContent from "./_components/content"
 import ForumFilters from "./_components/filters"
+import ForumContent from "./_components/forum-content"
+import ForumList from "./_components/forum-list"
 import ForumHeader from "./_components/header"
-import ForumList from "./_components/list"
 
 export const metadata: Metadata = {
   title: "Forum",
