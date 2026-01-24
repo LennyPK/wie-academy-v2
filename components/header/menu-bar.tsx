@@ -36,7 +36,7 @@ export default function MenuBar({ user }: MenuBarProps) {
     },
     { href: ROUTES.EVENTS, icon: Calendar, label: "Events", surfaces: ["mobile", "desktop"] },
     { href: ROUTES.FORUM, icon: MessagesSquare, label: "Forum", surfaces: ["mobile", "desktop"] },
-    { href: ROUTES.LEARN, icon: BookOpen, label: "Learn", surfaces: ["mobile", "desktop"] },
+    { href: ROUTES.EXPLORE, icon: BookOpen, label: "Explore", surfaces: ["mobile", "desktop"] },
   ]
 
   const accountItems: NavItem[] = [
