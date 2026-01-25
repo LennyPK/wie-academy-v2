@@ -1,8 +1,8 @@
 "use client"
 
 import { Post } from "../types"
+import ForumEmptyContent from "./content-empty"
 import ForumDetail from "./detail"
-import ForumEmptyContent from "./empty-content"
 import ForumForm from "./form"
 
 interface ForumContentProps {

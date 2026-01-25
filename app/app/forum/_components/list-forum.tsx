@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Post } from "../types"
 import ForumCard from "./card"
-import ForumEmptyList from "./empty-list"
+import ForumEmptyList from "./list-empty"
 
 interface ForumListProps {
   userId: string
