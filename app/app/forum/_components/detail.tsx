@@ -2,7 +2,6 @@
 
 import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
-import RichTextEditor from "@/components/editor/rich-text-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,6 +11,7 @@ import { Role } from "@/lib/prisma/enums"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
 import { Post } from "../types"
+import ReplyList from "./reply-list"
 
 interface ForumDetailProps {
   userId: string
@@ -21,13 +21,16 @@ interface ForumDetailProps {
 }
 
 export default function ForumDetail({ userId, userRole, post }: ForumDetailProps) {
-  if (!post || !post.author) {
+  if (!post) {
     return null
   }
 
-  const authorAvatarUrl = post.author.image
-  const authorInitials = post.isAnonymous ? "A" : post.author.firstName[0] + post.author.lastName[0]
-  const isAuthor = post.author.id === userId
+  const authorAvatarUrl = post.author?.image
+  const authorInitials = post.isAnonymous
+    ? "A"
+    : (post.author?.firstName?.[0] ?? "") + (post.author?.lastName?.[0] ?? "")
+  const isAuthor = post.author?.id === userId
+
   const isAdmin = userRole === Role.ADMIN
 
   const getAuthorLabel = () => {
@@ -35,7 +38,13 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
       return isAuthor ? "Anonymous (You)" : "Anonymous"
     }
 
-    return post.author?.name ?? "[deleted]"
+    if (!post.author) {
+      return "[deleted]"
+    }
+
+    const { firstName, lastName } = post.author
+
+    return `${firstName} ${lastName[0]}.`
   }
 
   const actions = (() => {
@@ -148,17 +157,12 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
         </div>
       </div>
 
-      <RichTextEditor
-        placeholder="Join the conversation"
-        initialContent={undefined}
-        className="small-editor rounded-md p-3"
-        editorClassName="mb-3"
-        onChangePlainText={() => {}}
-        onChangeHTML={() => {}}
-        onChangeJSON={() => {}}
+      <ReplyList
+        userId={userId}
+        postId={post.id}
+        postIsPrivate={post.isPrivate}
+        postReplies={post.postReplies}
       />
-
-      {/* TODO: Add anonymous toggle and "post reply" button */}
     </div>
   )
 }

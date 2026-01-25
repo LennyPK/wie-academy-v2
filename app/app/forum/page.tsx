@@ -9,10 +9,10 @@ import { Role } from "@/lib/prisma/enums"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import ForumContent from "./_components/content-forum"
 import ForumFilters from "./_components/filters"
-import ForumContent from "./_components/forum-content"
-import ForumList from "./_components/forum-list"
 import ForumHeader from "./_components/header"
+import ForumList from "./_components/list-forum"
 
 export const metadata: Metadata = {
   title: "Forum",
@@ -88,6 +88,13 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
     prisma.post.findMany({
       where,
       include: {
+        postReplies: {
+          include: {
+            author: {
+              select: { id: true, image: true, name: true, firstName: true, lastName: true },
+            },
+          },
+        },
         category: { select: { id: true, label: true } },
         author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
       },
@@ -135,7 +142,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
 
       <div className="sm:hidden">
         {selectedPost || !!mode ? (
-          <div className="px-4">
+          <div className="px-4 pb-20">
             <BackButton />
 
             <ForumContent userId={user.id} userRole={user.role} mode={mode} post={selectedPost} />

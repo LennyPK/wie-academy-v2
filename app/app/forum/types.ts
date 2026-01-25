@@ -23,6 +23,8 @@ export type Post = {
     lastName: string
   } | null
 
+  postReplies: Reply[]
+
   createdAt: Date
   updatedAt: Date
 }
@@ -38,4 +40,38 @@ export type NewPost = {
   isPrivate: boolean
 
   categoryId: number
+}
+
+export type Reply = {
+  id: string
+  postId: string
+  parentId: string | null
+
+  contentPlain: string
+  contentHtml: string
+  contentJson: JsonValue
+  isAnonymous: boolean
+
+  authorId: string | null
+  author: {
+    id: string
+    image: string | null
+    name: string
+    firstName: string
+    lastName: string
+  } | null
+
+  createdAt: Date
+  updatedAt: Date
+}
+
+export type NewReply = {
+  id?: string
+  postId: string
+  parentId?: string
+
+  contentPlain: string
+  contentHtml: string
+  contentJson: InputJsonValue
+  isAnonymous: boolean
 }
