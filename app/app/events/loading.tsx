@@ -22,10 +22,13 @@ export default function Loading() {
             <Skeleton className="h-9 flex-1 bg-card" />
 
             <div className="flex flex-col gap-2 sm:flex-row">
-              {/* Read Status Filter */}
+              {/* Status Status Filter */}
               <Skeleton className="h-9 w-full bg-card sm:flex-1" />
 
-              {/* Date Filter */}
+              {/* Category Filter */}
+              <Skeleton className="h-9 w-full bg-card sm:flex-1" />
+
+              {/* Sorting Filter */}
               <Skeleton className="h-9 w-full bg-card sm:flex-1" />
 
               {/* Clear Filters */}
@@ -41,29 +44,48 @@ export default function Loading() {
         </div>
 
         {/* List */}
-        <div className="space-y-6">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="flex flex-col gap-6 sm:grid sm:grid-cols-2">
+          {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="flex w-full flex-col rounded-lg bg-card p-5">
               {/* Category Badge and Timestamp */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
-                <Skeleton className="h-5 w-30" />
-                <Skeleton className="h-5 w-40" />
-              </div>
+              <Skeleton className="h-5 w-30" />
 
               {/* Title */}
-              <div className="mt-4 flex items-start gap-2 sm:items-center">
-                <Skeleton className="h-10 w-80" />
-              </div>
-
-              {/* Author */}
-              <div className="mt-2">
-                <Skeleton className="h-4 w-40" />
+              <div className="mt-2 flex items-start gap-2 sm:items-center">
+                <Skeleton className="h-8 w-80" />
               </div>
 
               {/* Content */}
-              <div className="mt-8 mb-10 space-y-2">
+              <div className="mt-4 mb-8 space-y-2">
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-full" />
+              </div>
+
+              {/* Details */}
+              <div className="flex flex-1 flex-col gap-2 overflow-hidden">
+                <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:grid sm:grid-cols-2 sm:gap-0 sm:text-base">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-50" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-50" />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-muted-foreground sm:text-base">
+                  <Skeleton className="h-5 w-50" />
+                </div>
+
+                {/* Seperator */}
+                <Skeleton className="my-3 h-0.5 w-full" />
+
+                {/* User Count */}
+                <Skeleton className="h-5 w-50" />
+
+                <Skeleton className="mt-2 h-2 w-full" />
+
+                {/* Actions */}
+                <Skeleton className="mt-2 h-10 w-full" />
               </div>
             </Skeleton>
           ))}
