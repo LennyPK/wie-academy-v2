@@ -7,11 +7,12 @@ import ForumCard from "./card"
 
 interface ForumListProps {
   userId: string
+  userRole: string
   posts: Post[]
   totalPages: number
 }
 
-export default function ForumList({ userId, posts }: ForumListProps) {
+export default function ForumList({ userId, userRole, posts }: ForumListProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -28,6 +29,7 @@ export default function ForumList({ userId, posts }: ForumListProps) {
         <ForumCard
           key={post.id}
           userId={userId}
+          userRole={userRole}
           post={post}
           searchQuery={searchQuery}
           onClick={() => handleCardClick(post.id)}
