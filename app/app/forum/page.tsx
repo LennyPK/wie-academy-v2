@@ -52,7 +52,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
   const category = params?.category || "all"
 
   const currentPage = Number(params?.page) || 1
-  const pageSize = 6
+  const pageSize = 8
 
   const conditions: Prisma.PostWhereInput[] = []
 

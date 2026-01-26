@@ -6,7 +6,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import ForumDetail from "../../_components/detail"
 
-export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ForumPostPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {

@@ -7,9 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ROUTES } from "@/lib/constants"
 import { Role } from "@/lib/prisma/enums"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { PostWithReply } from "../types"
 import ReplyList from "./reply-list"
 
@@ -21,6 +23,8 @@ interface ForumDetailProps {
 }
 
 export default function ForumDetail({ userId, userRole, post }: ForumDetailProps) {
+  const router = useRouter()
+
   if (!post) {
     return null
   }
@@ -30,7 +34,6 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
     ? "A"
     : (post.author?.firstName?.[0] ?? "") + (post.author?.lastName?.[0] ?? "")
   const isAuthor = post.author?.id === userId
-
   const isAdmin = userRole === Role.ADMIN
 
   const getAuthorLabel = () => {
@@ -47,13 +50,17 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
     return `${firstName} ${lastName[0]}.`
   }
 
+  const handleEdit = async () => {
+    router.push(`${ROUTES.FORUM}/edit/${post.id}`)
+  }
+
   const actions = (() => {
     if (isAuthor || isAdmin) {
       return (
         <>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
                 <Edit />
                 <span className="hidden sm:inline">Edit Post</span>
                 <span className="sm:hidden">Edit</span>

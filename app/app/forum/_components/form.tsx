@@ -20,10 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { ROUTES } from "@/lib/constants"
 import { getPostCategories } from "@/lib/database"
 import { Category } from "@/lib/types"
 import { useForm } from "@tanstack/react-form"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { insertPost } from "../actions"
@@ -38,23 +39,13 @@ interface ForumFormProps {
 export default function ForumForm({ post }: ForumFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const openPost = (postId: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    params.set("postId", postId)
-    params.delete("mode")
-
-    router.push(`?${params.toString()}`)
+    router.replace(`${ROUTES.FORUM}/post/${postId}`)
   }
 
   const closeForm = () => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    params.delete("mode")
-
-    router.push(`?${params.toString()}`)
+    router.back()
   }
 
   const [editorContent, setEditorContent] = useState({
