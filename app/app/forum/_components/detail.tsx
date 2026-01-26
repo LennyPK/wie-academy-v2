@@ -10,14 +10,14 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Role } from "@/lib/prisma/enums"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
-import { Post } from "../types"
+import { PostWithReply } from "../types"
 import ReplyList from "./reply-list"
 
 interface ForumDetailProps {
   userId: string
   userRole: string
 
-  post: Post
+  post: PostWithReply
 }
 
 export default function ForumDetail({ userId, userRole, post }: ForumDetailProps) {

@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { MessagesSquare } from "lucide-react"
 
-export default function ForumEmptyList() {
+export default function ForumEmpty() {
   return (
     <Card className="border-none bg-transparent shadow-none">
       <CardContent className="flex-1 items-center justify-center py-40 text-center">
