@@ -28,7 +28,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { insertAnnouncement } from "../actions"
-import { Announcement, NewAnnouncement, Region, School, YearLevel } from "../types"
+import { Announcement, NewAnnouncement } from "../types"
 import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
@@ -54,14 +54,15 @@ export default function AnnouncementForm({ setOpen, announcement }: Announcement
     title: announcement?.title ?? "",
     category: announcement?.categoryId ? String(announcement.category.id) : "",
     regions:
-      announcement?.targetRegions.map((region: Region) => String(region.regionId)) ??
+      announcement?.targetRegions.map((targetRegion) => String(targetRegion.region.id)) ??
       ([] as string[]),
     schools:
-      announcement?.targetSchools.map((school: School) => String(school.schoolId)) ??
+      announcement?.targetSchools.map((targetSchool) => String(targetSchool.school.id)) ??
       ([] as string[]),
     yearLevels:
-      announcement?.targetYearLevels.map((yearLevel: YearLevel) => String(yearLevel.yearLevelId)) ??
-      ([] as string[]),
+      announcement?.targetYearLevels.map((targetYearLevel) =>
+        String(targetYearLevel.yearLevel.id)
+      ) ?? ([] as string[]),
     content: announcement?.contentPlain ?? "",
   }
 
