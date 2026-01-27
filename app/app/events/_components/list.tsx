@@ -73,7 +73,7 @@ export default function EventList({
   return (
     <div
       // className={cn("space-y-6", events.length && "grid-cols-2 sm:grid")}
-      className="flex flex-col gap-6 sm:grid sm:grid-cols-2"
+      className="grid gap-5 sm:grid-cols-2"
       role="list"
       aria-label="events"
     >
