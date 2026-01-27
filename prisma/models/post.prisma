@@ -1,0 +1,72 @@
+enum PostInteractionType {
+  VIEW
+  LIKE
+
+  @@map("postInteractionType")
+}
+
+model Post {
+  id           String  @id @default(uuid())
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  isAnonymous  Boolean
+  isPrivate    Boolean
+
+  categoryId Int     @default(1)
+  authorId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category         PostCategory      @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  author           User?             @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  postInteractions PostInteraction[]
+  postReplies      PostReply[]
+
+  @@map("post")
+}
+
+model PostCategory {
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  label String
+  posts Post[]
+
+  @@map("postCategory")
+}
+
+model PostInteraction {
+  postId String
+  userId String
+  type   PostInteractionType
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId, type])
+  @@map("postInteraction")
+}
+
+model PostReply {
+  id       String  @id @default(uuid())
+  postId   String
+  parentId String?
+  authorId String
+
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  isAnonymous  Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post     Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent   PostReply?  @relation("ReplyChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children PostReply[] @relation("ReplyChildren")
+
+  @@map("postReply")
+}

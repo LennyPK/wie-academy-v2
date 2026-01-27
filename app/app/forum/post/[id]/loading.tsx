@@ -6,10 +6,6 @@ export default function Loading() {
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="py-4">
           <Skeleton className="h-9 w-30 bg-card" />
-          {/* <Button variant="ghost" className="text-sm text-muted-foreground" onClick={handleClick}>
-            <ChevronLeft className="size-5" />
-            <span>{label ? label : "Back"}</span>
-          </Button> */}
         </div>
         <div>
           <Skeleton className="flex w-full flex-col gap-2 rounded-lg bg-card p-5">

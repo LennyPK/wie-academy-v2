@@ -1,0 +1,62 @@
+enum ParticipationType {
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+
+  @@map("participationType")
+}
+
+model Event {
+  id               String   @id @default(uuid())
+  title            String
+  descriptionPlain String
+  descriptionHtml  String
+  descriptionJson  Json
+  categoryId       Int      @default(1)
+  location         String
+  capacity         Int
+  startDateTime    DateTime
+  endDateTime      DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  category       EventCategory        @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  registrations  EventRegistration[]
+  participations EventParticipation[]
+
+  @@map("event")
+}
+
+model EventCategory {
+  id     Int     @id @default(autoincrement())
+  value  String  @unique
+  label  String
+  events Event[]
+
+  @@map("eventCategory")
+}
+
+model EventRegistration {
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@map("eventRegistration")
+}
+
+model EventParticipation {
+  userId            String
+  eventId           String
+  attendedAt        DateTime          @default(now())
+  participationType ParticipationType @default(ATTENDED)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@map("eventParticipation")
+}
