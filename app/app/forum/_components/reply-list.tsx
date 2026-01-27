@@ -1,3 +1,5 @@
+"use client"
+
 import { RenderTipTap } from "@/components/editor/render"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"

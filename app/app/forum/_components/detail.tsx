@@ -8,10 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ROUTES } from "@/lib/constants"
-import { Role } from "@/lib/prisma/enums"
+import { PostInteractionType, Role } from "@/lib/prisma/enums"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { toggleLike } from "../actions"
 import { PostWithReply } from "../types"
 import ReplyList from "./reply-list"
 
@@ -20,10 +21,19 @@ interface ForumDetailProps {
   userRole: string
 
   post: PostWithReply
+  viewCount: number
+  likeCount: number
 }
 
-export default function ForumDetail({ userId, userRole, post }: ForumDetailProps) {
+export default function ForumDetail({
+  userId,
+  userRole,
+  post,
+  viewCount,
+  likeCount,
+}: ForumDetailProps) {
   const router = useRouter()
+  const pathname = usePathname()
 
   if (!post) {
     return null
@@ -35,6 +45,8 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
     : (post.author?.firstName?.[0] ?? "") + (post.author?.lastName?.[0] ?? "")
   const isAuthor = post.author?.id === userId
   const isAdmin = userRole === Role.ADMIN
+
+  const isLiked = post.postInteractions.find((i) => i.type === PostInteractionType.LIKE)
 
   const getAuthorLabel = () => {
     if (post.isAnonymous) {
@@ -52,6 +64,10 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
 
   const handleEdit = async () => {
     router.push(`${ROUTES.FORUM}/edit/${post.id}`)
+  }
+
+  const handleToggleLike = async () => {
+    await toggleLike(post.id, userId, pathname)
   }
 
   const actions = (() => {
@@ -89,10 +105,23 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
-            <HeartPlus />
-            <span className="hidden sm:inline">Like Post</span>
-            <span className="sm:hidden">Like</span>
+          <Button
+            variant="ghost"
+            onClick={handleToggleLike}
+            className="flex-1 cursor-pointer gap-2"
+          >
+            {isLiked ? (
+              <>
+                <Heart />
+                <span>Liked</span>
+              </>
+            ) : (
+              <>
+                <HeartPlus />
+                <span className="hidden sm:inline">Like Post</span>
+                <span className="sm:hidden">Like</span>
+              </>
+            )}
           </Button>
         </TooltipTrigger>
         <TooltipContent>Like Post</TooltipContent>
@@ -149,18 +178,18 @@ export default function ForumDetail({ userId, userRole, post }: ForumDetailProps
 
       <div className="flex gap-5 px-2 py-5">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Eye className="h-4 w-4" />
+          <span>{viewCount} views</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Heart className="h-4 w-4" />
-          <span>0 likes</span>
+          <span>{likeCount} likes</span>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MessageSquare className="h-4 w-4" />
           <span>0 replies</span>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Eye className="h-4 w-4" />
-          <span>0 views</span>
         </div>
       </div>
 

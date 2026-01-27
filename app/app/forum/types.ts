@@ -1,3 +1,4 @@
+import { PostInteractionType } from "@/prisma/enums"
 import { InputJsonValue, JsonValue } from "@prisma/client/runtime/client"
 
 export type Post = {
@@ -22,6 +23,12 @@ export type Post = {
     firstName: string
     lastName: string
   } | null
+
+  postInteractions: {
+    userId: string
+    type: PostInteractionType
+    postId: string
+  }[]
 
   createdAt: Date
   updatedAt: Date
@@ -98,6 +105,12 @@ export type PostWithReply = {
   } | null
 
   postReplies: Reply[]
+
+  postInteractions: {
+    userId: string
+    type: PostInteractionType
+    postId: string
+  }[]
 
   createdAt: Date
   updatedAt: Date

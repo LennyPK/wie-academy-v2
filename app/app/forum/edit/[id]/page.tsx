@@ -10,6 +10,7 @@ export default async function ForumPostEditPage({ params }: { params: Promise<{ 
     include: {
       category: { select: { id: true, label: true } },
       author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
+      postInteractions: { where: { postId: "__never__" } },
     },
   })
 

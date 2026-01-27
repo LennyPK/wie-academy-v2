@@ -83,6 +83,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
       include: {
         category: { select: { id: true, label: true } },
         author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
+        postInteractions: true,
       },
       orderBy: { updatedAt: "desc" },
       take: pageSize,
@@ -112,7 +113,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
         {/* No posts found */}
         {posts && posts.length === 0 && <ForumEmpty />}
 
-        <ForumList userId={user.id} userRole={user.role} posts={posts} totalPages={totalPages} />
+        <ForumList userId={user.id} userRole={user.role} posts={posts} />
 
         <Pagination totalPages={totalPages} />
       </main>

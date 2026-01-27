@@ -195,7 +195,7 @@ export default function AnnouncementDetail({
               {values.length}
             </Badge>
           )}
-          <ChevronDown className="size-4 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
+          <ChevronDown className="size-4 text-muted-foreground transition-transform duration-200 group-data-open:rotate-180" />
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2">

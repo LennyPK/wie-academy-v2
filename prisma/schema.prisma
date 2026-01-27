@@ -336,16 +336,22 @@ model PostCategory {
 }
 
 model PostInteraction {
-  postId   String
-  userId   String
-  isViewed Boolean
-  isLiked  Boolean
+  postId String
+  userId String
+  type   PostInteractionType
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([postId, userId])
+  @@id([postId, userId, type])
   @@map("postInteraction")
+}
+
+enum PostInteractionType {
+  VIEW
+  LIKE
+
+  @@map("postInteractionType")
 }
 
 model PostReply {

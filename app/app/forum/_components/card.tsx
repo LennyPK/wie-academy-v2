@@ -1,3 +1,5 @@
+"use client"
+
 import CategoryBadge from "@/components/category-badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -10,11 +12,12 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import { ROUTES } from "@/lib/constants"
 import { cn, highlightText } from "@/lib/utils"
-import { Role } from "@/prisma/enums"
+import { PostInteractionType, Role } from "@/prisma/enums"
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
 import { formatRelative } from "date-fns"
-import { Clock, Edit, Flag, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Clock, Edit, Eye, Flag, Heart, HeartPlus, Lock, MessageSquare, Trash2 } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { toggleLike } from "../actions"
 import { Post } from "../types"
 
 interface ForumCardProps {
@@ -22,8 +25,7 @@ interface ForumCardProps {
   userRole: string
   post: Post
   searchQuery?: string
-  onClick: () => void
-  // onEdit:(postId: string)=>Promise<void>
+  // onClick: () => void
   className?: string
 }
 
@@ -32,10 +34,11 @@ export default function ForumCard({
   userRole,
   post,
   searchQuery,
-  onClick,
+  // onClick,
   className,
 }: ForumCardProps) {
   const router = useRouter()
+  const pathname = usePathname()
 
   if (!post || !post.author) {
     return null
@@ -43,6 +46,13 @@ export default function ForumCard({
 
   const isAuthor = post.author.id === userId
   const isAdmin = userRole === Role.ADMIN
+
+  const isLiked = post.postInteractions.some(
+    (i) => i.type === PostInteractionType.LIKE && i.userId === userId
+  )
+
+  const viewCount = post.postInteractions.filter((i) => i.type === PostInteractionType.VIEW).length
+  const likeCount = post.postInteractions.filter((i) => i.type === PostInteractionType.LIKE).length
 
   const getAuthorLabel = () => {
     if (post.isAnonymous) {
@@ -53,11 +63,15 @@ export default function ForumCard({
   }
 
   const handlePostClick = () => {
-    onClick()
+    router.push(`${ROUTES.FORUM}/post/${post.id}`)
   }
 
   const handleEditClick = async () => {
     router.push(`${ROUTES.FORUM}/edit/${post.id}`)
+  }
+
+  const handleToggleLike = async () => {
+    await toggleLike(post.id, userId, pathname)
   }
 
   const contextMenu = (() => {
@@ -81,11 +95,18 @@ export default function ForumCard({
 
     return (
       <ContextMenuContent>
-        <ContextMenuItem
-        // onClick={handleEditClick}
-        >
-          <HeartPlus />
-          <span>Like</span>
+        <ContextMenuItem onClick={handleToggleLike}>
+          {isLiked ? (
+            <>
+              <Heart />
+              <span>Liked</span>
+            </>
+          ) : (
+            <>
+              <HeartPlus />
+              <span>Like</span>
+            </>
+          )}
         </ContextMenuItem>
 
         <ContextMenuSeparator />
@@ -142,11 +163,17 @@ export default function ForumCard({
 
               <div className="flex gap-5">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MessageSquare className="h-4 w-4" />
-                  <span>0</span>
+                  <Eye className="h-4 w-4" />
+                  <span>{viewCount}</span>
                 </div>
+
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Heart className="h-4 w-4" />
+                  <span>{likeCount}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MessageSquare className="h-4 w-4" />
                   <span>0</span>
                 </div>
               </div>
