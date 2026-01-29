@@ -99,3 +99,284 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+// User schema
+model Region {
+  id            Int                      @id @default(autoincrement())
+  value         String                   @unique
+  label         String
+  users         User[]
+  announcements RegionsOnAnnouncements[]
+
+  @@map("region")
+}
+
+model YearLevel {
+  id            Int                         @id @default(autoincrement())
+  value         String                      @unique
+  label         String
+  users         User[]
+  announcements YearLevelsOnAnnouncements[]
+
+  @@map("yearLevel")
+}
+
+model School {
+  id            Int                      @id
+  label         String
+  users         User[]
+  announcements SchoolsOnAnnouncements[]
+
+  @@map("school")
+}
+
+model Interest {
+  id    Int                @id @default(autoincrement())
+  value String             @unique
+  label String
+  users InterestsOnUsers[]
+
+  @@map("interest")
+}
+
+model InterestsOnUsers {
+  userId     String
+  interestId Int
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interest Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
+
+  @@id([userId, interestId])
+  @@map("interestsOnUsers")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  DECLINED
+
+  @@map("approvalStatus")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+
+  @@map("role")
+}
+
+// Announcement schema
+model Announcement {
+  id           String   @id @default(uuid())
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  categoryId   Int      @default(1)
+  authorId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  targetRegions    RegionsOnAnnouncements[]
+  targetSchools    SchoolsOnAnnouncements[]
+  targetYearLevels YearLevelsOnAnnouncements[]
+
+  category     AnnouncementCategory      @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  author       User?                     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  interactions AnnouncementInteraction[]
+
+  @@map("announcement")
+}
+
+model AnnouncementCategory {
+  id            Int            @id @default(autoincrement())
+  value         String         @unique
+  label         String
+  announcements Announcement[]
+
+  @@map("announcementCategory")
+}
+
+model SchoolsOnAnnouncements {
+  announcementId String
+  schoolId       Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, schoolId])
+  @@map("schoolsOnAnnouncements")
+}
+
+model RegionsOnAnnouncements {
+  announcementId String
+  regionId       Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  region       Region       @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, regionId])
+  @@map("regionsOnAnnouncements")
+}
+
+model YearLevelsOnAnnouncements {
+  announcementId String
+  yearLevelId    Int
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  yearLevel    YearLevel    @relation(fields: [yearLevelId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, yearLevelId])
+  @@map("yearLevelsOnAnnouncements")
+}
+
+model AnnouncementInteraction {
+  announcementId String
+  userId         String
+  isRead         Boolean
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([announcementId, userId])
+  @@map("announcementInteraction")
+}
+
+// Event Schema
+enum ParticipationType {
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+
+  @@map("participationType")
+}
+
+model Event {
+  id               String   @id @default(uuid())
+  title            String
+  descriptionPlain String
+  descriptionHtml  String
+  descriptionJson  Json
+  categoryId       Int      @default(1)
+  location         String
+  capacity         Int
+  startDateTime    DateTime
+  endDateTime      DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  category       EventCategory        @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  registrations  EventRegistration[]
+  participations EventParticipation[]
+  forms          Form[]
+
+  @@map("event")
+}
+
+model EventCategory {
+  id     Int     @id @default(autoincrement())
+  value  String  @unique
+  label  String
+  events Event[]
+
+  @@map("eventCategory")
+}
+
+model EventRegistration {
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@map("eventRegistration")
+}
+
+model EventParticipation {
+  userId            String
+  eventId           String
+  attendedAt        DateTime          @default(now())
+  participationType ParticipationType @default(ATTENDED)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@map("eventParticipation")
+}
+
+// Forum schema
+enum PostInteractionType {
+  VIEW
+  LIKE
+
+  @@map("postInteractionType")
+}
+
+model Post {
+  id           String  @id @default(uuid())
+  title        String
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  isAnonymous  Boolean
+  isPrivate    Boolean
+
+  categoryId Int     @default(1)
+  authorId   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  category         PostCategory      @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
+  author           User?             @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  postInteractions PostInteraction[]
+  postReplies      PostReply[]
+
+  @@map("post")
+}
+
+model PostCategory {
+  id    Int    @id @default(autoincrement())
+  value String @unique
+  label String
+  posts Post[]
+
+  @@map("postCategory")
+}
+
+model PostInteraction {
+  postId String
+  userId String
+  type   PostInteractionType
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId, type])
+  @@map("postInteraction")
+}
+
+model PostReply {
+  id       String  @id @default(uuid())
+  postId   String
+  parentId String?
+  authorId String
+
+  contentPlain String
+  contentHtml  String
+  contentJson  Json
+  isAnonymous  Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post     Post        @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author   User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent   PostReply?  @relation("ReplyChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children PostReply[] @relation("ReplyChildren")
+
+  @@map("postReply")
+}
