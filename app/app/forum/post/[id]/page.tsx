@@ -29,7 +29,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ id: 
   const post = await prisma.post.findUnique({
     where: { id: id },
     include: {
-      postReplies: {
+      replies: {
         include: {
           author: {
             select: { id: true, image: true, name: true, firstName: true, lastName: true },
@@ -38,7 +38,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ id: 
       },
       category: { select: { id: true, label: true } },
       author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
-      postInteractions: { where: { userId: user.id } },
+      interactions: { where: { userId: user.id } },
     },
   })
 

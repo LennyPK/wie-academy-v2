@@ -24,7 +24,7 @@ export type Post = {
     lastName: string
   } | null
 
-  postInteractions: {
+  interactions: {
     userId: string
     type: PostInteractionType
     postId: string
@@ -104,9 +104,9 @@ export type PostWithReply = {
     lastName: string
   } | null
 
-  postReplies: Reply[]
+  replies: Reply[]
 
-  postInteractions: {
+  interactions: {
     userId: string
     type: PostInteractionType
     postId: string

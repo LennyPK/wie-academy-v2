@@ -47,12 +47,12 @@ export default function ForumCard({
   const isAuthor = post.author.id === userId
   const isAdmin = userRole === Role.ADMIN
 
-  const isLiked = post.postInteractions.some(
+  const isLiked = post.interactions.some(
     (i) => i.type === PostInteractionType.LIKE && i.userId === userId
   )
 
-  const viewCount = post.postInteractions.filter((i) => i.type === PostInteractionType.VIEW).length
-  const likeCount = post.postInteractions.filter((i) => i.type === PostInteractionType.LIKE).length
+  const viewCount = post.interactions.filter((i) => i.type === PostInteractionType.VIEW).length
+  const likeCount = post.interactions.filter((i) => i.type === PostInteractionType.LIKE).length
 
   const getAuthorLabel = () => {
     if (post.isAnonymous) {

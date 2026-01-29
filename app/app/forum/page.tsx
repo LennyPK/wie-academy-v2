@@ -83,7 +83,7 @@ export default async function ForumPage({ searchParams }: ForumPageProps) {
       include: {
         category: { select: { id: true, label: true } },
         author: { select: { id: true, image: true, name: true, firstName: true, lastName: true } },
-        postInteractions: true,
+        interactions: true,
       },
       orderBy: { updatedAt: "desc" },
       take: pageSize,

@@ -46,7 +46,7 @@ export default function ForumDetail({
   const isAuthor = post.author?.id === userId
   const isAdmin = userRole === Role.ADMIN
 
-  const isLiked = post.postInteractions.find((i) => i.type === PostInteractionType.LIKE)
+  const isLiked = post.interactions.find((i) => i.type === PostInteractionType.LIKE)
 
   const getAuthorLabel = () => {
     if (post.isAnonymous) {
@@ -197,7 +197,7 @@ export default function ForumDetail({
         userId={userId}
         postId={post.id}
         postIsPrivate={post.isPrivate}
-        postReplies={post.postReplies}
+        postReplies={post.replies}
       />
     </div>
   )
