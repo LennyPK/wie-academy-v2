@@ -1,3 +1,4 @@
+import { AnnouncementInteractionType } from "@/prisma/enums"
 import { InputJsonValue, JsonValue } from "@prisma/client/runtime/client"
 
 export type Announcement = {
@@ -14,7 +15,12 @@ export type Announcement = {
   authorId: string | null
   author: { image: string | null; name: string } | null
 
-  interactions: { isRead: boolean }[]
+  // interactions: { isRead: boolean }[]
+  interactions: {
+    userId: string
+    type: AnnouncementInteractionType
+    announcementId: string
+  }[]
   targetRegions: { region: { id: number; label: string } }[]
   targetSchools: { school: { id: number; label: string } }[]
   targetYearLevels: { yearLevel: { id: number; label: string } }[]

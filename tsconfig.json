@@ -34,7 +34,12 @@
       "@/db": ["./lib/database/index.ts"],
       "@/generated/*": ["./lib/generated/prisma/*"],
       "@/constants*": ["./lib/constants"],
-      "@/db/*": ["./lib/database/*"]
+      "@/db/*": ["./lib/database/*"],
+
+      // App subfolders
+      "@/announcements/*": ["./app/app/announcements/*"],
+      "@/events/*": ["./app/app/events/*"],
+      "@/forum/*": ["./app/app/forum/*"]
     }
   },
   "include": [

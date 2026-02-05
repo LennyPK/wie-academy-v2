@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
-import { Role } from "@/prisma/enums"
+import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -24,11 +24,11 @@ interface SearchParams {
   page?: string
 }
 
-interface AnnouncementPageProps {
+interface AnnouncementsPageProps {
   searchParams?: Promise<SearchParams>
 }
 
-export default async function AnnouncementPage({ searchParams }: AnnouncementPageProps) {
+export default async function AnnouncementsPage({ searchParams }: AnnouncementsPageProps) {
   const session = await auth.api.getSession({ headers: await headers() })
 
   if (!session) {
@@ -106,9 +106,13 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
     const isRead = readStatus === "read"
 
     if (isRead) {
-      conditions.push({ interactions: { some: { userId: user.id, isRead: true } } })
+      conditions.push({
+        interactions: { some: { userId: user.id, type: AnnouncementInteractionType.VIEW } },
+      })
     } else {
-      conditions.push({ interactions: { none: { userId: user.id, isRead: true } } })
+      conditions.push({
+        interactions: { none: { userId: user.id, type: AnnouncementInteractionType.VIEW } },
+      })
     }
   }
 
@@ -175,7 +179,7 @@ export default async function AnnouncementPage({ searchParams }: AnnouncementPag
         author: { select: { name: true, image: true } },
         interactions: {
           where: { userId: user.id },
-          select: { isRead: true },
+          // select: { isRead: true },
         },
         targetRegions: { select: { region: { select: { id: true, label: true } } } },
         targetSchools: { select: { school: { select: { id: true, label: true } } } },

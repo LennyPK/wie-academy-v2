@@ -1,65 +1,48 @@
 "use client"
 
-import { useIsMobile } from "@/hooks/use-mobile"
-
 import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-} from "@/components/ui/dialog"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerTitle,
-} from "@/components/ui/drawer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Role } from "@/prisma/enums"
-import { DialogTitle } from "@radix-ui/react-dialog"
+import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, BookX, ChevronDown, Clock, Edit } from "lucide-react"
 import { Announcement } from "../types"
 
 interface AnnouncementDetailProps {
-  announcement: Announcement | null
-  open: boolean
-  setOpen: (open: boolean) => void
   userRole: string
-  onToggleRead: (announcementId: string) => Promise<void>
-  onEdit: (announcementId: string) => Promise<void>
+  announcement: Announcement | null
+  // open: boolean
+  // setOpen: (open: boolean) => void
+  // onToggleRead: (announcementId: string) => Promise<void>
+  // onEdit: (announcementId: string) => Promise<void>
 }
 
 export default function AnnouncementDetail({
-  announcement,
-  open,
-  setOpen,
   userRole,
-  onToggleRead,
-  onEdit,
+  announcement,
+  // open,
+  // setOpen,
+  // onToggleRead,
+  // onEdit,
 }: AnnouncementDetailProps) {
-  const isMobile = useIsMobile()
-
-  const isRead = announcement ? announcement.interactions.some((i) => i.isRead) : false
-  const isAdmin = userRole === Role.ADMIN
+  // const isMobile = useIsMobile()
 
   if (!announcement) return null
 
+  const isRead = announcement.interactions.some((i) => i.type === AnnouncementInteractionType.VIEW)
+  const isAdmin = userRole === Role.ADMIN
+
   const handleToggleRead = async () => {
-    onToggleRead(announcement.id)
+    // onToggleRead(announcement.id)
   }
 
   const handleEdit = async () => {
-    onEdit(announcement.id)
+    // onEdit(announcement.id)
   }
 
   const actions = (
@@ -169,11 +152,14 @@ export default function AnnouncementDetail({
       <div className="mb-4 flex justify-center sm:justify-start">
         <CategoryBadge category={announcement.category} className="w-fit" />
       </div>
-      <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
+
+      {headerTitle}
+      {headerDescription}
+      {/* <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
       <div className="mt-2 sm:hidden">{headerDescription}</div>
 
       <DialogTitle className="hidden sm:block">{headerTitle}</DialogTitle>
-      <div className="mt-2 hidden sm:block">{headerDescription}</div>
+      <div className="mt-2 hidden sm:block">{headerDescription}</div> */}
     </div>
   )
 
@@ -236,34 +222,50 @@ export default function AnnouncementDetail({
     </div>
   )
 
-  if (isMobile) {
-    return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerOverlay className="backdrop-blur-xs" />
-        <DrawerContent className="bg-card px-5">
-          <DrawerHeader className="text-center">{header}</DrawerHeader>
-          {actions}
-          <div className="overflow-y-auto">{bodyContent}</div>
-          <DrawerFooter>{targeting}</DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    )
-  }
+  // if (isMobile) {
+  //   return (
+  //     <Drawer open={open} onOpenChange={setOpen}>
+  //       <DrawerOverlay className="backdrop-blur-xs" />
+  //       <DrawerContent className="bg-card px-5">
+  //         <DrawerHeader className="text-center">{header}</DrawerHeader>
+  //         {actions}
+  //         <div className="overflow-y-auto">{bodyContent}</div>
+  //         <DrawerFooter>{targeting}</DrawerFooter>
+  //       </DrawerContent>
+  //     </Drawer>
+  //   )
+  // }
+
+  // return (
+  //   <Dialog open={open} onOpenChange={setOpen}>
+  //     <DialogOverlay className="backdrop-blur-xs" />
+  //     <DialogContent
+  //       aria-describedby={announcement.id}
+  //       className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
+  //     >
+  //       <DialogHeader>{header}</DialogHeader>
+  //       {actions}
+  //       <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
+  //         {bodyContent}
+  //       </div>
+  //       <DialogFooter className="sm:justify-start">{targeting}</DialogFooter>
+  //     </DialogContent>
+  //   </Dialog>
+  // )
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogOverlay className="backdrop-blur-xs" />
-      <DialogContent
-        aria-describedby={announcement.id}
-        className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
-      >
-        <DialogHeader>{header}</DialogHeader>
-        {actions}
-        <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
-          {bodyContent}
-        </div>
-        <DialogFooter className="sm:justify-start">{targeting}</DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <div>
+      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <Card>
+          <CardContent>
+            {header}
+            {actions}
+            <div className="overflow-y-auto">{bodyContent}</div>
+            {/* {bodyContent} */}
+          </CardContent>
+        </Card>
+        <footer>{targeting}</footer>
+      </main>
+    </div>
   )
 }

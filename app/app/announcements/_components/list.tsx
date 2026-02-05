@@ -1,11 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { markAsRead, toggleRead } from "../actions"
 import { Announcement } from "../types"
 import AnnouncementCard from "./card"
-import AnnouncementDetail from "./detail"
-import AnnouncementFormModal from "./form-modal"
 
 interface AnnouncementListProps {
   userId: string
@@ -20,67 +16,70 @@ export default function AnnouncementList({
   announcements,
   searchQuery,
 }: AnnouncementListProps) {
-  const [detailOpen, setDetailOpen] = useState(false)
-  const [editOpen, setEditOpen] = useState(false)
-  const [announcement, setAnnouncement] = useState<Announcement | null>(null)
+  // const [detailOpen, setDetailOpen] = useState(false)
+  // const pathname = usePathname()
 
-  const handleAnnouncementClick = (announcement: Announcement) => async () => {
-    setAnnouncement(announcement)
-    setDetailOpen(true)
-    // Mark as seen when opened
-    await markAsRead(announcement.id, userId)
-    // const seen = await onMarkSeen(announcement.id)
-    // if (seen && (seen.event === "unlocked" || seen.event === "tier_up")) {
-    //   const supabase = createClient()
-    //   const {
-    //     data: { user },
-    //   } = await supabase.auth.getUser()
-    //   const userId = user?.id
-    //   if (!userId) return
-    //   const gained = XP_VALUES.NEW_BADGE_TIER
-    //   const xpAddSuccess = await addXPToUser(userId, gained)
-    //   const name = seen.badgeName || "Badge"
-    //   const msg =
-    //     seen.event === "unlocked"
-    //       ? `${name} unlocked!`
-    //       : `${name} upgraded to Tier ${seen.newTier}!`
-    //   toast.success(msg, xpAddSuccess ? { description: `Gained ${gained} XP!` } : {})
-    // }
-  }
+  // const [editOpen, setEditOpen] = useState(false)
+  // const [announcement, setAnnouncement] = useState<Announcement | null>(null)
 
-  const handleEditClick = async (announcementId: string) => {
-    setEditOpen(true)
-    setAnnouncement(
-      announcements.find((announcement) => announcement.id === announcementId) || null
-    )
-  }
+  // const handleAnnouncementClick = (announcement: Announcement) => async () => {
+  // setAnnouncement(announcement)
+  // setDetailOpen(true)
+  // Mark as seen when opened
+  // await markAsRead(announcement.id, userId)
+  // const seen = await onMarkSeen(announcement.id)
+  // if (seen && (seen.event === "unlocked" || seen.event === "tier_up")) {
+  //   const supabase = createClient()
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser()
+  //   const userId = user?.id
+  //   if (!userId) return
+  //   const gained = XP_VALUES.NEW_BADGE_TIER
+  //   const xpAddSuccess = await addXPToUser(userId, gained)
+  //   const name = seen.badgeName || "Badge"
+  //   const msg =
+  //     seen.event === "unlocked"
+  //       ? `${name} unlocked!`
+  //       : `${name} upgraded to Tier ${seen.newTier}!`
+  //   toast.success(msg, xpAddSuccess ? { description: `Gained ${gained} XP!` } : {})
+  // }
+  // }
 
-  const onToggleRead = async (announcementId: string) => {
-    await toggleRead(announcementId, userId)
-  }
+  // const handleEditClick = async (announcementId: string) => {
+  //   setEditOpen(true)
+  //   setAnnouncement(
+  //     announcements.find((announcement) => announcement.id === announcementId) || null
+  //   )
+  // }
+
+  // const onToggleRead = async (announcementId: string) => {
+  //   await toggleRead(announcementId, userId, pathname)
+  // }
 
   return (
     <div className="space-y-6" role="list" aria-label="announcements">
-      <AnnouncementDetail
+      {/* <AnnouncementDetail
         open={detailOpen}
         setOpen={setDetailOpen}
         announcement={announcement}
         userRole={userRole}
         onToggleRead={(id) => onToggleRead(id)}
         onEdit={handleEditClick}
-      />
+      /> */}
 
-      <AnnouncementFormModal announcement={announcement} open={editOpen} setOpen={setEditOpen} />
+      {/* <AnnouncementFormModal announcement={announcement} open={editOpen} setOpen={setEditOpen} /> */}
 
       {announcements &&
         announcements.map((announcement) => (
           <AnnouncementCard
+            userId={userId}
             userRole={userRole}
             key={announcement.id}
             announcement={announcement}
-            onClick={handleAnnouncementClick(announcement)}
-            onEdit={handleEditClick}
-            onToggleRead={() => onToggleRead(announcement.id)}
+            // onClick={handleAnnouncementClick(announcement)}
+            // onEdit={handleEditClick}
+            // onToggleRead={() => onToggleRead(announcement.id)}
             searchQuery={searchQuery}
           />
         ))}

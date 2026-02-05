@@ -3,32 +3,32 @@
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
+import { AnnouncementInteractionType } from "@/prisma/enums"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { NewAnnouncement } from "./types"
 
-export async function toggleRead(announcementId: string, userId: string) {
+export async function toggleRead(announcementId: string, userId: string, path: string) {
   const interaction = await prisma.announcementInteraction.findUnique({
     where: {
-      announcementId_userId: {
+      announcementId_userId_type: {
         announcementId,
         userId,
+        type: AnnouncementInteractionType.VIEW,
       },
     },
   })
 
   if (interaction) {
     // Toggle the current value
-    await prisma.announcementInteraction.update({
+    await prisma.announcementInteraction.delete({
       where: {
-        announcementId_userId: {
+        announcementId_userId_type: {
           announcementId,
           userId,
+          type: AnnouncementInteractionType.VIEW,
         },
-      },
-      data: {
-        isRead: !interaction.isRead,
       },
     })
   } else {
@@ -37,22 +37,30 @@ export async function toggleRead(announcementId: string, userId: string) {
       data: {
         announcementId,
         userId,
-        isRead: true,
+        type: AnnouncementInteractionType.VIEW,
       },
     })
   }
 
-  revalidatePath(ROUTES.ANNOUNCEMENTS)
+  revalidatePath(path)
 }
 
 export async function markAsRead(announcementId: string, userId: string) {
   await prisma.announcementInteraction.upsert({
-    where: { announcementId_userId: { announcementId, userId } },
-    update: { isRead: true },
-    create: { announcementId, userId, isRead: true },
+    where: {
+      announcementId_userId_type: {
+        announcementId,
+        userId,
+        type: AnnouncementInteractionType.VIEW,
+      },
+    },
+    // update: { isRead: true },
+    // create: { announcementId, userId, isRead: true },
+    update: {},
+    create: { announcementId, userId, type: AnnouncementInteractionType.VIEW },
   })
 
-  revalidatePath(ROUTES.ANNOUNCEMENTS)
+  // revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
 export async function insertAnnouncement(announcementPayload: NewAnnouncement) {

@@ -22,7 +22,7 @@ export default function BackButton({ label, route }: BackButtonProps) {
 
   return (
     <div className="py-4">
-      <Button variant="ghost" className="text-sm text-muted-foreground" onClick={handleClick}>
+      <Button variant="link" className="text-sm text-muted-foreground" onClick={handleClick}>
         <ChevronLeft className="size-5" />
         <span>{label ? label : "Back"}</span>
       </Button>
