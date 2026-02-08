@@ -21,7 +21,6 @@ export async function toggleRead(announcementId: string, userId: string, path: s
   })
 
   if (interaction) {
-    // Toggle the current value
     await prisma.announcementInteraction.delete({
       where: {
         announcementId_userId_type: {
@@ -32,7 +31,6 @@ export async function toggleRead(announcementId: string, userId: string, path: s
       },
     })
   } else {
-    // If no interaction exists yet, create it as read
     await prisma.announcementInteraction.create({
       data: {
         announcementId,
@@ -57,7 +55,11 @@ export async function markAsRead(announcementId: string, userId: string) {
     // update: { isRead: true },
     // create: { announcementId, userId, isRead: true },
     update: {},
-    create: { announcementId, userId, type: AnnouncementInteractionType.VIEW },
+    create: {
+      announcementId,
+      userId,
+      type: AnnouncementInteractionType.VIEW,
+    },
   })
 
   // revalidatePath(ROUTES.ANNOUNCEMENTS)

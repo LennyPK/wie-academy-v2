@@ -159,7 +159,7 @@ export default function ForumReplyForm({ postId, isPrivate, clearForm }: ForumRe
               <Button type="button" variant="outline" className="flex-1" onClick={clearForm}>
                 Clear
               </Button>
-              <Button type="submit" className="flex-1 cursor-pointer" disabled={isLoading}>
+              <Button type="submit" className="flex-1" disabled={isLoading}>
                 Submit
               </Button>
             </div>

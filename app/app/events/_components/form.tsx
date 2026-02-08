@@ -447,7 +447,7 @@ export default function EventForm({ setOpen, event }: EventFormProps) {
             >
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 cursor-pointer" disabled={isLoading}>
+            <Button type="submit" className="flex-1" disabled={isLoading}>
               Submit
             </Button>
           </div>

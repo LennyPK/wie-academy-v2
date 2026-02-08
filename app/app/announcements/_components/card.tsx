@@ -15,7 +15,8 @@ import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { cn, highlightText } from "@/utils"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, EyeOff } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { markAsRead, toggleRead } from "../actions"
 import { Announcement } from "../types"
 
 interface AnnouncementCardProps {
@@ -38,8 +39,10 @@ export default function AnnouncementCard({
   // onToggleRead,
 }: AnnouncementCardProps) {
   const router = useRouter()
+  const pathname = usePathname()
 
-  const handleAnnouncementClick = () => {
+  const handleAnnouncementClick = async () => {
+    await markAsRead(announcement.id, userId)
     router.push(`${ROUTES.ANNOUNCEMENTS}/${announcement.id}`)
     // onClick()
   }
@@ -49,8 +52,9 @@ export default function AnnouncementCard({
     // onEdit(announcement.id)
   }
 
-  const handleToggleReadStatus = (e: React.MouseEvent) => {
+  const handleToggleReadStatus = async (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click/open
+    await toggleRead(announcement.id, userId, pathname)
     // onToggleRead()
   }
 
@@ -66,7 +70,7 @@ export default function AnnouncementCard({
         <Card
           key={announcement.id}
           className={cn(
-            "min-h-[250px] flex-col border-0 transition-all duration-300",
+            "min-h-62.5 flex-col border-0 transition-all duration-100",
             "focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:outline-none",
             isRead
               ? "bg-muted"

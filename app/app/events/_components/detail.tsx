@@ -136,7 +136,7 @@ export default function EventDetail({
         <>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 gap-2">
                 <Edit />
                 <span className="hidden sm:inline">Edit Event</span>
                 <span className="sm:hidden">Edit</span>
@@ -147,7 +147,7 @@ export default function EventDetail({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" className="flex-1 gap-2">
                 <Users />
                 <span className="sm:hidden">Attendees</span>
                 <span className="hidden sm:inline">View Attendees</span>
@@ -158,7 +158,7 @@ export default function EventDetail({
 
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" className="flex-1 gap-2">
                 <QrCode />
                 <span className="sm:hidden">QR Code</span>
                 <span className="hidden sm:inline">View QR Code</span>
@@ -190,7 +190,7 @@ export default function EventDetail({
 
     if (isRegistrationDisabled) {
       return (
-        <Button variant="ghost" disabled className="flex flex-1 cursor-pointer items-center gap-2">
+        <Button variant="ghost" disabled className="flex flex-1 items-center gap-2">
           <UserLock />
           <span>Event Full</span>
         </Button>
@@ -206,7 +206,7 @@ export default function EventDetail({
               variant={isRegistered ? "ghost" : "default"}
               onClick={handleRegister}
               className={cn(
-                "group flex flex-1 cursor-pointer items-center gap-2",
+                "group flex flex-1 items-center gap-2",
                 isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
               )}
             >
@@ -236,7 +236,7 @@ export default function EventDetail({
             <Button
               variant="ghost"
               hidden={!isRegistered}
-              className={cn("flex flex-1 cursor-pointer items-center gap-2")}
+              className={cn("flex flex-1 items-center gap-2")}
             >
               <CalendarPlus />
               <span className="hidden sm:inline">Add to Calendar</span>

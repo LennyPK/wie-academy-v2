@@ -157,7 +157,7 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
               </div>
 
               <Field>
-                <Button type="submit" className="cursor-pointer" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                   Sign In
                 </Button>
                 <FieldDescription className="text-center">

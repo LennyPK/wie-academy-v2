@@ -119,7 +119,7 @@ export function DatePicker({
             data-empty={!date}
             variant="outline"
             className={cn(
-              "w-48 cursor-pointer justify-between bg-card font-normal hover:bg-card data-[empty=true]:text-muted-foreground",
+              "w-48 justify-between bg-card font-normal hover:bg-card data-[empty=true]:text-muted-foreground",
               className
             )}
             {...props}

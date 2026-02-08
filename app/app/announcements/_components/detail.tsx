@@ -11,9 +11,12 @@ import { cn } from "@/lib/utils"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, BookX, ChevronDown, Clock, Edit } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { toggleRead } from "../actions"
 import { Announcement } from "../types"
 
 interface AnnouncementDetailProps {
+  userId: string
   userRole: string
   announcement: Announcement | null
   // open: boolean
@@ -23,6 +26,7 @@ interface AnnouncementDetailProps {
 }
 
 export default function AnnouncementDetail({
+  userId,
   userRole,
   announcement,
   // open,
@@ -31,6 +35,7 @@ export default function AnnouncementDetail({
   // onEdit,
 }: AnnouncementDetailProps) {
   // const isMobile = useIsMobile()
+  const pathname = usePathname()
 
   if (!announcement) return null
 
@@ -39,6 +44,7 @@ export default function AnnouncementDetail({
 
   const handleToggleRead = async () => {
     // onToggleRead(announcement.id)
+    await toggleRead(announcement.id, userId, pathname)
   }
 
   const handleEdit = async () => {
@@ -54,7 +60,7 @@ export default function AnnouncementDetail({
             <Button
               variant={isRead ? "ghost" : "default"}
               onClick={handleToggleRead}
-              className={cn("group flex-1 cursor-pointer gap-2")}
+              className={cn("group flex-1 gap-2")}
             >
               {isRead ? (
                 <>
@@ -80,7 +86,7 @@ export default function AnnouncementDetail({
         {isAdmin && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 gap-2">
                 <Edit />
                 <span className="hidden sm:inline">Edit Announcement</span>
                 <span className="sm:hidden">Edit</span>
@@ -193,7 +199,9 @@ export default function AnnouncementDetail({
               </Badge>
             ))
           ) : (
-            <span className="text-xs text-muted-foreground">{fallback}</span>
+            <Badge variant="outline" className="px-2 text-xs font-normal">
+              {fallback}
+            </Badge>
           )}
         </div>
       </CollapsibleContent>

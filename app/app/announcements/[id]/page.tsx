@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma/client"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import AnnouncementDetail from "../_components/detail"
-import { markAsRead } from "../actions"
 
 export default async function AnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })
@@ -24,9 +23,6 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
   }
 
   const { id } = await params
-
-  // TODO: Convert to transaction
-  await markAsRead(id, user.id)
 
   const announcement = await prisma.announcement.findUnique({
     where: { id: id },
@@ -75,6 +71,7 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <BackButton />
         <AnnouncementDetail
+          userId={user.id}
           userRole={user.role}
           announcement={announcement}
           // userId={user.id}

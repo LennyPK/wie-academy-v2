@@ -130,10 +130,7 @@ export default function EventCard({
   const actions = (() => {
     if (isAdmin) {
       return (
-        <Button
-          variant={isPast ? "outline" : "default"}
-          className="flex cursor-pointer items-center gap-2"
-        >
+        <Button variant={isPast ? "outline" : "default"} className="flex items-center gap-2">
           <QrCode />
           <span>QR Code</span>
         </Button>
@@ -160,11 +157,7 @@ export default function EventCard({
 
     if (isRegistrationDisabled) {
       return (
-        <Button
-          variant="outline"
-          disabled
-          className="flex flex-1 cursor-pointer items-center gap-2"
-        >
+        <Button variant="outline" disabled className="flex flex-1 items-center gap-2">
           <UserLock />
           <span>Event Full</span>
         </Button>
@@ -175,7 +168,7 @@ export default function EventCard({
       <Button
         variant={isRegistered ? "ghost" : "default"}
         className={cn(
-          "group flex flex-1 cursor-pointer items-center gap-2",
+          "group flex flex-1 items-center gap-2",
           isRegistered && "hover:bg-destructive hover:text-destructive-foreground"
         )}
         onClick={handleRegister}

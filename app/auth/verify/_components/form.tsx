@@ -101,7 +101,7 @@ export default function VerifyForm({ email }: VerifyFormProps) {
       </form.Field>
 
       <Field>
-        <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
+        <Button type="submit" className="w-full" disabled={isLoading}>
           <RefreshCw className="mr-2 h-4 w-4" />
           Resend Verification Email
         </Button>

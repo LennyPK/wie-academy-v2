@@ -76,7 +76,7 @@ export default function ForumDetail({
         <>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" onClick={handleEdit} className="flex-1 cursor-pointer gap-2">
+              <Button variant="ghost" onClick={handleEdit} className="flex-1 gap-2">
                 <Edit />
                 <span className="hidden sm:inline">Edit Post</span>
                 <span className="sm:hidden">Edit</span>
@@ -89,7 +89,7 @@ export default function ForumDetail({
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex-1 cursor-pointer gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                className="flex-1 gap-2 text-destructive hover:bg-destructive hover:text-destructive-foreground"
               >
                 <Trash2 />
                 <span className="hidden sm:inline">Delete Post</span>
@@ -105,11 +105,7 @@ export default function ForumDetail({
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            onClick={handleToggleLike}
-            className="flex-1 cursor-pointer gap-2"
-          >
+          <Button variant="ghost" onClick={handleToggleLike} className="flex-1 gap-2">
             {isLiked ? (
               <>
                 <Heart />

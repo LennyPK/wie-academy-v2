@@ -268,7 +268,7 @@ export default function ForumForm({ post }: ForumFormProps) {
                 <Button type="button" variant="outline" className="flex-1" onClick={closeForm}>
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1 cursor-pointer" disabled={isLoading}>
+                <Button type="submit" className="flex-1" disabled={isLoading}>
                   Submit
                 </Button>
               </div>

@@ -375,7 +375,7 @@ export default function SignUpForm({
               </form.Field>
 
               <Field>
-                <Button type="submit" className="cursor-pointer" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                   Sign Up
                 </Button>
                 <FieldDescription className="text-center">
