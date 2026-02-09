@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ROUTES } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, BookX, ChevronDown, Clock, Edit } from "lucide-react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { toggleRead } from "../actions"
 import { Announcement } from "../types"
 
@@ -19,22 +20,14 @@ interface AnnouncementDetailProps {
   userId: string
   userRole: string
   announcement: Announcement | null
-  // open: boolean
-  // setOpen: (open: boolean) => void
-  // onToggleRead: (announcementId: string) => Promise<void>
-  // onEdit: (announcementId: string) => Promise<void>
 }
 
 export default function AnnouncementDetail({
   userId,
   userRole,
   announcement,
-  // open,
-  // setOpen,
-  // onToggleRead,
-  // onEdit,
 }: AnnouncementDetailProps) {
-  // const isMobile = useIsMobile()
+  const router = useRouter()
   const pathname = usePathname()
 
   if (!announcement) return null
@@ -43,12 +36,11 @@ export default function AnnouncementDetail({
   const isAdmin = userRole === Role.ADMIN
 
   const handleToggleRead = async () => {
-    // onToggleRead(announcement.id)
     await toggleRead(announcement.id, userId, pathname)
   }
 
   const handleEdit = async () => {
-    // onEdit(announcement.id)
+    router.push(`${ROUTES.ANNOUNCEMENTS}/edit/${announcement.id}`)
   }
 
   const actions = (
@@ -56,7 +48,6 @@ export default function AnnouncementDetail({
       <div className="mt-4 flex items-center gap-1 border-y border-border py-3">
         <Tooltip>
           <TooltipTrigger asChild>
-            {/* FIXME: Button doesn't update when read status changes */}
             <Button
               variant={isRead ? "ghost" : "default"}
               onClick={handleToggleRead}
@@ -161,11 +152,6 @@ export default function AnnouncementDetail({
 
       {headerTitle}
       {headerDescription}
-      {/* <DrawerTitle className="sm:hidden">{headerTitle}</DrawerTitle>
-      <div className="mt-2 sm:hidden">{headerDescription}</div>
-
-      <DialogTitle className="hidden sm:block">{headerTitle}</DialogTitle>
-      <div className="mt-2 hidden sm:block">{headerDescription}</div> */}
     </div>
   )
 
@@ -230,50 +216,16 @@ export default function AnnouncementDetail({
     </div>
   )
 
-  // if (isMobile) {
-  //   return (
-  //     <Drawer open={open} onOpenChange={setOpen}>
-  //       <DrawerOverlay className="backdrop-blur-xs" />
-  //       <DrawerContent className="bg-card px-5">
-  //         <DrawerHeader className="text-center">{header}</DrawerHeader>
-  //         {actions}
-  //         <div className="overflow-y-auto">{bodyContent}</div>
-  //         <DrawerFooter>{targeting}</DrawerFooter>
-  //       </DrawerContent>
-  //     </Drawer>
-  //   )
-  // }
-
-  // return (
-  //   <Dialog open={open} onOpenChange={setOpen}>
-  //     <DialogOverlay className="backdrop-blur-xs" />
-  //     <DialogContent
-  //       aria-describedby={announcement.id}
-  //       className="flex max-h-[85vh] min-h-[200px] w-full max-w-[800px] min-w-[320px] flex-col overflow-hidden bg-card sm:max-w-[960px]"
-  //     >
-  //       <DialogHeader>{header}</DialogHeader>
-  //       {actions}
-  //       <div className="overflow-y-auto" style={{ scrollbarWidth: "thin" }}>
-  //         {bodyContent}
-  //       </div>
-  //       <DialogFooter className="sm:justify-start">{targeting}</DialogFooter>
-  //     </DialogContent>
-  //   </Dialog>
-  // )
-
   return (
     <div>
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <Card>
-          <CardContent>
-            {header}
-            {actions}
-            <div className="overflow-y-auto">{bodyContent}</div>
-            {/* {bodyContent} */}
-          </CardContent>
-        </Card>
-        <footer>{targeting}</footer>
-      </main>
+      <Card>
+        <CardContent>
+          {header}
+          {actions}
+          {bodyContent}
+        </CardContent>
+      </Card>
+      <footer className="py-5">{targeting}</footer>
     </div>
   )
 }
