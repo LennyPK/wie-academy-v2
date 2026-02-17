@@ -36,9 +36,8 @@ model FormQuestion {
   type         FormQuestionType
   questionText String
   isRequired   Boolean
-  // correctAnswer     String?
-  // answerExplanation String?
-  // score             Int?
+  explanation  String?
+  score        Int?
   quizConfig   Json?
   orderIndex   Int
 
