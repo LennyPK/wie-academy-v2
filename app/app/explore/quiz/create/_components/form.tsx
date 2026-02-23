@@ -4,6 +4,7 @@ import { useAppForm } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldGroup } from "@/components/ui/field"
+import { FormQuestionType } from "@/lib/prisma/enums"
 import { wait } from "@/lib/utils"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
@@ -55,9 +56,47 @@ export default function QuizForm() {
       modeAfterSubmission: "change",
     }),
     onSubmit: async ({ value }) => {
+      // TODO: Clear options from other q types and set score to 0 for single selects
       setIsLoading(true)
       console.log(value)
       await wait(2000)
+
+      const sanitizedQuestions = value.questions.map((q) => {
+        switch (q.type) {
+          case FormQuestionType.TEXT:
+          case FormQuestionType.TRUE_FALSE:
+          case FormQuestionType.RATING:
+          case FormQuestionType.SCALE: {
+            return {
+              id: q.id,
+              type: q.type,
+              prompt: q.prompt,
+              score: q.score,
+              isRequired: q.isRequired,
+              order: q.order,
+              // type-specific fields are spread conditionally below
+              ...("targetValue" in q && { targetValue: q.targetValue }),
+              ...("minValue" in q && { minValue: q.minValue }),
+              ...("maxValue" in q && { maxValue: q.maxValue }),
+              ...("minLabel" in q && { minLabel: q.minLabel }),
+              ...("maxLabel" in q && { maxLabel: q.maxLabel }),
+              ...("correctAnswer" in q && { correctAnswer: q.correctAnswer }),
+              ...("trueLabel" in q && { trueLabel: q.trueLabel }),
+              ...("falseLabel" in q && { falseLabel: q.falseLabel }),
+            }
+          }
+          default:
+            return q
+        }
+      })
+
+      const sanitizedQuiz = {
+        title: value.title,
+        description: value.description,
+        questions: sanitizedQuestions,
+      }
+
+      console.log(sanitizedQuiz)
       setIsLoading(false)
     },
   })

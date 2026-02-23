@@ -19,9 +19,15 @@ interface SelectIconFieldProps {
   label: string
   options: SelectOption[]
   placeholder?: string
+  onValueChange?: (value: string) => void
 }
 
-export default function SelectIconField({ label, options, placeholder }: SelectIconFieldProps) {
+export default function SelectIconField({
+  label,
+  options,
+  placeholder,
+  onValueChange,
+}: SelectIconFieldProps) {
   const field = useFieldContext<string>()
   const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid
 
@@ -31,7 +37,12 @@ export default function SelectIconField({ label, options, placeholder }: SelectI
       <Select
         name={field.name}
         value={field.state.value}
-        onValueChange={(value) => field.handleChange(value)}
+        onValueChange={(value) => {
+          field.handleChange(value)
+          // Call the optional callback after the field is updated
+          // so any downstream reads via form.getFieldValue see the new value.
+          onValueChange?.(value)
+        }}
       >
         <SelectTrigger id={field.name} onBlur={field.handleBlur} aria-invalid={isInvalid}>
           <SelectValue placeholder={placeholder} />

@@ -1,6 +1,6 @@
 import { withForm } from "@/components/form"
 import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldGroup } from "@/components/ui/field"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { FormQuestionType } from "@/lib/prisma/enums"
@@ -15,6 +15,10 @@ export const MultiSelectQuestion = withForm({
     return (
       <form.Field name={`questions[${questionIndex}].options`} mode="array">
         {(optionsField) => {
+          // Guard against the question not having options yet —
+          // this happens when switching from a non-options type like TEXT.
+          if (!optionsField.state.value) return null
+
           const optionsIsInvalid =
             optionsField.state.meta.isTouched && !optionsField.state.meta.isValid
 
@@ -99,7 +103,7 @@ export const MultiSelectQuestion = withForm({
                         }}
                       >
                         {({ liveValue, isDuplicate, isCorrect, order }) => (
-                          <FieldGroup className="flex flex-row items-baseline">
+                          <FieldGroup className="flex flex-row items-end">
                             <span className="font-medium">{order}.</span>
 
                             <Toggle
@@ -107,12 +111,17 @@ export const MultiSelectQuestion = withForm({
                               pressed={isCorrect}
                               onPressedChange={() => handleToggleCorrect(index)}
                               disabled={liveValue === ""}
-                              className="rounded-full data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                              className={cn(
+                                "rounded-full",
+                                "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
+                                "hover:cursor-pointer"
+                              )}
                             >
                               <Check />
                             </Toggle>
 
                             <Field data-invalid={labelIsInvalid || isDuplicate}>
+                              <FieldLabel htmlFor={labelField.name}>Option Label</FieldLabel>
                               <Input
                                 id={labelField.name}
                                 name={labelField.name}
@@ -156,7 +165,8 @@ export const MultiSelectQuestion = withForm({
                                 const scoreIsInvalid =
                                   scoreField.state.meta.isTouched && !scoreField.state.meta.isValid
                                 return (
-                                  <Field data-invalid={scoreIsInvalid} className="w-20 shrink-0">
+                                  <Field data-invalid={scoreIsInvalid} className="w-30 shrink-0">
+                                    <FieldLabel htmlFor={scoreField.name}>Option Score</FieldLabel>
                                     <Input
                                       id={scoreField.name}
                                       name={scoreField.name}

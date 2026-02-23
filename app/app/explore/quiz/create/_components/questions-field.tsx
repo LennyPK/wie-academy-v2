@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch"
 import { questionTypeOptions } from "@/lib/constants/question-types"
 import { FormQuestionType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
-import { Plus } from "lucide-react"
+import { Plus, Trash2 } from "lucide-react"
 import { formOpts } from "."
 import { MultiSelectQuestion } from "./question.multi-select"
 import { RatingQuestion2 } from "./question.rating"
@@ -55,7 +55,34 @@ export const QuestionsField = withForm({
                             )}
                           </div>
 
-                          <Badge>{questionType}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge>{questionType}</Badge>
+
+                            <Button
+                              type="button"
+                              // size="icon"
+                              variant="outline"
+                              onClick={() => {
+                                const currentQuestions = form.getFieldValue("questions")
+
+                                // Instead of calling removeValue + re-indexing separately (which races
+                                // because removeValue is async), we replace the whole array in one
+                                // atomic setFieldValue — filter the deleted question out and re-index order
+                                // in the same pass.
+                                const updatedQuestions = currentQuestions
+                                  .filter((_, questionIndex) => questionIndex !== i)
+                                  .map((question, newIndex) => ({ ...question, order: newIndex }))
+
+                                // Replace the entire questions array after reindexing
+                                form.setFieldValue("questions", updatedQuestions)
+                              }}
+                              className="hover:bg-destructive hover:text-destructive-foreground"
+                              disabled={form.getFieldValue("questions").length <= 1}
+                            >
+                              <Trash2 />
+                              <span>Delete</span>
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </form.Subscribe>
@@ -71,6 +98,36 @@ export const QuestionsField = withForm({
                               label="Question Type"
                               placeholder="Select Type"
                               options={questionTypeOptions}
+                              onValueChange={(value) => {
+                                // When switching to an options-based type, seed with
+                                // two empty options if none exist yet.
+                                if (
+                                  value === FormQuestionType.SINGLE_SELECT ||
+                                  value === FormQuestionType.MULTI_SELECT
+                                ) {
+                                  const question = form.getFieldValue(`questions[${i}]`)
+                                  if (!("options" in question) || !question.options.length) {
+                                    form.setFieldValue(`questions[${i}].options`, [
+                                      {
+                                        id: crypto.randomUUID(),
+                                        label: "",
+                                        value: "",
+                                        isCorrect: false,
+                                        order: 0,
+                                        score: 0,
+                                      },
+                                      {
+                                        id: crypto.randomUUID(),
+                                        label: "",
+                                        value: "",
+                                        isCorrect: false,
+                                        order: 1,
+                                        score: 0,
+                                      },
+                                    ])
+                                  }
+                                }
+                              }}
                             />
                           )
                         }}
@@ -113,6 +170,7 @@ export const QuestionsField = withForm({
                                     subField.handleChange(checked === true)
                                   }
                                   aria-invalid={isInvalid}
+                                  disabled
                                 />
                               </Field>
                             )

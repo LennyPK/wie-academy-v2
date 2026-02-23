@@ -15,6 +15,10 @@ export const SingleSelectQuestion = withForm({
     return (
       <form.Field name={`questions[${questionIndex}].options`} mode="array">
         {(optionsField) => {
+          // Guard against the question not having options yet —
+          // this happens when switching from a non-options type like TEXT.
+          if (!optionsField.state.value) return null
+
           const optionsIsInvalid =
             optionsField.state.meta.isTouched && !optionsField.state.meta.isValid
 
@@ -106,7 +110,11 @@ export const SingleSelectQuestion = withForm({
                               pressed={isCorrect}
                               onPressedChange={() => handleCorrectChange(liveValue)}
                               disabled={liveValue === ""}
-                              className="rounded-full data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                              className={cn(
+                                "rounded-full",
+                                "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
+                                "hover:cursor-pointer"
+                              )}
                             >
                               <Check />
                             </Toggle>

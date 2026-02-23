@@ -25,7 +25,7 @@ const baseQuestionSchema = z.object({
     .min(1, "Question prompt is required")
     .max(500, "Question prompt is too long"),
   // explanation: z.string().trim().max(1000, "Explanation is too long").optional(),
-  score: z.int().min(1, "A question must be worth at least 1 point"),
+  score: z.int("Score is required").min(1, "A question must be worth at least 1 point"),
   isRequired: z.boolean(),
   order: z.int().nonnegative(),
 })
@@ -80,7 +80,7 @@ const multiSelectQuestionSchema = baseQuestionSchema
 
 const trueFalseQuestionSchema = baseQuestionSchema.extend({
   type: z.literal(FormQuestionType.TRUE_FALSE),
-  correctAnswer: z.boolean(),
+  correctAnswer: z.boolean("Choice is required"),
   trueLabel: z.string().trim().max(100, "True label is too long").optional(),
   falseLabel: z.string().trim().max(100, "False label is too long").optional(),
 })
