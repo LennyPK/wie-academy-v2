@@ -6,8 +6,8 @@ import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import ExploreHeader from "./_components/header"
-import QuizEmpty from "./quiz/_components/quiz-empty"
-import QuizList from "./quiz/_components/quiz-list"
+import QuizEmpty from "./quiz-old/_components/quiz-empty"
+import QuizList from "./quiz-old/_components/quiz-list"
 
 export const metadata: Metadata = {
   title: "Explore",
