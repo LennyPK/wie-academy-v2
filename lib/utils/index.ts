@@ -35,4 +35,11 @@ export async function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+export const slugify = (str: string) =>
+  str
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "")
+
 export { highlightText } from "./highlight-text"
