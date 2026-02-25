@@ -5,7 +5,8 @@ import * as z from "zod"
 // Option (SINGLE_CHOICE, MULTI_SELECT)
 // ─────────────────────────────────────────
 const optionSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  tempId: z.string(),
   label: z.string().trim().min(1, "Option label is required").max(200, "Option label is too long"),
   value: z.string(),
   isCorrect: z.boolean(),
@@ -18,7 +19,8 @@ const optionSchema = z.object({
 // Each question type has its own schema, which are then discriminated on `type`.
 // ─────────────────────────────────────────
 const baseQuestionSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  tempId: z.string(),
   prompt: z
     .string()
     .trim()
@@ -160,6 +162,7 @@ const questionSchema = z.discriminatedUnion("type", [
 
 export const formSchema = z
   .object({
+    id: z.string().optional(),
     title: z.string().trim().min(1, "Title is required").max(100, "Title is too long"),
     description: z
       .string()

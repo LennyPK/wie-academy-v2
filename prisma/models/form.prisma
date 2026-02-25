@@ -31,29 +31,46 @@ model Form {
 }
 
 model FormQuestion {
-  id           String           @id @default(uuid())
-  formId       String
-  type         FormQuestionType
-  questionText String
-  isRequired   Boolean
-  explanation  String?
-  score        Int?
-  quizConfig   Json?
-  orderIndex   Int
+  id          String           @id @default(uuid())
+  formId      String
+  type        FormQuestionType
+  prompt      String
+  isRequired  Boolean
+  explanation String?
+  score       Int?
+  // quizConfig  Json?
+  order       Int
+
+  // TRUE_FALSE
+  correctAnswer Boolean?
+  trueLabel     String?
+  falseLabel    String?
+
+  // RATING (fixed 1-5)
+  ratingTarget Int?
+
+  // SCALE
+  scaleMin      Int?
+  scaleMax      Int?
+  scaleTarget   Int?
+  scaleMinLabel String?
+  scaleMaxLabel String?
 
   form    Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
-  options FormOption[]
+  options FormOption[] // SINGLE_SELECT and MULTI_SELECT only
   answers FormAnswer[]
 
   @@map("formQuestion")
 }
 
 model FormOption {
-  id         String @id @default(uuid())
+  id         String  @id @default(uuid())
   questionId String
   label      String
   value      String
-  orderIndex Int
+  isCorrect  Boolean @default(false)
+  score      Int     @default(0)
+  order      Int
 
   question FormQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
 

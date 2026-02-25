@@ -8,7 +8,7 @@ export const initialValues: z.infer<typeof formSchema> = {
   description: "",
   questions: [
     {
-      id: crypto.randomUUID(),
+      tempId: crypto.randomUUID(),
       prompt: "",
       type: FormQuestionType.SINGLE_SELECT,
       // correctOptionValue: "",
@@ -16,12 +16,12 @@ export const initialValues: z.infer<typeof formSchema> = {
       order: 0,
       score: 1,
       options: [
-        { id: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 0, score: 0 },
-        { id: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 1, score: 0 },
+        { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 0, score: 0 },
+        { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 1, score: 0 },
       ],
     },
     {
-      id: crypto.randomUUID(),
+      tempId: crypto.randomUUID(),
       prompt: "",
       type: FormQuestionType.SINGLE_SELECT,
       isRequired: true,
@@ -29,8 +29,8 @@ export const initialValues: z.infer<typeof formSchema> = {
       score: 1,
       // correctOptionValue: "",
       options: [
-        { id: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 0, score: 0 },
-        { id: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 1, score: 0 },
+        { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 0, score: 0 },
+        { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 1, score: 0 },
       ],
     },
   ],

@@ -66,7 +66,7 @@ export const MultiSelectQuestion = withForm({
                   // Use a stable option.id (set once on creation via crypto.randomUUID())
                   // rather than index or option.value so React doesn't unmount/remount
                   // the field on delete or on every keystroke as the slug changes.
-                  key={`${questionIndex}-option-${option.id}`}
+                  key={`${questionIndex}-option-${option.id ?? option.tempId}`}
                   name={`questions[${questionIndex}].options[${index}].label`}
                 >
                   {(labelField) => {
@@ -216,7 +216,7 @@ export const MultiSelectQuestion = withForm({
                 className={cn("flex w-full items-center justify-center gap-2 py-4 transition-all")}
                 onClick={() =>
                   optionsField.pushValue({
-                    id: crypto.randomUUID(),
+                    tempId: crypto.randomUUID(),
                     label: "",
                     value: "",
                     isCorrect: false,

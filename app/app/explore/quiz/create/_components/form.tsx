@@ -9,7 +9,10 @@ import { wait } from "@/lib/utils"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { toast } from "sonner"
+import * as z from "zod"
 import { formOpts } from "."
+import { insertQuiz } from "../actions"
 import { formSchema } from "./form-schema"
 import { QuestionsField } from "./questions-field"
 
@@ -20,31 +23,6 @@ export default function QuizForm() {
   const closeForm = () => {
     router.back()
   }
-
-  // const initialValues = {
-  //   title: "",
-  //   description: "",
-  //   questions: [
-  //     {
-  //       title: "",
-  //       type: FormQuestionType.SINGLE_SELECT,
-  //       correctOptionValue: "",
-  //       options: [
-  //         { label: "", value: "", isCorrect: false },
-  //         { label: "", value: "", isCorrect: false },
-  //       ],
-  //     },
-  //     {
-  //       title: "",
-  //       type: FormQuestionType.SINGLE_SELECT,
-  //       correctOptionValue: "",
-  //       options: [
-  //         { label: "", value: "", isCorrect: false },
-  //         { label: "", value: "", isCorrect: false },
-  //       ],
-  //     },
-  //   ],
-  // }
 
   const form = useAppForm({
     ...formOpts,
@@ -58,6 +36,7 @@ export default function QuizForm() {
     onSubmit: async ({ value }) => {
       // TODO: Clear options from other q types and set score to 0 for single selects
       setIsLoading(true)
+      toast.loading("Saving...")
       console.log(value)
       await wait(2000)
 
@@ -90,14 +69,22 @@ export default function QuizForm() {
         }
       })
 
-      const sanitizedQuiz = {
+      const sanitizedQuiz: z.infer<typeof formSchema> = {
+        id: value.id ?? "",
         title: value.title,
         description: value.description,
-        questions: sanitizedQuestions,
+        questions: sanitizedQuestions as z.infer<typeof formSchema>["questions"], // enforces question types explicitly
       }
 
       console.log(sanitizedQuiz)
+
+      const newQuiz = await insertQuiz(sanitizedQuiz)
+      toast.dismiss()
+      toast.success(`New quiz saved: ${newQuiz.title}`)
       setIsLoading(false)
+
+      console.log("Quiz: ")
+      console.log(newQuiz)
     },
   })
 

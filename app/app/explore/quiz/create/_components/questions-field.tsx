@@ -34,7 +34,7 @@ export const QuestionsField = withForm({
           return (
             <div className="space-y-5">
               {field.state.value.map((question, i) => (
-                <Card key={question.id}>
+                <Card key={question.id ?? question.tempId}>
                   <CardHeader>
                     <form.Subscribe
                       selector={(state) => {
@@ -109,7 +109,7 @@ export const QuestionsField = withForm({
                                   if (!("options" in question) || !question.options.length) {
                                     form.setFieldValue(`questions[${i}].options`, [
                                       {
-                                        id: crypto.randomUUID(),
+                                        tempId: crypto.randomUUID(),
                                         label: "",
                                         value: "",
                                         isCorrect: false,
@@ -117,7 +117,7 @@ export const QuestionsField = withForm({
                                         score: 0,
                                       },
                                       {
-                                        id: crypto.randomUUID(),
+                                        tempId: crypto.randomUUID(),
                                         label: "",
                                         value: "",
                                         isCorrect: false,
@@ -232,7 +232,7 @@ export const QuestionsField = withForm({
                 )}
                 onClick={() =>
                   field.pushValue({
-                    id: crypto.randomUUID(),
+                    tempId: crypto.randomUUID(),
                     prompt: "",
                     type: FormQuestionType.SINGLE_SELECT,
                     isRequired: true,
@@ -240,7 +240,7 @@ export const QuestionsField = withForm({
                     score: 1,
                     options: [
                       {
-                        id: crypto.randomUUID(),
+                        tempId: crypto.randomUUID(),
                         label: "",
                         value: "",
                         isCorrect: false,
@@ -248,7 +248,7 @@ export const QuestionsField = withForm({
                         score: 0,
                       },
                       {
-                        id: crypto.randomUUID(),
+                        tempId: crypto.randomUUID(),
                         label: "",
                         value: "",
                         isCorrect: false,
