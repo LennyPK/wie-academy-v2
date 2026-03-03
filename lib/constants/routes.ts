@@ -17,6 +17,7 @@ export const ROUTES = {
   EVENT_ATTENDANCE: "/api/events/attendance",
   FORUM: "/app/forum",
   EXPLORE: "/app/explore",
+  QUIZ: "/app/explore/quiz",
   REPORT: "/report",
   CHAT: "/chat",
   LOGOUT: "/logout",
