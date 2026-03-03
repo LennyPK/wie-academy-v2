@@ -6,8 +6,8 @@ import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import ExploreHeader from "./_components/header"
-import QuizEmpty from "./quiz-old/_components/quiz-empty"
-import QuizList from "./quiz-old/_components/quiz-list"
+import QuizEmpty from "./quiz/_components/empty"
+import QuizList from "./quiz/_components/list"
 
 export const metadata: Metadata = {
   title: "Explore",
@@ -37,52 +37,63 @@ export default async function ExplorePage() {
   const quizzes = await prisma.form.findMany({
     where: { type: FormType.QUIZ },
     include: {
-      _count: {
-        select: { questions: true },
+      questions: {
+        include: { options: true },
       },
     },
-    orderBy: { updatedAt: "desc" },
   })
+
+  // const quizzes = await prisma.form.findMany({
+  //   where: { type: FormType.QUIZ },
+  //   include: {
+  //     _count: {
+  //       select: { questions: true },
+  //     },
+  //   },
+  //   orderBy: { updatedAt: "desc" },
+  // })
 
   // Fetch user's quiz responses to calculate best scores
-  const userResponses = await prisma.formResponse.findMany({
-    where: {
-      userId: user.id,
-      formId: { in: quizzes.map((q) => q.id) },
-    },
-    select: {
-      formId: true,
-      total: true,
-    },
-  })
+  // const userResponses = await prisma.formResponse.findMany({
+  //   where: {
+  //     userId: user.id,
+  //     formId: { in: quizzes.map((q) => q.id) },
+  //   },
+  //   select: {
+  //     formId: true,
+  //     total: true,
+  //   },
+  // })
 
   // Calculate best scores and attempt counts per quiz
-  const userScores: Record<
-    string,
-    {
-      bestScore: number
-      maxScore: number
-      attemptCount: number
-    }
-  > = {}
+  // const userScores: Record<
+  //   string,
+  //   {
+  //     bestScore: number
+  //     maxScore: number
+  //     attemptCount: number
+  //   }
+  // > = {}
 
-  for (const quiz of quizzes) {
-    const responses = userResponses.filter((r) => r.formId === quiz.id)
-    if (responses.length > 0) {
-      const maxScore = await prisma.formQuestion
-        .aggregate({
-          where: { formId: quiz.id },
-          _sum: { score: true },
-        })
-        .then((result) => result._sum.score || 0)
+  // for (const quiz of quizzes) {
+  //   const responses = userResponses.filter((r) => r.formId === quiz.id)
+  //   if (responses.length > 0) {
+  //     const maxScore = await prisma.formQuestion
+  //       .aggregate({
+  //         where: { formId: quiz.id },
+  //         _sum: { score: true },
+  //       })
+  //       .then((result) => result._sum.score || 0)
 
-      userScores[quiz.id] = {
-        bestScore: Math.max(...responses.map((r) => r.total)),
-        maxScore: maxScore,
-        attemptCount: responses.length,
-      }
-    }
-  }
+  //     userScores[quiz.id] = {
+  //       bestScore: Math.max(...responses.map((r) => r.total)),
+  //       maxScore: maxScore,
+  //       attemptCount: responses.length,
+  //     }
+  //   }
+  // }
+
+  console.log(quizzes)
 
   return (
     <div>
@@ -93,7 +104,29 @@ export default async function ExplorePage() {
         {quizzes.length === 0 && <QuizEmpty />}
 
         {/* Quiz List */}
-        {quizzes.length > 0 && <QuizList quizzes={quizzes} userScores={userScores} />}
+        {/* {quizzes.length > 0 && <QuizList quizzes={quizzes} userScores={userScores} />} */}
+        {/* {quizzes.length > 0 &&
+          quizzes.map((quiz) => {
+            return (
+              <Card key={quiz.id}>
+                <CardHeader>
+                  <CardTitle className="line-clamp-1">{quiz.title}</CardTitle>
+
+                  <Badge variant="outline">
+                    <FileQuestion />
+                    {quiz._count.questions || 0} Questions
+                  </Badge>
+                </CardHeader>
+
+                <CardContent className="line-clamp-2 text-sm">{quiz.description}</CardContent>
+              </Card>
+              // <div key={q.id}>
+              //   {q.title} {q.questions.length}
+              // </div>
+            )
+          })}
+          {} */}
+        {quizzes.length > 0 && <QuizList userId={user.id} userRole={user.role} quizzes={quizzes} />}
       </main>
     </div>
   )
