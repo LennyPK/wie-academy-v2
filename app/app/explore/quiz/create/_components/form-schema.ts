@@ -167,8 +167,9 @@ export const formSchema = z
     description: z
       .string()
       .trim()
-      .min(1, "Description is required")
-      .max(500, "Description is too long"),
+      // .min(1, "Description is required")
+      .max(500, "Description is too long")
+      .optional(),
     questions: z.array(questionSchema).min(1, "At least 1 question is required"),
     // .max(50, "Maximum 50 questions allowed"),
   })

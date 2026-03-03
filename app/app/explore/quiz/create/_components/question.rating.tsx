@@ -5,7 +5,7 @@ import { formOpts } from "."
 
 const MAX_RATING = 5
 
-export const RatingQuestion2 = withForm({
+export const RatingQuestion = withForm({
   ...formOpts,
   props: { questionIndex: 0 },
   render: ({ form, questionIndex }) => {
@@ -19,26 +19,24 @@ export const RatingQuestion2 = withForm({
               <FieldLabel>Target Rating</FieldLabel>
 
               <FieldSet className="flex w-full flex-row justify-center">
-                {[...Array(MAX_RATING)]
-                  .map((_, i) => i + 1)
-                  .map((val) => (
-                    <button
-                      key={val}
-                      type="button"
-                      onClick={() => field.handleChange(val)}
-                      aria-label={`${val} star${val > 1 ? "s" : ""}`}
-                      aria-pressed={field.state.value === val}
-                      className="transition-colors"
-                    >
-                      <Star
-                        className={
-                          field.state.value !== undefined && val <= field.state.value
-                            ? "fill-primary text-primary"
-                            : "fill-none text-muted-foreground"
-                        }
-                      />
-                    </button>
-                  ))}
+                {Array.from({ length: MAX_RATING }, (_, i) => i + 1).map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => field.handleChange(val)}
+                    aria-label={`${val} star${val > 1 ? "s" : ""}`}
+                    aria-pressed={field.state.value === val}
+                    className="transition-colors"
+                  >
+                    <Star
+                      className={
+                        field.state.value !== undefined && val <= field.state.value
+                          ? "fill-primary text-primary"
+                          : "fill-none text-muted-foreground"
+                      }
+                    />
+                  </button>
+                ))}
               </FieldSet>
 
               {isInvalid && <FieldError errors={field.state.meta.errors} />}

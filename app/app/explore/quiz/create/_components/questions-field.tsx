@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 import { Plus, Trash2 } from "lucide-react"
 import { formOpts } from "."
 import { MultiSelectQuestion } from "./question.multi-select"
-import { RatingQuestion2 } from "./question.rating"
+import { RatingQuestion } from "./question.rating"
 import { ScaleQuestion } from "./question.scale"
 import { SingleSelectQuestion } from "./question.single-select"
 import { TextQuestion } from "./question.text"
@@ -208,7 +208,7 @@ export const QuestionsField = withForm({
                             case FormQuestionType.TRUE_FALSE:
                               return <TrueFalseQuestion form={form} questionIndex={i} />
                             case FormQuestionType.RATING:
-                              return <RatingQuestion2 form={form} questionIndex={i} />
+                              return <RatingQuestion form={form} questionIndex={i} />
                             case FormQuestionType.SCALE:
                               return <ScaleQuestion form={form} questionIndex={i} />
                             default:
