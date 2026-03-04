@@ -1,9 +1,15 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field"
 import { Toggle } from "@/components/ui/toggle"
+import { formOptions } from "@tanstack/react-form"
 import { cn } from "@/lib/utils"
 import * as z from "zod"
-import { formOpts } from "."
+
+const formOpts = formOptions({
+  defaultValues: {
+    answers: [] as Array<{ questionId: string; type: "SCALE"; value: number | null }>,
+  },
+})
 
 export const ScaleAnswer = withForm({
   ...formOpts,

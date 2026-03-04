@@ -1,5 +1,6 @@
 "use server"
 
+import { attemptSchema } from "@/explore/quiz/[id]/attempt/_components/form-schema"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
@@ -66,4 +67,104 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
   })
 
   return quiz
+}
+
+export async function insertQuizResponse(
+  quizId: string,
+  answers: z.infer<typeof attemptSchema>["answers"]
+) {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  if (!session) {
+    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  }
+
+  // Fetch questions
+  const questions = await prisma.formQuestion.findMany({
+    where: { formId: quizId },
+    include: { options: true },
+  })
+
+  const response = await prisma.$transaction(async (tx) => {
+    const formResponse = await tx.formResponse.create({
+      data: { formId: quizId, userId: session.user.id },
+    })
+
+    let totalScore = 0
+
+    for (const answer of answers) {
+      const question = questions.find((question) => question.id === answer.questionId)
+
+      if (!question) continue
+
+      let isCorrect: boolean | null = null
+      let score: number = 0
+
+      if (answer.type === FormQuestionType.TRUE_FALSE) {
+        isCorrect = answer.value === question.correctAnswer
+        score = isCorrect ? (question.score ?? 0) : 0
+
+        await tx.formAnswer.create({
+          data: {
+            questionId: answer.questionId,
+            responseId: formResponse.id,
+            valueBoolean: answer.value,
+            isCorrect,
+            score,
+          },
+        })
+      }
+
+      if (answer.type === FormQuestionType.SINGLE_SELECT) {
+        const selected = question.options.find((option) => option.value === answer.value)
+        isCorrect = selected?.isCorrect ?? false
+        score = isCorrect ? (question.score ?? 0) : 0
+
+        await tx.formAnswer.create({
+          data: {
+            questionId: answer.questionId,
+            responseId: formResponse.id,
+            ...(selected && { valueOptions: { create: [{ optionId: selected.id }] } }),
+            isCorrect,
+            score,
+          },
+        })
+      }
+
+      if (answer.type === FormQuestionType.MULTI_SELECT) {
+        const selectedOptions = question.options.filter((option) =>
+          answer.values.includes(option.value)
+        )
+        const correctOptions = question.options.filter((option) => option.isCorrect)
+        const hasIncorrectSelection = selectedOptions.some((option) => !option.isCorrect)
+
+        isCorrect = !hasIncorrectSelection && selectedOptions.length === correctOptions.length
+
+        score = hasIncorrectSelection
+          ? 0
+          : selectedOptions
+              .filter((option) => option.isCorrect)
+              .reduce((sum, option) => sum + option.score, 0)
+
+        await tx.formAnswer.create({
+          data: {
+            questionId: answer.questionId,
+            responseId: formResponse.id,
+            valueOptions: { create: selectedOptions.map((option) => ({ optionId: option.id })) },
+            isCorrect,
+            score,
+          },
+        })
+      }
+
+      totalScore += score
+    }
+
+    return tx.formResponse.update({
+      where: { id: formResponse.id },
+      data: { total: totalScore },
+    })
+  })
+
+  return response
 }

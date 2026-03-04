@@ -9,6 +9,7 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
+    "format: check": "prettier --check .",
     "format:fix": "prettier --write . && next lint --fix",
     "prepare": "husky",
     "db:generate": "prisma generate",

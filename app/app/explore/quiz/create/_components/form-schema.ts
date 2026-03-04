@@ -87,39 +87,6 @@ const trueFalseQuestionSchema = baseQuestionSchema.extend({
   falseLabel: z.string().trim().max(100, "False label is too long").optional(),
 })
 
-// const numericRangeQuestionSchema = baseQuestionSchema
-//   .extend({
-//     minValue: z.int(),
-//     maxValue: z.int(),
-//     targetValue: z.int(),
-//     minLabel: z.string().optional(),
-//     maxLabel: z.string().optional(),
-//   })
-//   .superRefine((data, ctx) => {
-//     if (data.maxValue <= data.minValue) {
-//       ctx.addIssue({
-//         code: "custom",
-//         message: "Max value must be greater than min value",
-//         path: ["maxValue"],
-//       })
-//     }
-//     if (data.targetValue < data.minValue || data.targetValue > data.maxValue) {
-//       ctx.addIssue({
-//         code: "custom",
-//         message: "Target value must be between min and max values",
-//         path: ["targetValue"],
-//       })
-//     }
-//   })
-
-// const ratingQuestionSchema = numericRangeQuestionSchema.extend({
-//   type: z.literal(FormQuestionType.RATING),
-// })
-
-// const scaleQuestionSchema = numericRangeQuestionSchema.extend({
-//   type: z.literal(FormQuestionType.SCALE),
-// })
-
 const ratingQuestionSchema = baseQuestionSchema.extend({
   type: z.literal(FormQuestionType.RATING),
   targetValue: z.int("Target value is required").min(1).max(5),

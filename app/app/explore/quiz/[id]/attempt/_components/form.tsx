@@ -12,18 +12,15 @@ import {
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
-import { FormQuestionType } from "@/lib/prisma/enums"
-import { wait } from "@/lib/utils"
+import { insertQuizResponse } from "@/explore/quiz/create/actions"
+import { QuizWithQuestions } from "@/explore/quiz/types"
+import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { useState } from "react"
 import { toast } from "sonner"
 import z from "zod"
 import { formatAnswer } from "."
-import { QuizWithQuestions } from "../../../types"
 import { MultiSelectAnswer } from "./answer.multi-select"
-import { RatingAnswer } from "./answer.rating"
-import { ScaleAnswer } from "./answer.scale"
 import { SingleSelectAnswer } from "./answer.single-select"
-import { TextAnswer } from "./answer.text"
 import { TrueFalseAnswer } from "./answer.true-false"
 import { attemptSchema } from "./form-schema"
 
@@ -36,7 +33,14 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const questions = quiz.questions.sort((a, b) => a.order - b.order)
+  const quizQuestionTypes: FormQuestionType[] = [
+    FormQuestionType.SINGLE_SELECT,
+    FormQuestionType.MULTI_SELECT,
+    FormQuestionType.TRUE_FALSE,
+  ]
+  const questions = quiz.questions
+    .filter((q) => (quiz.type === FormType.QUIZ ? quizQuestionTypes.includes(q.type) : true))
+    .sort((a, b) => a.order - b.order)
   const currentQuestion = questions[currentStep]
   const isSummaryStep = currentStep === questions.length
   const progress = (currentStep / questions.length) * 100
@@ -57,18 +61,20 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   const initialValues: z.input<typeof attemptSchema>["answers"] = questions.map((q) => {
     switch (q.type) {
-      case FormQuestionType.TEXT:
-        return { questionId: q.id, type: q.type, value: "" }
+      // case FormQuestionType.TEXT:
+      //   return { questionId: q.id, type: q.type, value: "" }
       case FormQuestionType.SINGLE_SELECT:
         return { questionId: q.id, type: q.type, value: "" }
       case FormQuestionType.MULTI_SELECT:
         return { questionId: q.id, type: q.type, values: [] }
       case FormQuestionType.TRUE_FALSE:
         return { questionId: q.id, type: q.type, value: null }
-      case FormQuestionType.RATING:
-        return { questionId: q.id, type: q.type, value: 0 }
-      case FormQuestionType.SCALE:
-        return { questionId: q.id, type: q.type, value: null }
+      // case FormQuestionType.RATING:
+      //   return { questionId: q.id, type: q.type, value: 0 }
+      // case FormQuestionType.SCALE:
+      //   return { questionId: q.id, type: q.type, value: null }
+      default:
+        throw new Error(`Unexpected question type: ${q.type}`)
     }
   })
 
@@ -79,11 +85,20 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
     onSubmit: async ({ value }) => {
       setIsSubmitting(true)
       toast.loading("Saving...")
-      await wait(2000)
       console.log(value)
-      toast.dismiss()
-      //  toast.success(`New attempt saved: ${newQuiz.title}`)
-      setIsSubmitting(false)
+
+      const sanitizedAnswers = attemptSchema.parse(value)
+
+      try {
+        await insertQuizResponse(quiz.id, sanitizedAnswers.answers)
+        toast.dismiss()
+        toast.success("Quiz submitted!")
+      } catch {
+        toast.dismiss()
+        toast.error("Something went wrong. Please try again.")
+      } finally {
+        setIsSubmitting(false)
+      }
     },
   })
 
@@ -166,8 +181,8 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
           <CardContent>
             {(() => {
               switch (currentQuestion.type) {
-                case FormQuestionType.TEXT:
-                  return <TextAnswer form={form} questionIndex={currentStep} />
+                // case FormQuestionType.TEXT:
+                //   return <TextAnswer form={form} questionIndex={currentStep} />
                 case FormQuestionType.SINGLE_SELECT:
                   return (
                     <SingleSelectAnswer
@@ -193,19 +208,21 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                       falseLabel={currentQuestion.falseLabel ?? "False"}
                     />
                   )
-                case FormQuestionType.RATING:
-                  return <RatingAnswer form={form} questionIndex={currentStep} />
-                case FormQuestionType.SCALE:
-                  return (
-                    <ScaleAnswer
-                      form={form}
-                      questionIndex={currentStep}
-                      min={currentQuestion.scaleMin ?? 1}
-                      max={currentQuestion.scaleMax ?? 10}
-                      minLabel={currentQuestion.scaleMinLabel ?? "Minimum"}
-                      maxLabel={currentQuestion.scaleMaxLabel ?? "Maximum"}
-                    />
-                  )
+                // case FormQuestionType.RATING:
+                //   return <RatingAnswer form={form} questionIndex={currentStep} />
+                // case FormQuestionType.SCALE:
+                //   return (
+                //     <ScaleAnswer
+                //       form={form}
+                //       questionIndex={currentStep}
+                //       min={currentQuestion.scaleMin ?? 1}
+                //       max={currentQuestion.scaleMax ?? 10}
+                //       minLabel={currentQuestion.scaleMinLabel ?? "Minimum"}
+                //       maxLabel={currentQuestion.scaleMaxLabel ?? "Maximum"}
+                //     />
+                //   )
+                default:
+                  return null
               }
             })()}
           </CardContent>

@@ -11,7 +11,6 @@ export const initialValues: z.infer<typeof formSchema> = {
       tempId: crypto.randomUUID(),
       prompt: "",
       type: FormQuestionType.SINGLE_SELECT,
-      // correctOptionValue: "",
       isRequired: true,
       order: 0,
       score: 1,
@@ -27,7 +26,6 @@ export const initialValues: z.infer<typeof formSchema> = {
       isRequired: true,
       order: 1,
       score: 1,
-      // correctOptionValue: "",
       options: [
         { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 0, score: 0 },
         { tempId: crypto.randomUUID(), label: "", value: "", isCorrect: false, order: 1, score: 0 },

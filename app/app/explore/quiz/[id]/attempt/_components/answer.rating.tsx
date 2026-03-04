@@ -1,8 +1,14 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError, FieldSet } from "@/components/ui/field"
+import { formOptions } from "@tanstack/react-form"
 import { Star } from "lucide-react"
 import * as z from "zod"
-import { formOpts } from "."
+
+const formOpts = formOptions({
+  defaultValues: {
+    answers: [] as Array<{ questionId: string; type: "RATING"; value: number }>,
+  },
+})
 
 const MAX_RATING = 5
 

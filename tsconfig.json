@@ -40,7 +40,7 @@
       "@/announcements/*": ["./app/app/announcements/*"],
       "@/events/*": ["./app/app/events/*"],
       "@/forum/*": ["./app/app/forum/*"],
-      "@/learn/*": ["./app/app/learn/*"]
+      "@/explore/*": ["./app/app/explore/*"]
     }
   },
   "include": [

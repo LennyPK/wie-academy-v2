@@ -11,8 +11,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Switch } from "@/components/ui/switch"
-import { questionTypeOptions } from "@/lib/constants/question-types"
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { quizQuestionTypeOptions, surveyQuestionTypeOptions } from "@/lib/constants/question-types"
+import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { Plus, Trash2 } from "lucide-react"
 import { formOpts } from "."
@@ -25,7 +25,11 @@ import { TrueFalseQuestion } from "./question.true-false"
 
 export const QuestionsField = withForm({
   ...formOpts,
-  render: ({ form }) => {
+  props: { formType: FormType.QUIZ as FormType },
+  render: ({ form, formType }) => {
+    const questionTypeOptions =
+      formType === FormType.QUIZ ? quizQuestionTypeOptions : surveyQuestionTypeOptions
+
     return (
       <form.Field name="questions" mode="array">
         {(field) => {

@@ -15,8 +15,8 @@ export function formatAnswer(
   question: QuizWithQuestions["questions"][number]
 ): string {
   switch (answer.type) {
-    case FormQuestionType.TEXT:
-      return answer.value || "No answer"
+    // case FormQuestionType.TEXT:
+    //   return answer.value || "No answer"
     case FormQuestionType.SINGLE_SELECT: {
       const option = question.options.find((o) => o.value === answer.value)
       return option?.label ?? answer.value ?? "No answer"
@@ -31,9 +31,11 @@ export function formatAnswer(
     case FormQuestionType.TRUE_FALSE:
       if (answer.value === null) return "No answer"
       return answer.value ? (question.trueLabel ?? "True") : (question.falseLabel ?? "False")
-    case FormQuestionType.RATING:
-      return answer.value ? `${answer.value} / 5` : "No answer"
-    case FormQuestionType.SCALE:
-      return answer.value !== null ? String(answer.value) : "No answer"
+    // case FormQuestionType.RATING:
+    //   return answer.value ? `${answer.value} / 5` : "No answer"
+    // case FormQuestionType.SCALE:
+    //   return answer.value !== null ? String(answer.value) : "No answer"
+    default:
+      return "No answer"
   }
 }

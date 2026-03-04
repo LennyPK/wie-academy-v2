@@ -5,10 +5,10 @@ const baseAnswerSchema = z.object({
   questionId: z.string(),
 })
 
-const textAnswerSchema = baseAnswerSchema.extend({
-  type: z.literal(FormQuestionType.TEXT),
-  value: z.string().min(1, "Answer is required"),
-})
+// const textAnswerSchema = baseAnswerSchema.extend({
+//   type: z.literal(FormQuestionType.TEXT),
+//   value: z.string().min(1, "Answer is required"),
+// })
 
 const singleSelectAnswerSchema = baseAnswerSchema.extend({
   type: z.literal(FormQuestionType.SINGLE_SELECT),
@@ -28,29 +28,29 @@ const trueFalseAnswerSchema = baseAnswerSchema.extend({
     .refine((val) => val !== null, { message: "Please select an option" }),
 })
 
-const ratingAnswerSchema = baseAnswerSchema.extend({
-  type: z.literal(FormQuestionType.RATING),
-  value: z
-    .int("Please select an option")
-    .min(1, "Please select a valid option")
-    .max(5, "Please select a valid option"),
-})
+// const ratingAnswerSchema = baseAnswerSchema.extend({
+//   type: z.literal(FormQuestionType.RATING),
+//   value: z
+//     .int("Please select an option")
+//     .min(1, "Please select a valid option")
+//     .max(5, "Please select a valid option"),
+// })
 
-const scaleAnswerSchema = baseAnswerSchema.extend({
-  type: z.literal(FormQuestionType.SCALE),
-  value: z
-    .int()
-    .nullable()
-    .refine((val) => val !== null, { message: "Please select an option" }),
-})
+// const scaleAnswerSchema = baseAnswerSchema.extend({
+//   type: z.literal(FormQuestionType.SCALE),
+//   value: z
+//     .int()
+//     .nullable()
+//     .refine((val) => val !== null, { message: "Please select an option" }),
+// })
 
 export const answerSchema = z.discriminatedUnion("type", [
-  textAnswerSchema,
+  // textAnswerSchema,
   singleSelectAnswerSchema,
   multiSelectAnswerSchema,
   trueFalseAnswerSchema,
-  ratingAnswerSchema,
-  scaleAnswerSchema,
+  // ratingAnswerSchema,
+  // scaleAnswerSchema,
 ])
 
 export const attemptSchema = z.object({

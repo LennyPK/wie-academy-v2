@@ -4,8 +4,7 @@ import { useAppForm } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldGroup } from "@/components/ui/field"
-import { FormQuestionType } from "@/lib/prisma/enums"
-import { wait } from "@/lib/utils"
+import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -38,7 +37,6 @@ export default function QuizForm() {
       setIsLoading(true)
       toast.loading("Saving...")
       console.log(value)
-      await wait(2000)
 
       const sanitizedQuestions = value.questions.map((q) => {
         switch (q.type) {
@@ -131,7 +129,7 @@ export default function QuizForm() {
       <h1 className="mx-2 text-3xl font-bold text-foreground">Questions</h1>
 
       {/* Questions Array */}
-      <QuestionsField form={form} />
+      <QuestionsField form={form} formType={FormType.QUIZ} />
 
       <Field>
         <div className="grid grid-rows-2 gap-4 sm:grid-cols-2">
