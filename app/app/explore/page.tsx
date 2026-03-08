@@ -43,6 +43,25 @@ export default async function ExplorePage() {
     },
   })
 
+  const userResponses = await prisma.formResponse.groupBy({
+    by: ["formId"],
+    where: {
+      userId: user.id,
+      formId: { in: quizzes.map((quiz) => quiz.id) },
+    },
+    _max: { total: true },
+    _count: { id: true },
+  })
+
+  const quizScores = Object.fromEntries(
+    userResponses.map((record) => [
+      record.formId,
+      { bestScore: record._max.total, attemptCount: record._count.id },
+    ])
+  )
+
+  console.log("User Responses")
+  console.log(userResponses)
   // const quizzes = await prisma.form.findMany({
   //   where: { type: FormType.QUIZ },
   //   include: {
@@ -126,7 +145,14 @@ export default async function ExplorePage() {
             )
           })}
           {} */}
-        {quizzes.length > 0 && <QuizList userId={user.id} userRole={user.role} quizzes={quizzes} />}
+        {quizzes.length > 0 && (
+          <QuizList
+            userId={user.id}
+            userRole={user.role}
+            quizzes={quizzes}
+            quizScores={quizScores}
+          />
+        )}
       </main>
     </div>
   )

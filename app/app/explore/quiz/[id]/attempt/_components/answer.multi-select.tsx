@@ -47,7 +47,6 @@ export const MultiSelectAnswer = withForm({
                       pressed={selectedValues.includes(option.value)}
                       onPressedChange={() => handleToggle(option.value)}
                       className={cn(
-                        "rounded-full",
                         "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
                         "hover:cursor-pointer"
                       )}

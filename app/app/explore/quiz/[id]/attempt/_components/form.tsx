@@ -1,24 +1,21 @@
 "use client"
 
 import { useAppForm } from "@/components/form"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
 import { insertQuizResponse } from "@/explore/quiz/create/actions"
 import { QuizWithQuestions } from "@/explore/quiz/types"
 import { FormQuestionType, FormType } from "@/lib/prisma/enums"
+import { cn } from "@/lib/utils"
+import { Check, ChevronLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import z from "zod"
-import { formatAnswer } from "."
+import { formatAnswer, formatAnswerType } from "."
 import { MultiSelectAnswer } from "./answer.multi-select"
 import { SingleSelectAnswer } from "./answer.single-select"
 import { TrueFalseAnswer } from "./answer.true-false"
@@ -30,8 +27,10 @@ interface QuizAttemptFormProps {
 }
 
 export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const quizQuestionTypes: FormQuestionType[] = [
     FormQuestionType.SINGLE_SELECT,
@@ -57,6 +56,25 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
     }
 
     setCurrentStep((prev) => prev + 1)
+  }
+
+  const handlePrev = async () => {
+    setCurrentStep((current) => current - 1)
+  }
+
+  const handleJumpTo = (index: number) => {
+    setCurrentStep(index)
+  }
+
+  function isAnswered(answer: z.input<typeof attemptSchema>["answers"][number]): boolean {
+    switch (answer.type) {
+      case FormQuestionType.SINGLE_SELECT:
+        return answer.value !== ""
+      case FormQuestionType.MULTI_SELECT:
+        return answer.values.length > 0
+      case FormQuestionType.TRUE_FALSE:
+        return answer.value !== null
+    }
   }
 
   const initialValues: z.input<typeof attemptSchema>["answers"] = questions.map((q) => {
@@ -104,6 +122,172 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   console.log(userId)
 
+  const headerCard = (
+    <Card>
+      <CardHeader className="grid grid-cols-[120px_1fr_120px] items-center">
+        <div className="flex justify-start">
+          <Button
+            variant="link"
+            className="text-sm text-muted-foreground"
+            onClick={() => router.back()}
+          >
+            <ChevronLeft className="size-5" />
+            <span>Back</span>
+          </Button>
+        </div>
+
+        <div className="flex flex-1 flex-col items-center gap-2">
+          <CardTitle className="text-center">{quiz.title}</CardTitle>
+          <CardDescription className="text-center">
+            {isSummaryStep
+              ? "Review your answers"
+              : `Question ${currentStep + 1} of ${questions.length}`}
+          </CardDescription>
+        </div>
+
+        <div className="flex w-full justify-end">
+          <Badge variant="outline" className="justify-end">
+            {Math.round(progress)}%
+          </Badge>
+        </div>
+      </CardHeader>
+
+      <CardContent className="flex flex-col space-y-4">
+        <Progress value={progress} />
+      </CardContent>
+    </Card>
+  )
+
+  const summaryCard = (
+    <form.Subscribe selector={(state) => state.values.answers}>
+      {(answers) => (
+        <Card>
+          <CardHeader>
+            <CardDescription>Check your answers before submitting.</CardDescription>
+          </CardHeader>
+
+          <CardContent className="divide-y">
+            {questions.map((question, i) => {
+              const answer = answers[i]
+              return (
+                <button
+                  key={question.id}
+                  className="flex w-full items-center py-5 text-left transition-colors hover:bg-muted"
+                  type="button"
+                  onClick={() => handleJumpTo(i)}
+                >
+                  <span
+                    className={cn(
+                      "mx-4 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                      answer !== null
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted-foreground text-muted"
+                    )}
+                  >
+                    {answer !== null ? <Check className="h-3.5 w-3.5" /> : i + 1}
+                  </span>
+
+                  <div className="flex flex-1 flex-col gap-1">
+                    <p className="text-sm font-medium">{question.prompt}</p>
+
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-muted-foreground">{formatAnswerType(answer)}</p>
+                      <p className="text-sm text-muted-foreground">|</p>
+                      <p className="text-sm font-medium text-primary">
+                        {formatAnswer(answer, question)}
+                      </p>
+                    </div>
+
+                    <span className="text-xs text-muted-foreground">{question.score} pts</span>
+                  </div>
+                </button>
+              )
+            })}
+          </CardContent>
+        </Card>
+      )}
+    </form.Subscribe>
+  )
+
+  const navCard = (
+    <Card>
+      <CardContent className="flex justify-between align-middle">
+        <Button type="button" variant="outline" onClick={handlePrev} disabled={currentStep === 0}>
+          Back
+        </Button>
+
+        <form.Subscribe selector={(state) => state.values.answers}>
+          {(answers) => {
+            const allAnswered = answers.every((answer) => isAnswered(answer))
+
+            return (
+              <div className="flex items-center justify-center gap-2">
+                {questions.map((question, i) => {
+                  const answered = isAnswered(answers[i])
+                  const isCurrent = i === currentStep
+                  const isNavigable = answered || isCurrent || i < currentStep || isSummaryStep
+
+                  return (
+                    <button
+                      key={question.id}
+                      type="button"
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      onMouseLeave={() => setHoveredIndex(null)}
+                      onClick={() => handleJumpTo(i)}
+                      className={cn(
+                        "group flex h-2 items-center justify-center rounded-full px-0 transition-all duration-200 hover:h-5 hover:w-8",
+                        isCurrent
+                          ? "w-8 bg-primary text-primary-foreground hover:w-16"
+                          : answered
+                            ? "w-2 bg-primary/50 text-primary-foreground"
+                            : "w-2 cursor-not-allowed bg-muted hover:h-2 hover:w-2"
+                      )}
+                      aria-label={`Go to question ${i + 1}`}
+                      disabled={!isNavigable}
+                    >
+                      {hoveredIndex === i && <span className="text-xs">Q{i + 1}</span>}
+                    </button>
+                  )
+                })}
+
+                <button
+                  type="button"
+                  onMouseEnter={() => setHoveredIndex(questions.length)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onClick={() => handleJumpTo(questions.length)}
+                  className={cn(
+                    "group flex h-2 items-center justify-center rounded-full px-0 transition-all duration-200 hover:h-5 hover:w-8",
+                    isSummaryStep
+                      ? "w-8 bg-accent text-accent-foreground hover:w-16"
+                      : allAnswered
+                        ? "w-2 bg-accent text-accent-foreground"
+                        : "w-2 cursor-not-allowed bg-muted hover:h-2 hover:w-2"
+                  )}
+                  aria-label={"Go to summary"}
+                  disabled={!allAnswered}
+                >
+                  {hoveredIndex === questions.length && <Check className="h-3 w-3" />}
+                  {/* {hoveredIndex === questions.length && <span className="text-xs">Review</span>} */}
+                </button>
+              </div>
+            )
+          }}
+        </form.Subscribe>
+
+        {isSummaryStep ? (
+          <Button key="submit" type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Spinner data-icon="inline-start" />}
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        ) : (
+          <Button key="next" type="button" onClick={handleNext}>
+            Next
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   return (
     <form
       className="space-y-6 py-4"
@@ -112,63 +296,10 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
         form.handleSubmit()
       }}
     >
-      <Card>
-        <CardHeader>
-          <CardTitle>{quiz.title}</CardTitle>
-          <CardDescription>{quiz.description}</CardDescription>
-        </CardHeader>
-
-        <CardContent className="flex flex-col space-y-4">
-          <span>{!isSummaryStep && `Question ${currentStep + 1} of ${questions.length}`}</span>
-          <span>{Math.round(progress)}% complete</span>
-          <Progress value={progress} />
-        </CardContent>
-      </Card>
-      <div className="flex flex-col space-y-4">
-        <span>{quiz.id}</span>
-      </div>
+      {headerCard}
 
       {isSummaryStep ? (
-        <form.Subscribe selector={(state) => state.values.answers}>
-          {(answers) => (
-            <Card>
-              <CardHeader>
-                <CardTitle>Review your answers</CardTitle>
-                <CardDescription>Check your answers before submitting.</CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                {questions.map((question, i) => {
-                  const answer = answers[i]
-                  return (
-                    <div key={question.id} className="space-y-1">
-                      <p className="text-sm font-medium">
-                        Q{i + 1}. {question.prompt}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {formatAnswer(answer, question)}
-                      </p>
-                    </div>
-                  )
-                })}
-              </CardContent>
-
-              <CardFooter className="flex justify-between">
-                {/* <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setCurrentStep(questions.length - 1)}
-                >
-                  Back
-                </Button> */}
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Spinner data-icon="inline-start" />}
-                  {isSubmitting ? "Submitting..." : "Submit"}
-                </Button>
-              </CardFooter>
-            </Card>
-          )}
-        </form.Subscribe>
+        summaryCard
       ) : (
         <Card>
           <CardHeader>
@@ -226,24 +357,10 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
               }
             })()}
           </CardContent>
-
-          <CardFooter>
-            {/* {isLastQuestion ? (
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting && <Spinner data-icon="inline-start" />}
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
-            ) : (
-              <Button type="button" onClick={handleNext}>
-                Next
-              </Button>
-            )} */}
-            <Button type="button" onClick={handleNext}>
-              Next
-            </Button>
-          </CardFooter>
         </Card>
       )}
+
+      {navCard}
     </form>
   )
 }

@@ -1,22 +1,35 @@
 "use client"
 
-import { QuizWithQuestions } from "../types"
+import { QuizScores, QuizWithQuestions } from "@/explore/quiz/types"
 import QuizCard from "./card"
 
 interface QuizListProps {
   userId: string
   userRole: string
   quizzes: QuizWithQuestions[]
+  quizScores: QuizScores
 }
 
-export default function QuizList({ userId, userRole, quizzes }: QuizListProps) {
+export default function QuizList({ userId, userRole, quizzes, quizScores }: QuizListProps) {
   console.log(`${userId}: ${userRole}`)
 
   return (
-    <div className="space-y-6" role="list" aria-label="announcements">
+    <div
+      className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
+      role="list"
+      aria-label="announcements"
+    >
       {quizzes.length > 0 &&
         quizzes.map((quiz) => {
-          return <QuizCard key={quiz.id} userId={userId} userRole={userRole} quiz={quiz} />
+          return (
+            <QuizCard
+              key={quiz.id}
+              userId={userId}
+              userRole={userRole}
+              quiz={quiz}
+              scoreData={quizScores[quiz.id]}
+            />
+          )
         })}
     </div>
   )

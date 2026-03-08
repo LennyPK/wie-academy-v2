@@ -1,4 +1,3 @@
-import BackButton from "@/components/back-button"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
@@ -37,7 +36,6 @@ export default async function QuizAttemptPage({ params }: { params: Promise<{ id
   return (
     <div>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <BackButton />
         <QuizAttemptForm userId={user.id} quiz={quiz} />
       </main>
     </div>

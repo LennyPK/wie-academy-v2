@@ -39,3 +39,24 @@ export function formatAnswer(
       return "No answer"
   }
 }
+
+export function formatAnswerType(answer: z.input<typeof attemptSchema>["answers"][number]): string {
+  switch (answer.type) {
+    // case FormQuestionType.TEXT:
+    //   return "Text"
+    case FormQuestionType.SINGLE_SELECT: {
+      return "Multiple Choice"
+    }
+    case FormQuestionType.MULTI_SELECT: {
+      return "Checkbox"
+    }
+    case FormQuestionType.TRUE_FALSE:
+      return "True / False"
+    // case FormQuestionType.RATING:
+    //   return "Rating"
+    // case FormQuestionType.SCALE:
+    //   return "Scale"
+    default:
+      return "No answer"
+  }
+}

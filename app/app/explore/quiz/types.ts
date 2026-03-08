@@ -21,6 +21,15 @@ const quizWithQuestions = {
   },
 } satisfies Prisma.FormDefaultArgs
 
-export type QuizWithQuestions = Prisma.FormGetPayload<typeof quizWithQuestions>
+type QuizWithQuestions = Prisma.FormGetPayload<typeof quizWithQuestions>
+
+type QuizScoreData = {
+  bestScore: number | null
+  attemptCount: number
+}
+
+type QuizScores = Record<string, QuizScoreData>
+
+export type { QuizScoreData, QuizScores, QuizWithQuestions }
 
 console.log(quizWithQuestions)

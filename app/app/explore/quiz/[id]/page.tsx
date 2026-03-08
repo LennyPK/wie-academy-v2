@@ -34,12 +34,27 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   if (!quiz) return
 
+  const userResponses = await prisma.formResponse.groupBy({
+    by: ["formId"],
+    where: {
+      userId: user.id,
+      formId: quiz.id,
+    },
+    _max: { total: true },
+    _count: { id: true },
+  })
+
+  const scoreRecord = userResponses[0]
+  const scoreData = scoreRecord
+    ? { bestScore: scoreRecord._max.total, attemptCount: scoreRecord._count.id }
+    : { bestScore: null, attemptCount: 0 }
+
   return (
     <div>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <BackButton />
 
-        <QuizDetail quiz={quiz} />
+        <QuizDetail quiz={quiz} scoreData={scoreData} />
       </main>
     </div>
   )
