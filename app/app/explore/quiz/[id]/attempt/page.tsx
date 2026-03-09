@@ -1,3 +1,4 @@
+import { quizWithQuestions } from "@/explore/quiz/types"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
@@ -26,9 +27,7 @@ export default async function QuizAttemptPage({ params }: { params: Promise<{ id
 
   const quiz = await prisma.form.findUnique({
     where: { id: id, type: FormType.QUIZ },
-    include: {
-      questions: { include: { options: true } },
-    },
+    ...quizWithQuestions,
   })
 
   if (!quiz) return

@@ -47,11 +47,6 @@ export default function QuizCard({ userId, userRole, quiz, scoreData }: QuizCard
           <CardHeader>
             <CardTitle className="line-clamp-1">{quiz.title}</CardTitle>
             <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
-
-            {/* <Badge variant="outline">
-              <FileQuestion />
-              {quiz.questions.length || 0} questions
-            </Badge> */}
           </CardHeader>
 
           <CardContent>

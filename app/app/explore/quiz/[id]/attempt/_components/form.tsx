@@ -10,7 +10,7 @@ import { insertQuizResponse } from "@/explore/quiz/create/actions"
 import { QuizWithQuestions } from "@/explore/quiz/types"
 import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
-import { Check, ChevronLeft } from "lucide-react"
+import { ArrowRight, Check, ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -127,6 +127,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
       <CardHeader className="grid grid-cols-[120px_1fr_120px] items-center">
         <div className="flex justify-start">
           <Button
+            type="button"
             variant="link"
             className="text-sm text-muted-foreground"
             onClick={() => router.back()}
@@ -184,7 +185,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                         : "bg-muted-foreground text-muted"
                     )}
                   >
-                    {answer !== null ? <Check className="h-3.5 w-3.5" /> : i + 1}
+                    {answer !== null ? <Check className="h-3 w-3" /> : i + 1}
                   </span>
 
                   <div className="flex flex-1 flex-col gap-1">
@@ -200,6 +201,8 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
                     <span className="text-xs text-muted-foreground">{question.score} pts</span>
                   </div>
+
+                  <ArrowRight className="mx-4 h-3 w-3" />
                 </button>
               )
             })}
@@ -258,9 +261,9 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                   className={cn(
                     "group flex h-2 items-center justify-center rounded-full px-0 transition-all duration-200 hover:h-5 hover:w-8",
                     isSummaryStep
-                      ? "w-8 bg-accent text-accent-foreground hover:w-16"
+                      ? "w-8 bg-success text-success-foreground hover:w-16"
                       : allAnswered
-                        ? "w-2 bg-accent text-accent-foreground"
+                        ? "w-2 bg-success/50 text-success-foreground"
                         : "w-2 cursor-not-allowed bg-muted hover:h-2 hover:w-2"
                   )}
                   aria-label={"Go to summary"}

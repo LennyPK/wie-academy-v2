@@ -60,15 +60,6 @@ export default function QuizDetail({ quiz, scoreData }: QuizDetailProps) {
             <p className="text-xs text-muted-foreground">Best Score</p>
           </div>
         </div>
-
-        {attemptCount > 0 && (
-          <div className="mb-4 flex items-center gap-2 text-sm text-slate-500">
-            <BarChart3 className="h-4 w-4" />
-            <span>
-              You have attempted this quiz {attemptCount} time{attemptCount > 1 ? "s" : ""}
-            </span>
-          </div>
-        )}
       </CardContent>
 
       <CardFooter>

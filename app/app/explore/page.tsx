@@ -8,6 +8,7 @@ import { redirect } from "next/navigation"
 import ExploreHeader from "./_components/header"
 import QuizEmpty from "./quiz/_components/empty"
 import QuizList from "./quiz/_components/list"
+import { quizWithQuestions } from "./quiz/types"
 
 export const metadata: Metadata = {
   title: "Explore",
@@ -36,11 +37,7 @@ export default async function ExplorePage() {
   // Fetch all quizzes with question counts
   const quizzes = await prisma.form.findMany({
     where: { type: FormType.QUIZ },
-    include: {
-      questions: {
-        include: { options: true },
-      },
-    },
+    ...quizWithQuestions,
   })
 
   const userResponses = await prisma.formResponse.groupBy({
