@@ -1,6 +1,6 @@
 import { withForm } from "@/components/form"
 import { Button } from "@/components/ui/button"
-import { Field, FieldError, FieldGroup } from "@/components/ui/field"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { FormQuestionType } from "@/lib/prisma/enums"
@@ -99,9 +99,12 @@ export const SingleSelectQuestion = withForm({
                         }}
                       >
                         {({ liveValue, isDuplicate, isCorrect, order }) => (
-                          <FieldGroup className="flex flex-row items-baseline">
-                            <span className="font-medium">{order}.</span>
-
+                          <FieldGroup
+                            className={cn(
+                              "flex flex-row",
+                              labelIsInvalid ? "items-center" : "items-end"
+                            )}
+                          >
                             {/* Toggle enforces single-select by calling handleCorrectChange
                                 which sets all options atomically — only this option gets
                                 isCorrect: true, all others are set to false. */}
@@ -120,6 +123,9 @@ export const SingleSelectQuestion = withForm({
                             </Toggle>
 
                             <Field data-invalid={labelIsInvalid || isDuplicate}>
+                              <FieldLabel htmlFor={labelField.name}>
+                                Option {order + 1} Label
+                              </FieldLabel>
                               <Input
                                 id={labelField.name}
                                 name={labelField.name}
@@ -153,6 +159,7 @@ export const SingleSelectQuestion = withForm({
                                     })
                                   }
                                 }}
+                                className="text-sm sm:text-base"
                                 aria-invalid={labelIsInvalid || isDuplicate}
                               />
                               {labelIsInvalid && (

@@ -1,5 +1,5 @@
 import { FormQuestionType } from "@/prisma/enums"
-import { Check, List, SlidersHorizontal, SquareCheck, Star, Type } from "lucide-react"
+import { CheckCheck, List, SlidersHorizontal, SquareCheck, Star, Type } from "lucide-react"
 
 const questionTypeOptions = [
   {
@@ -20,7 +20,7 @@ const questionTypeOptions = [
   {
     value: FormQuestionType.TRUE_FALSE,
     label: "True / False",
-    icon: Check,
+    icon: CheckCheck,
   },
   {
     value: FormQuestionType.RATING,

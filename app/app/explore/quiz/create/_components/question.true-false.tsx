@@ -28,7 +28,7 @@ export const TrueFalseQuestion = withForm({
                 }}
               >
                 {(correctAnswer) => (
-                  <FieldGroup className="flex flex-row justify-center">
+                  <FieldGroup className="flex flex-col justify-center sm:flex-row">
                     <FieldSet className="flex flex-row items-center gap-2">
                       <Toggle
                         variant="outline"
@@ -54,10 +54,11 @@ export const TrueFalseQuestion = withForm({
                                 type="text"
                                 // Placeholder shows the default label so the
                                 // creator knows what will be displayed if left empty.
-                                placeholder="True"
+                                placeholder="True (optional)"
                                 value={trueLabelField.state.value}
                                 onChange={(e) => trueLabelField.handleChange(e.target.value)}
                                 onBlur={trueLabelField.handleBlur}
+                                className="text-sm sm:text-base"
                               />
                               {isInvalid && (
                                 <FieldError errors={trueLabelField.state.meta.errors} />
@@ -93,11 +94,12 @@ export const TrueFalseQuestion = withForm({
                                 type="text"
                                 // Placeholder shows the default label so the
                                 // creator knows what will be displayed if left empty.
-                                placeholder="False"
+                                placeholder="False (optional)"
                                 value={falseLabelField.state.value}
                                 onChange={(e) => falseLabelField.handleChange(e.target.value)}
                                 onBlur={falseLabelField.handleBlur}
                                 aria-invalid={isInvalid}
+                                className="text-sm sm:text-base"
                               />
                               {isInvalid && (
                                 <FieldError errors={falseLabelField.state.meta.errors} />

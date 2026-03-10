@@ -1,7 +1,6 @@
 import { withForm } from "@/components/form"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardAction, CardContent, CardHeader } from "@/components/ui/card"
 import {
   Field,
   FieldContent,
@@ -39,7 +38,8 @@ export const QuestionsField = withForm({
             <div className="space-y-5">
               {field.state.value.map((question, i) => (
                 <Card key={question.id ?? question.tempId}>
-                  <CardHeader>
+                  <CardHeader className="flex w-full flex-row items-center gap-2">
+                    {/* <CardHeader className="flex flex-row items-center justify-between"> */}
                     <form.Subscribe
                       selector={(state) => {
                         const questionPrompt = state.values.questions[i].prompt
@@ -48,48 +48,65 @@ export const QuestionsField = withForm({
                         return { questionPrompt, questionType }
                       }}
                     >
-                      {({ questionPrompt, questionType }) => (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">Q{i + 1}</span>
+                      {({ questionPrompt }) => (
+                        <>
+                          <div className="flex w-full items-center gap-2 overflow-hidden text-sm sm:text-base">
+                            <span className="shrink-0 text-muted-foreground">Q{i + 1}</span>
+
                             {questionPrompt ? (
-                              <span>{questionPrompt}</span>
+                              <span className="truncate">{questionPrompt}</span>
                             ) : (
                               <span className="text-muted-foreground">Untitled</span>
                             )}
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <Badge>{questionType}</Badge>
-
-                            <Button
-                              type="button"
-                              // size="icon"
-                              variant="outline"
-                              onClick={() => {
-                                const currentQuestions = form.getFieldValue("questions")
-
-                                // Instead of calling removeValue + re-indexing separately (which races
-                                // because removeValue is async), we replace the whole array in one
-                                // atomic setFieldValue — filter the deleted question out and re-index order
-                                // in the same pass.
-                                const updatedQuestions = currentQuestions
-                                  .filter((_, questionIndex) => questionIndex !== i)
-                                  .map((question, newIndex) => ({ ...question, order: newIndex }))
-
-                                // Replace the entire questions array after reindexing
-                                form.setFieldValue("questions", updatedQuestions)
-                              }}
-                              className="hover:bg-destructive hover:text-destructive-foreground"
-                              disabled={form.getFieldValue("questions").length <= 1}
-                            >
-                              <Trash2 />
-                              <span>Delete</span>
-                            </Button>
-                          </div>
-                        </div>
+                          {/* <Badge
+                            variant="secondary"
+                            className="self-center py-1 text-xs sm:px-3 sm:text-sm"
+                            // className="self-center py-1 text-xs sm:self-end sm:px-3 sm:text-sm"
+                          >
+                            {(() => {
+                              const option = questionTypeOptions.find(
+                                (option) => option.value === questionType
+                              )
+                              if (!option) return
+                              return (
+                                <>
+                                  <option.icon />
+                                  {option.label}
+                                </>
+                              )
+                            })()}
+                          </Badge> */}
+                        </>
                       )}
                     </form.Subscribe>
+
+                    <CardAction>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={() => {
+                          const currentQuestions = form.getFieldValue("questions")
+
+                          // Instead of calling removeValue + re-indexing separately (which races
+                          // because removeValue is async), we replace the whole array in one
+                          // atomic setFieldValue — filter the deleted question out and re-index order
+                          // in the same pass.
+                          const updatedQuestions = currentQuestions
+                            .filter((_, questionIndex) => questionIndex !== i)
+                            .map((question, newIndex) => ({ ...question, order: newIndex }))
+
+                          // Replace the entire questions array after reindexing
+                          form.setFieldValue("questions", updatedQuestions)
+                        }}
+                        className="flex-1"
+                        disabled={form.getFieldValue("questions").length <= 1}
+                      >
+                        <Trash2 />
+                        <span className="hidden sm:inline">Delete</span>
+                      </Button>
+                    </CardAction>
                   </CardHeader>
 
                   <CardContent>
@@ -144,12 +161,13 @@ export const QuestionsField = withForm({
                             <subField.TextField
                               label="Question Prompt"
                               placeholder="Question Title"
+                              className="text-sm sm:text-base"
                             />
                           )
                         }}
                       </form.AppField>
 
-                      <FieldGroup className="flex flex-row">
+                      <FieldGroup className="flex flex-col sm:flex-row">
                         <form.Field name={`questions[${i}].isRequired`}>
                           {(subField) => {
                             const isInvalid =

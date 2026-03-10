@@ -103,15 +103,19 @@ export const MultiSelectQuestion = withForm({
                         }}
                       >
                         {({ liveValue, isDuplicate, isCorrect, order }) => (
-                          <FieldGroup className="flex flex-row items-end">
-                            <span className="font-medium">{order}.</span>
-
+                          <FieldGroup
+                            className={cn(
+                              "flex flex-row",
+                              labelIsInvalid ? "items-center" : "items-end"
+                            )}
+                          >
                             <Toggle
                               variant="outline"
                               pressed={isCorrect}
                               onPressedChange={() => handleToggleCorrect(index)}
                               disabled={liveValue === ""}
                               className={cn(
+                                "hidden sm:block",
                                 "rounded-full",
                                 "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
                                 "hover:cursor-pointer"
@@ -120,85 +124,121 @@ export const MultiSelectQuestion = withForm({
                               <Check />
                             </Toggle>
 
-                            <Field data-invalid={labelIsInvalid || isDuplicate}>
-                              <FieldLabel htmlFor={labelField.name}>Option Label</FieldLabel>
-                              <Input
-                                id={labelField.name}
-                                name={labelField.name}
-                                type="text"
-                                placeholder="Option Label"
-                                variant="default"
-                                value={labelField.state.value}
-                                onBlur={labelField.handleBlur}
-                                onChange={(e) => {
-                                  const newSlug = slugify(e.target.value)
+                            <FieldGroup className="sm:flex-row">
+                              <Field data-invalid={labelIsInvalid || isDuplicate}>
+                                <FieldLabel htmlFor={labelField.name}>
+                                  Option {order + 1} Label
+                                </FieldLabel>
+                                <Input
+                                  id={labelField.name}
+                                  name={labelField.name}
+                                  type="text"
+                                  placeholder="Option Label"
+                                  variant="default"
+                                  value={labelField.state.value}
+                                  onBlur={labelField.handleBlur}
+                                  onChange={(e) => {
+                                    const newSlug = slugify(e.target.value)
 
-                                  // Update label and slug first so the store is
-                                  // up to date before any downstream reads.
-                                  labelField.handleChange(e.target.value)
-                                  form.setFieldValue(
-                                    `questions[${questionIndex}].options[${index}].value`,
-                                    newSlug
-                                  )
+                                    // Update label and slug first so the store is
+                                    // up to date before any downstream reads.
+                                    labelField.handleChange(e.target.value)
+                                    form.setFieldValue(
+                                      `questions[${questionIndex}].options[${index}].value`,
+                                      newSlug
+                                    )
 
-                                  // No need to re-sync isCorrect on label change for
-                                  // multi-select — isCorrect is independent of value,
-                                  // unlike single-select where the Toggle matches by value slug
-                                  // and must stay in sync when the label changes.
-                                }}
-                                aria-invalid={labelIsInvalid || isDuplicate}
-                              />
-                              {labelIsInvalid && (
-                                <FieldError errors={labelField.state.meta.errors} />
-                              )}
-                              {isDuplicate && (
-                                <FieldError
-                                  errors={[{ message: "Option labels must be unique" }]}
+                                    // No need to re-sync isCorrect on label change for
+                                    // multi-select — isCorrect is independent of value,
+                                    // unlike single-select where the Toggle matches by value slug
+                                    // and must stay in sync when the label changes.
+                                  }}
+                                  className="text-sm sm:text-base"
+                                  aria-invalid={labelIsInvalid || isDuplicate}
                                 />
+                                {labelIsInvalid && (
+                                  <FieldError errors={labelField.state.meta.errors} />
+                                )}
+                                {isDuplicate && (
+                                  <FieldError
+                                    errors={[{ message: "Option labels must be unique" }]}
+                                  />
+                                )}
+                              </Field>
+
+                              <form.Field
+                                name={`questions[${questionIndex}].options[${index}].score`}
+                              >
+                                {(scoreField) => {
+                                  const scoreIsInvalid =
+                                    scoreField.state.meta.isTouched &&
+                                    !scoreField.state.meta.isValid
+                                  return (
+                                    <Field
+                                      data-invalid={scoreIsInvalid}
+                                      className="w-full shrink-0 sm:w-30"
+                                    >
+                                      <FieldLabel htmlFor={scoreField.name}>
+                                        Option {order + 1} Score
+                                      </FieldLabel>
+                                      <Input
+                                        id={scoreField.name}
+                                        name={scoreField.name}
+                                        type="number"
+                                        placeholder="10"
+                                        min={0}
+                                        value={scoreField.state.value}
+                                        onBlur={scoreField.handleBlur}
+                                        onChange={(e) => {
+                                          const val = parseInt(e.target.value)
+                                          scoreField.handleChange(isNaN(val) ? 0 : val)
+                                        }}
+                                        className="text-sm sm:text-base"
+                                        aria-invalid={scoreIsInvalid}
+                                        disabled={!isCorrect}
+                                      />
+                                      {scoreIsInvalid && (
+                                        <FieldError errors={scoreField.state.meta.errors} />
+                                      )}
+                                    </Field>
+                                  )
+                                }}
+                              </form.Field>
+                            </FieldGroup>
+
+                            <div
+                              className={cn(
+                                "flex flex-col justify-end self-stretch sm:justify-center sm:gap-0",
+                                labelIsInvalid ? "gap-y-10" : "gap-y-6"
                               )}
-                            </Field>
-
-                            <form.Field
-                              name={`questions[${questionIndex}].options[${index}].score`}
                             >
-                              {(scoreField) => {
-                                const scoreIsInvalid =
-                                  scoreField.state.meta.isTouched && !scoreField.state.meta.isValid
-                                return (
-                                  <Field data-invalid={scoreIsInvalid} className="w-30 shrink-0">
-                                    <FieldLabel htmlFor={scoreField.name}>Option Score</FieldLabel>
-                                    <Input
-                                      id={scoreField.name}
-                                      name={scoreField.name}
-                                      type="number"
-                                      placeholder="10"
-                                      min={0}
-                                      value={scoreField.state.value}
-                                      onBlur={scoreField.handleBlur}
-                                      onChange={(e) => {
-                                        const val = parseInt(e.target.value)
-                                        scoreField.handleChange(isNaN(val) ? 0 : val)
-                                      }}
-                                      aria-invalid={scoreIsInvalid}
-                                      disabled={!isCorrect}
-                                    />
-                                    {scoreIsInvalid && (
-                                      <FieldError errors={scoreField.state.meta.errors} />
-                                    )}
-                                  </Field>
-                                )
-                              }}
-                            </form.Field>
+                              <Toggle
+                                variant="outline"
+                                pressed={isCorrect}
+                                onPressedChange={() => handleToggleCorrect(index)}
+                                disabled={liveValue === ""}
+                                className={cn(
+                                  "sm:hidden",
+                                  "rounded-full",
+                                  "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground",
+                                  "hover:cursor-pointer"
+                                )}
+                              >
+                                <Check />
+                              </Toggle>
 
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="outline"
-                              onClick={() => handleDelete(index)}
-                              className="rounded-full hover:bg-destructive hover:text-destructive-foreground"
-                            >
-                              <Trash2 />
-                            </Button>
+                              <FieldLabel />
+
+                              <Button
+                                type="button"
+                                size="icon"
+                                variant="outline"
+                                onClick={() => handleDelete(index)}
+                                className="rounded-full hover:bg-destructive hover:text-destructive-foreground"
+                              >
+                                <Trash2 />
+                              </Button>
+                            </div>
                           </FieldGroup>
                         )}
                       </form.Subscribe>
