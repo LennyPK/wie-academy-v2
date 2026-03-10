@@ -46,7 +46,9 @@ export default function QuizAttemptList({ attempts, maxScore }: QuizAttemptsProp
               return (
                 <TableRow
                   key={attempt.id}
-                  className={cn(score === maxScore && "bg-success/80 text-success-foreground")}
+                  className={cn(
+                    score === maxScore && "bg-success text-success-foreground hover:bg-success/80"
+                  )}
                 >
                   <TableCell className="font-medium">Attempt {attemptNumber}</TableCell>
                   <TableCell className="text-right">

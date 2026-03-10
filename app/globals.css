@@ -171,20 +171,24 @@ html body[data-scroll-locked] {
 
 @layer base {
   :root {
-    --success: oklch(0.808 0.244 138);
-    --success-foreground: oklch(0.254 0.068 136.1);
-    --warning: oklch(0.7 0.156 61.1);
-    --warning-foreground: oklch(0.228 0.043 67.7);
-    --info: oklch(0.502 0.227 263.6);
+    --success: oklch(0.623 0.169 149.2);
+    --success-foreground: oklch(1 0 0);
+
+    --warning: oklch(0.77 0.165 70.6);
+    --warning-foreground: oklch(0 0 0);
+
+    --info: oklch(0.58 0.231 259.6);
     --info-foreground: oklch(1 0 0);
   }
 
   .dark {
-    --success: oklch(0.314 0.079 150.9);
-    --success-foreground: oklch(0.817 0.218 149.8);
-    --warning: oklch(0.258 0.064 43.7);
-    --warning-foreground: oklch(0.79 0.103 45.7);
-    --info: oklch(0.193 0.09 269);
-    --info-foreground: oklch(0.684 0.145 276.2);
+    --success: oklch(0.747 0.205 149);
+    --success-foreground: oklch(1 0 0);
+
+    --warning: oklch(0.77 0.165 70.6);
+    --warning-foreground: oklch(0 0 0);
+
+    --info: oklch(0.646 0.191 256.9);
+    --info-foreground: oklch(1 0 0);
   }
 }

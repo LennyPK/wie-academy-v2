@@ -15,19 +15,40 @@ import { Prisma } from "@/lib/generated/prisma/client"
 //   updatedAt: Date
 // }
 
-export const quizWithQuestions = {
+const quizWithQuestions = {
   include: {
     questions: { include: { options: true } },
   },
 } satisfies Prisma.FormDefaultArgs
 
-export const quizAttempt = {
+const quizAttempt = {
   select: { id: true, total: true, submittedAt: true },
+} satisfies Prisma.FormResponseDefaultArgs
+
+const quizResult = {
+  include: {
+    form: {
+      include: {
+        questions: {
+          include: { options: true },
+          orderBy: { order: "asc" },
+        },
+      },
+    },
+    answers: {
+      include: {
+        question: true,
+        valueOptions: { include: { option: true } },
+      },
+    },
+  },
 } satisfies Prisma.FormResponseDefaultArgs
 
 type QuizWithQuestions = Prisma.FormGetPayload<typeof quizWithQuestions>
 
 type QuizAttempt = Prisma.FormResponseGetPayload<typeof quizAttempt>
+
+type QuizResult = Prisma.FormResponseGetPayload<typeof quizAttempt>
 
 type QuizScoreData = {
   bestScore: number | null
@@ -36,6 +57,6 @@ type QuizScoreData = {
 
 type QuizScores = Record<string, QuizScoreData>
 
-export type { QuizAttempt, QuizScoreData, QuizScores, QuizWithQuestions }
+export { quizAttempt, quizResult, quizWithQuestions }
 
-console.log(quizWithQuestions, quizAttempt)
+export type { QuizAttempt, QuizResult, QuizScoreData, QuizScores, QuizWithQuestions }

@@ -36,7 +36,7 @@ export default function QuizDetail({ quiz, scoreData }: QuizDetailProps) {
 
       <CardContent>
         {/* Info grid */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-lg bg-muted p-3 text-center">
             <HelpCircle className="mx-auto mb-1 h-5 w-5 text-primary" />
             <p className="text-lg font-semibold">{totalQuestions}</p>

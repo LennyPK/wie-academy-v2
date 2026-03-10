@@ -8,8 +8,10 @@ import { Progress } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
 import { insertQuizResponse } from "@/explore/quiz/create/actions"
 import { QuizWithQuestions } from "@/explore/quiz/types"
+import { ROUTES } from "@/lib/constants"
 import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
+import { useStore } from "@tanstack/react-form"
 import { ArrowRight, Check, ChevronLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -42,7 +44,6 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
     .sort((a, b) => a.order - b.order)
   const currentQuestion = questions[currentStep]
   const isSummaryStep = currentStep === questions.length
-  const progress = (currentStep / questions.length) * 100
 
   const handleNext = async () => {
     // Validate only the current question's answer before advancing
@@ -108,9 +109,10 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
       const sanitizedAnswers = attemptSchema.parse(value)
 
       try {
-        await insertQuizResponse(quiz.id, sanitizedAnswers.answers)
+        const response = await insertQuizResponse(quiz.id, sanitizedAnswers.answers)
         toast.dismiss()
         toast.success("Quiz submitted!")
+        router.replace(`${ROUTES.QUIZ}/${quiz.id}/results/${response.id}`)
       } catch {
         toast.dismiss()
         toast.error("Something went wrong. Please try again.")
@@ -119,6 +121,9 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
       }
     },
   })
+
+  const answers = useStore(form.store, (state) => state.values.answers)
+  const progress = (answers.filter((answer) => isAnswered(answer)).length / questions.length) * 100
 
   console.log(userId)
 
@@ -270,7 +275,6 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                   disabled={!allAnswered}
                 >
                   {hoveredIndex === questions.length && <Check className="h-3 w-3" />}
-                  {/* {hoveredIndex === questions.length && <span className="text-xs">Review</span>} */}
                 </button>
               </div>
             )
