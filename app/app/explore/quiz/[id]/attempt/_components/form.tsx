@@ -129,30 +129,31 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   const headerCard = (
     <Card>
-      <CardHeader className="grid grid-cols-[120px_1fr_120px] items-center">
-        <div className="flex justify-start">
-          <Button
-            type="button"
-            variant="link"
-            className="text-sm text-muted-foreground"
-            onClick={() => router.back()}
-          >
-            <ChevronLeft className="size-5" />
-            <span>Back</span>
-          </Button>
-        </div>
+      <CardHeader className="flex flex-col justify-center gap-4 sm:grid sm:grid-cols-[120px_1fr_120px] sm:items-center sm:gap-2">
+        <Button
+          type="button"
+          variant="link"
+          className="justify-start px-0 text-sm text-muted-foreground has-[>svg]:px-0"
+          onClick={() => router.back()}
+        >
+          <ChevronLeft className="size-5" />
+          <span>Exit</span>
+        </Button>
 
-        <div className="flex flex-1 flex-col items-center gap-2">
-          <CardTitle className="text-center">{quiz.title}</CardTitle>
-          <CardDescription className="text-center">
+        <div className="flex flex-1 flex-col gap-2 sm:items-center">
+          <CardTitle className="sm:text-center">{quiz.title}</CardTitle>
+          <CardDescription className="sm:text-center">
             {isSummaryStep
               ? "Review your answers"
               : `Question ${currentStep + 1} of ${questions.length}`}
           </CardDescription>
+          {!isSummaryStep && currentQuestion.score && (
+            <Badge variant="outline">{currentQuestion.score} pts</Badge>
+          )}
         </div>
 
-        <div className="flex w-full justify-end">
-          <Badge variant="outline" className="justify-end">
+        <div className="hidden w-full justify-center sm:flex sm:justify-end">
+          <Badge variant="secondary" className="justify-end">
             {Math.round(progress)}%
           </Badge>
         </div>
@@ -178,13 +179,13 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
               return (
                 <button
                   key={question.id}
-                  className="flex w-full items-center py-5 text-left transition-colors hover:bg-muted"
+                  className="flex w-full items-center gap-2 px-2 py-3 text-left transition-colors hover:bg-muted sm:gap-4 sm:px-4 sm:py-5"
                   type="button"
                   onClick={() => handleJumpTo(i)}
                 >
                   <span
                     className={cn(
-                      "mx-4 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
                       answer !== null
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted-foreground text-muted"
@@ -196,18 +197,16 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                   <div className="flex flex-1 flex-col gap-1">
                     <p className="text-sm font-medium">{question.prompt}</p>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                       <p className="text-sm text-muted-foreground">{formatAnswerType(answer)}</p>
-                      <p className="text-sm text-muted-foreground">|</p>
+                      <p className="hidden text-sm text-muted-foreground sm:inline">|</p>
                       <p className="text-sm font-medium text-primary">
                         {formatAnswer(answer, question)}
                       </p>
                     </div>
-
-                    <span className="text-xs text-muted-foreground">{question.score} pts</span>
                   </div>
 
-                  <ArrowRight className="mx-4 h-3 w-3" />
+                  <ArrowRight className="mx-4 hidden h-3 w-3 sm:block" />
                 </button>
               )
             })}
@@ -219,7 +218,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   const navCard = (
     <Card>
-      <CardContent className="flex justify-between align-middle">
+      <CardContent className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:align-middle">
         <Button type="button" variant="outline" onClick={handlePrev} disabled={currentStep === 0}>
           Back
         </Button>
@@ -229,7 +228,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
             const allAnswered = answers.every((answer) => isAnswered(answer))
 
             return (
-              <div className="flex items-center justify-center gap-2">
+              <div className="hidden items-center justify-center gap-2 sm:flex">
                 {questions.map((question, i) => {
                   const answered = isAnswered(answers[i])
                   const isCurrent = i === currentStep

@@ -68,7 +68,7 @@ export default async function QuizResultsPage({
 
           <CardContent>
             {/* Score stats */}
-            <div className="my-15 flex flex-col items-center justify-center gap-6 sm:flex-row sm:gap-8">
+            <div className="my-10 flex flex-col items-center justify-center gap-6 sm:my-15 sm:flex-row sm:gap-8">
               <div className="text-center">
                 <p className="text-3xl font-bold text-primary sm:text-4xl">
                   {percentage.toFixed(0)}%
@@ -235,7 +235,7 @@ export default async function QuizResultsPage({
             )}
 
             <Button asChild variant="outline" className="w-full sm:flex-1">
-              <Link href={ROUTES.QUIZ}>Back to Quizzes</Link>
+              <Link href={ROUTES.EXPLORE}>Back to Quizzes</Link>
             </Button>
           </CardFooter>
         </Card>
