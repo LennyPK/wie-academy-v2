@@ -207,7 +207,7 @@ export default async function QuizResultsPage({
                         {/* Show explanation */}
                         {!isCorrect && (
                           <div className="rounded-md bg-muted p-3">
-                            <p className="text-xs font-medium text-muted-foreground">Explanation</p>{" "}
+                            <p className="text-xs font-medium text-muted-foreground">Explanation</p>
                             <p className="text-sm text-foreground">
                               {question.explanation
                                 ? question.explanation
