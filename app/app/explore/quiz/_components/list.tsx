@@ -4,15 +4,11 @@ import { QuizScores, QuizWithQuestions } from "@/explore/quiz/types"
 import QuizCard from "./card"
 
 interface QuizListProps {
-  userId: string
-  userRole: string
   quizzes: QuizWithQuestions[]
   quizScores: QuizScores
 }
 
-export default function QuizList({ userId, userRole, quizzes, quizScores }: QuizListProps) {
-  console.log(`${userId}: ${userRole}`)
-
+export default function QuizList({ quizzes, quizScores }: QuizListProps) {
   return (
     <div
       className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -21,15 +17,7 @@ export default function QuizList({ userId, userRole, quizzes, quizScores }: Quiz
     >
       {quizzes.length > 0 &&
         quizzes.map((quiz) => {
-          return (
-            <QuizCard
-              key={quiz.id}
-              userId={userId}
-              userRole={userRole}
-              quiz={quiz}
-              scoreData={quizScores[quiz.id]}
-            />
-          )
+          return <QuizCard key={quiz.id} quiz={quiz} scoreData={quizScores[quiz.id]} />
         })}
     </div>
   )

@@ -1,5 +1,5 @@
 import { withForm } from "@/components/form"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const TextQuestion = withForm({
   ...formOpts,

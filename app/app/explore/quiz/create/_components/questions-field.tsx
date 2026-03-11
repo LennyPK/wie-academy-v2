@@ -19,12 +19,12 @@ import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, Plus, Trash2 } from "lucide-react"
 import { formOpts } from "."
-import { MultiSelectQuestion } from "./question.multi-select"
-import { RatingQuestion } from "./question.rating"
-import { ScaleQuestion } from "./question.scale"
-import { SingleSelectQuestion } from "./question.single-select"
-import { TextQuestion } from "./question.text"
-import { TrueFalseQuestion } from "./question.true-false"
+import { MultiSelectQuestion } from "./question-forms/multi-select"
+import { RatingQuestion } from "./question-forms/rating"
+import { ScaleQuestion } from "./question-forms/scale"
+import { SingleSelectQuestion } from "./question-forms/single-select"
+import { TextQuestion } from "./question-forms/text"
+import { TrueFalseQuestion } from "./question-forms/true-false"
 
 export const QuestionsField = withForm({
   ...formOpts,

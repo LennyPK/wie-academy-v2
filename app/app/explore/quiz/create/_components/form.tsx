@@ -4,6 +4,8 @@ import { useAppForm } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldGroup } from "@/components/ui/field"
+import { insertQuiz } from "@/explore/quiz/actions"
+import { ROUTES } from "@/lib/constants"
 import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
@@ -11,7 +13,6 @@ import { useState } from "react"
 import { toast } from "sonner"
 import * as z from "zod"
 import { formOpts } from "."
-import { insertQuiz } from "../actions"
 import { formSchema } from "./form-schema"
 import { QuestionsField } from "./questions-field"
 
@@ -33,10 +34,8 @@ export default function QuizForm() {
       modeAfterSubmission: "change",
     }),
     onSubmit: async ({ value }) => {
-      // TODO: Clear options from other q types and set score to 0 for single selects
       setIsLoading(true)
       toast.loading("Saving...")
-      console.log(value)
 
       const sanitizedQuestions = value.questions.map((q) => {
         switch (q.type) {
@@ -74,20 +73,19 @@ export default function QuizForm() {
         questions: sanitizedQuestions as z.infer<typeof formSchema>["questions"], // enforces question types explicitly
       }
 
-      console.log(sanitizedQuiz)
-
-      const newQuiz = await insertQuiz(sanitizedQuiz)
-      toast.dismiss()
-      toast.success(`New quiz saved: ${newQuiz.title}`)
-      setIsLoading(false)
-
-      console.log("Quiz: ")
-      console.log(newQuiz)
+      try {
+        const newQuiz = await insertQuiz(sanitizedQuiz)
+        toast.dismiss()
+        toast.success(`New quiz saved: ${newQuiz.title}`)
+        router.replace(`${ROUTES.QUIZ}/${newQuiz.id}`)
+      } catch {
+        toast.dismiss()
+        toast.error("Something went wrong. Please try again.")
+      } finally {
+        setIsLoading(false)
+      }
     },
   })
-
-  // const values = useStore(form.store, (state) => state.values)
-  // const errors = useStore(form.store, (state) => state.errors)
 
   return (
     <form
@@ -97,9 +95,6 @@ export default function QuizForm() {
         form.handleSubmit()
       }}
     >
-      {/* <pre className="text-xs">{JSON.stringify(values, null, 2)}</pre> */}
-      {/* <pre className="text-xs text-destructive">{JSON.stringify(errors, null, 2)}</pre> */}
-
       {/* Title and Description card */}
       <Card>
         <CardContent>

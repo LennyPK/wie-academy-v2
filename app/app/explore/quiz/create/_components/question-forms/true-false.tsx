@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
 import { FormQuestionType } from "@/lib/prisma/enums"
 import { Check } from "lucide-react"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const TrueFalseQuestion = withForm({
   ...formOpts,

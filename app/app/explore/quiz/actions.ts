@@ -1,6 +1,5 @@
 "use server"
 
-import { attemptSchema } from "@/explore/quiz/[id]/attempt/_components/form-schema"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
@@ -8,7 +7,8 @@ import { FormQuestionType, FormType } from "@/lib/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import * as z from "zod"
-import { formSchema } from "./_components/form-schema"
+import { attemptSchema } from "./[id]/attempt/_components/form-schema"
+import { formSchema } from "./create/_components/form-schema"
 
 export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
   const session = await auth.api.getSession({ headers: await headers() })

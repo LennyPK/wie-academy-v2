@@ -4,7 +4,7 @@ import { Toggle } from "@/components/ui/toggle"
 import { cn } from "@/lib/utils"
 import { Check } from "lucide-react"
 import * as z from "zod"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const TrueFalseAnswer = withForm({
   ...formOpts,

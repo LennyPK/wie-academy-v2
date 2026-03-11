@@ -2,7 +2,7 @@ import { withForm } from "@/components/form"
 import { Field, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import * as z from "zod"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const TextAnswer = withForm({
   ...formOpts,

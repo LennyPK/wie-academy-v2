@@ -13,18 +13,15 @@ import {
 import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Progress } from "@/components/ui/progress"
 import { QuizScoreData, QuizWithQuestions } from "@/explore/quiz/types"
-import { ROUTES } from "@/lib/constants"
 import { ArrowRight, BarChart3, CircleQuestionMark } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 
 interface QuizCardProps {
-  userId: string
-  userRole: string
   quiz: QuizWithQuestions
   scoreData: QuizScoreData
 }
 
-export default function QuizCard({ userId, userRole, quiz, scoreData }: QuizCardProps) {
+export default function QuizCard({ quiz, scoreData }: QuizCardProps) {
   const router = useRouter()
   const pathname = usePathname()
 
@@ -32,14 +29,13 @@ export default function QuizCard({ userId, userRole, quiz, scoreData }: QuizCard
 
   const handleQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`${ROUTES.QUIZ}/${quiz.id}`)
+    router.push(`${pathname}/${quiz.id}`)
   }
   const handleTakeQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`${ROUTES.QUIZ}/${quiz.id}/attempt`)
+    router.push(`${pathname}/${quiz.id}/attempt`)
   }
 
-  console.log(`${userId}: ${userRole}, ${pathname}`)
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild className="cursor-pointer">
@@ -68,12 +64,10 @@ export default function QuizCard({ userId, userRole, quiz, scoreData }: QuizCard
           <CardFooter>
             {scoreData ? (
               <div className="flex w-full flex-col gap-2">
-                <div className="flex w-full justify-between text-xs text-muted-foreground">
-                  <div>
-                    <span>
-                      Best Score: {scoreData.bestScore ?? 0} / {maxScore}
-                    </span>
-                  </div>
+                <div className="flex w-full items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    Best Score: {scoreData.bestScore ?? 0} / {maxScore}
+                  </span>
                   <Badge variant="outline">
                     {scoreData.attemptCount} attempt{scoreData.attemptCount !== 1 ? "s" : ""}
                   </Badge>

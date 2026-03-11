@@ -2,7 +2,7 @@ import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Toggle } from "@/components/ui/toggle"
 import { FormQuestionType } from "@/lib/prisma/enums"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const ScaleQuestion = withForm({
   ...formOpts,

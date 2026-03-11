@@ -6,7 +6,7 @@ import { Toggle } from "@/components/ui/toggle"
 import { FormQuestionType } from "@/lib/prisma/enums"
 import { cn, slugify } from "@/lib/utils"
 import { Check, Plus, Trash2 } from "lucide-react"
-import { formOpts } from "."
+import { formOpts } from ".."
 
 export const MultiSelectQuestion = withForm({
   ...formOpts,
