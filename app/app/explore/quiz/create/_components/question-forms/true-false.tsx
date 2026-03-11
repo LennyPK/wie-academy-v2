@@ -2,7 +2,7 @@ import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { Check } from "lucide-react"
 import { formOpts } from ".."
 
@@ -23,7 +23,9 @@ export const TrueFalseQuestion = withForm({
               <form.Subscribe
                 selector={(state) => {
                   const question = state.values.questions[questionIndex]
-                  if (!question || question.type !== FormQuestionType.TRUE_FALSE) return null
+                  if (!question || question.type !== QuestionnaireQuestionType.TRUE_FALSE) {
+                    return null
+                  }
                   return question.correctAnswer
                 }}
               >

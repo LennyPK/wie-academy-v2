@@ -1,7 +1,7 @@
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuizWithQuestions } from "@/explore/quiz/types"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { formOptions } from "@tanstack/react-form"
 import * as z from "zod"
-import { QuizWithQuestions } from "../../../types"
 import { attemptSchema } from "./form-schema"
 
 export const initialValues: z.input<typeof attemptSchema> = { answers: [] }
@@ -15,25 +15,25 @@ export function formatAnswer(
   question: QuizWithQuestions["questions"][number]
 ): string {
   switch (answer.type) {
-    // case FormQuestionType.TEXT:
+    // case QuestionnaireQuestionType.TEXT:
     //   return answer.value || "No answer"
-    case FormQuestionType.SINGLE_SELECT: {
+    case QuestionnaireQuestionType.SINGLE_SELECT: {
       const option = question.options.find((o) => o.value === answer.value)
       return option?.label ?? answer.value ?? "No answer"
     }
-    case FormQuestionType.MULTI_SELECT: {
+    case QuestionnaireQuestionType.MULTI_SELECT: {
       if (!answer.values.length) return "No answer"
       const labels = answer.values.map(
         (v) => question.options.find((o) => o.value === v)?.label ?? v
       )
       return labels.join(", ")
     }
-    case FormQuestionType.TRUE_FALSE:
+    case QuestionnaireQuestionType.TRUE_FALSE:
       if (answer.value === null) return "No answer"
       return answer.value ? (question.trueLabel ?? "True") : (question.falseLabel ?? "False")
-    // case FormQuestionType.RATING:
+    // case QuestionnaireQuestionType.RATING:
     //   return answer.value ? `${answer.value} / 5` : "No answer"
-    // case FormQuestionType.SCALE:
+    // case QuestionnaireQuestionType.SCALE:
     //   return answer.value !== null ? String(answer.value) : "No answer"
     default:
       return "No answer"
@@ -42,19 +42,19 @@ export function formatAnswer(
 
 export function formatAnswerType(answer: z.input<typeof attemptSchema>["answers"][number]): string {
   switch (answer.type) {
-    // case FormQuestionType.TEXT:
+    // case QuestionnaireQuestionType.TEXT:
     //   return "Text"
-    case FormQuestionType.SINGLE_SELECT: {
+    case QuestionnaireQuestionType.SINGLE_SELECT: {
       return "Multiple Choice"
     }
-    case FormQuestionType.MULTI_SELECT: {
+    case QuestionnaireQuestionType.MULTI_SELECT: {
       return "Checkbox"
     }
-    case FormQuestionType.TRUE_FALSE:
+    case QuestionnaireQuestionType.TRUE_FALSE:
       return "True / False"
-    // case FormQuestionType.RATING:
+    // case QuestionnaireQuestionType.RATING:
     //   return "Rating"
-    // case FormQuestionType.SCALE:
+    // case QuestionnaireQuestionType.SCALE:
     //   return "Scale"
     default:
       return "No answer"

@@ -1,4 +1,4 @@
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { formOptions } from "@tanstack/react-form"
 import * as z from "zod"
 import { formSchema } from "./form-schema"
@@ -10,7 +10,7 @@ export const initialValues: z.infer<typeof formSchema> = {
     {
       tempId: crypto.randomUUID(),
       prompt: "",
-      type: FormQuestionType.SINGLE_SELECT,
+      type: QuestionnaireQuestionType.SINGLE_SELECT,
       isRequired: true,
       order: 0,
       score: 1,
@@ -22,7 +22,7 @@ export const initialValues: z.infer<typeof formSchema> = {
     {
       tempId: crypto.randomUUID(),
       prompt: "",
-      type: FormQuestionType.SINGLE_SELECT,
+      type: QuestionnaireQuestionType.SINGLE_SELECT,
       isRequired: true,
       order: 1,
       score: 1,

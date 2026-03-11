@@ -23,7 +23,7 @@ model Event {
   category       EventCategory        @relation(fields: [categoryId], references: [id], onDelete: SetDefault)
   registrations  EventRegistration[]
   participations EventParticipation[]
-  forms          Form[]
+  questionnaires Questionnaire[]
 
   @@map("event")
 }

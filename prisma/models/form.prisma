@@ -1,11 +1,11 @@
-enum FormType {
+enum QuestionnaireType {
   QUIZ
   SURVEY
 
-  @@map("formType")
+  @@map("questionnaireType")
 }
 
-enum FormQuestionType {
+enum QuestionnaireQuestionType {
   TEXT
   SINGLE_SELECT
   MULTI_SELECT
@@ -13,35 +13,35 @@ enum FormQuestionType {
   RATING
   SCALE
 
-  @@map("formQuestionType")
+  @@map("questionnaireQuestionType")
 }
 
-model Form {
-  id          String   @id @default(uuid())
-  type        FormType
+model Questionnaire {
+  id          String            @id @default(uuid())
+  type        QuestionnaireType
   eventId     String?
   title       String
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
 
-  event     Event?         @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  questions FormQuestion[]
-  responses FormResponse[]
+  event     Event?                  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  questions QuestionnaireQuestion[]
+  responses QuestionnaireResponse[]
 
-  @@map("form")
+  @@map("questionnaire")
 }
 
-model FormQuestion {
-  id          String           @id @default(uuid())
-  formId      String
-  type        FormQuestionType
-  prompt      String
-  isRequired  Boolean
-  explanation String?
-  score       Int?
+model QuestionnaireQuestion {
+  id              String                    @id @default(uuid())
+  questionnaireId String
+  type            QuestionnaireQuestionType
+  prompt          String
+  isRequired      Boolean
+  explanation     String?
+  score           Int?
   // quizConfig  Json?
-  order       Int
+  order           Int
 
   // TRUE_FALSE
   correctAnswer Boolean?
@@ -58,14 +58,14 @@ model FormQuestion {
   scaleMinLabel String?
   scaleMaxLabel String?
 
-  form    Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
-  options FormOption[] // SINGLE_SELECT and MULTI_SELECT only
-  answers FormAnswer[]
+  questionnaire Questionnaire         @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  options       QuestionnaireOption[] // SINGLE_SELECT and MULTI_SELECT only
+  answers       QuestionnaireAnswer[]
 
-  @@map("formQuestion")
+  @@map("questionnaireQuestion")
 }
 
-model FormOption {
+model QuestionnaireOption {
   id         String  @id @default(uuid())
   questionId String
   label      String
@@ -74,29 +74,29 @@ model FormOption {
   score      Int     @default(0)
   order      Int
 
-  question      FormQuestion           @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  answerOptions FormOptionsOnAnswers[]
+  question      QuestionnaireQuestion           @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerOptions QuestionnaireOptionsOnAnswers[]
 
   @@unique([questionId, value])
-  @@map("formOption")
+  @@map("questionnaireOption")
 }
 
-model FormResponse {
-  id          String   @id @default(uuid())
-  formId      String
-  userId      String
-  total       Int?
-  isAnonymous Boolean?
-  submittedAt DateTime @default(now())
+model QuestionnaireResponse {
+  id              String   @id @default(uuid())
+  questionnaireId String
+  userId          String
+  total           Int?
+  isAnonymous     Boolean?
+  submittedAt     DateTime @default(now())
 
-  form    Form         @relation(fields: [formId], references: [id], onDelete: Cascade)
-  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  answers FormAnswer[]
+  questionnaire Questionnaire         @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers       QuestionnaireAnswer[]
 
-  @@map("formResponse")
+  @@map("questionnaireResponse")
 }
 
-model FormAnswer {
+model QuestionnaireAnswer {
   id         String @id @default(uuid())
   questionId String
   responseId String
@@ -105,7 +105,7 @@ model FormAnswer {
   valueString  String? // Text answer
   valueInt     Int? // Scale & rating answer
   valueBoolean Boolean? // True/false answer
-  valueOptions FormOptionsOnAnswers[] // Single & multi select answers
+  valueOptions QuestionnaireOptionsOnAnswers[] // Single & multi select answers
 
   // Scoring snapshot
   isCorrect Boolean?
@@ -114,20 +114,20 @@ model FormAnswer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  question FormQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  response FormResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question QuestionnaireQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  response QuestionnaireResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
 
   @@unique([responseId, questionId])
-  @@map("formAnswer")
+  @@map("questionnaireAnswer")
 }
 
-model FormOptionsOnAnswers {
+model QuestionnaireOptionsOnAnswers {
   answerId String
   optionId String
 
-  answer FormAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  option FormOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  answer QuestionnaireAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  option QuestionnaireOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
 
   @@id([answerId, optionId])
-  @@map("formOptionsOnAnswers")
+  @@map("questionnaireOptionsOnAnswers")
 }

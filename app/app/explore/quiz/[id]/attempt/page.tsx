@@ -2,7 +2,7 @@ import { quizWithQuestions } from "@/explore/quiz/types"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { FormType } from "@/lib/prisma/enums"
+import { QuestionnaireType } from "@/lib/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import QuizAttemptForm from "./_components/form"
@@ -25,8 +25,8 @@ export default async function QuizAttemptPage({ params }: { params: Promise<{ id
 
   const { id } = await params
 
-  const quiz = await prisma.form.findUnique({
-    where: { id: id, type: FormType.QUIZ },
+  const quiz = await prisma.questionnaire.findUnique({
+    where: { id: id, type: QuestionnaireType.QUIZ },
     ...quizWithQuestions,
   })
 

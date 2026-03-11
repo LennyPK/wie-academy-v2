@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { insertQuizResponse } from "@/explore/quiz/actions"
 import { QuizWithQuestions } from "@/explore/quiz/types"
 import { ROUTES } from "@/lib/constants"
-import { FormQuestionType, FormType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType, QuestionnaireType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { useStore } from "@tanstack/react-form"
 import { ArrowRight, Check, ChevronLeft } from "lucide-react"
@@ -34,13 +34,15 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  const quizQuestionTypes: FormQuestionType[] = [
-    FormQuestionType.SINGLE_SELECT,
-    FormQuestionType.MULTI_SELECT,
-    FormQuestionType.TRUE_FALSE,
+  const quizQuestionTypes: QuestionnaireQuestionType[] = [
+    QuestionnaireQuestionType.SINGLE_SELECT,
+    QuestionnaireQuestionType.MULTI_SELECT,
+    QuestionnaireQuestionType.TRUE_FALSE,
   ]
   const questions = quiz.questions
-    .filter((q) => (quiz.type === FormType.QUIZ ? quizQuestionTypes.includes(q.type) : true))
+    .filter((q) =>
+      quiz.type === QuestionnaireType.QUIZ ? quizQuestionTypes.includes(q.type) : true
+    )
     .sort((a, b) => a.order - b.order)
   const currentQuestion = questions[currentStep]
   const isSummaryStep = currentStep === questions.length
@@ -49,7 +51,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
     // Validate only the current question's answer before advancing
     if (currentQuestion.isRequired) {
       const result =
-        currentQuestion.type === FormQuestionType.MULTI_SELECT
+        currentQuestion.type === QuestionnaireQuestionType.MULTI_SELECT
           ? await form.validateField(`answers[${currentStep}].values`, "change")
           : await form.validateField(`answers[${currentStep}].value`, "change")
 
@@ -69,28 +71,28 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   function isAnswered(answer: z.input<typeof attemptSchema>["answers"][number]): boolean {
     switch (answer.type) {
-      case FormQuestionType.SINGLE_SELECT:
+      case QuestionnaireQuestionType.SINGLE_SELECT:
         return answer.value !== ""
-      case FormQuestionType.MULTI_SELECT:
+      case QuestionnaireQuestionType.MULTI_SELECT:
         return answer.values.length > 0
-      case FormQuestionType.TRUE_FALSE:
+      case QuestionnaireQuestionType.TRUE_FALSE:
         return answer.value !== null
     }
   }
 
   const initialValues: z.input<typeof attemptSchema>["answers"] = questions.map((q) => {
     switch (q.type) {
-      // case FormQuestionType.TEXT:
+      // case QuestionnaireQuestionType.TEXT:
       //   return { questionId: q.id, type: q.type, value: "" }
-      case FormQuestionType.SINGLE_SELECT:
+      case QuestionnaireQuestionType.SINGLE_SELECT:
         return { questionId: q.id, type: q.type, value: "" }
-      case FormQuestionType.MULTI_SELECT:
+      case QuestionnaireQuestionType.MULTI_SELECT:
         return { questionId: q.id, type: q.type, values: [] }
-      case FormQuestionType.TRUE_FALSE:
+      case QuestionnaireQuestionType.TRUE_FALSE:
         return { questionId: q.id, type: q.type, value: null }
-      // case FormQuestionType.RATING:
+      // case QuestionnaireQuestionType.RATING:
       //   return { questionId: q.id, type: q.type, value: 0 }
-      // case FormQuestionType.SCALE:
+      // case QuestionnaireQuestionType.SCALE:
       //   return { questionId: q.id, type: q.type, value: null }
       default:
         throw new Error(`Unexpected question type: ${q.type}`)
@@ -318,9 +320,9 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
           <CardContent>
             {(() => {
               switch (currentQuestion.type) {
-                // case FormQuestionType.TEXT:
+                // case QuestionnaireQuestionType.TEXT:
                 //   return <TextAnswer form={form} questionIndex={currentStep} />
-                case FormQuestionType.SINGLE_SELECT:
+                case QuestionnaireQuestionType.SINGLE_SELECT:
                   return (
                     <SingleSelectAnswer
                       form={form}
@@ -328,7 +330,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                       options={currentQuestion.options}
                     />
                   )
-                case FormQuestionType.MULTI_SELECT:
+                case QuestionnaireQuestionType.MULTI_SELECT:
                   return (
                     <MultiSelectAnswer
                       form={form}
@@ -336,7 +338,7 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                       options={currentQuestion.options}
                     />
                   )
-                case FormQuestionType.TRUE_FALSE:
+                case QuestionnaireQuestionType.TRUE_FALSE:
                   return (
                     <TrueFalseAnswer
                       form={form}
@@ -345,9 +347,9 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
                       falseLabel={currentQuestion.falseLabel ?? "False"}
                     />
                   )
-                // case FormQuestionType.RATING:
+                // case QuestionnaireQuestionType.RATING:
                 //   return <RatingAnswer form={form} questionIndex={currentStep} />
-                // case FormQuestionType.SCALE:
+                // case QuestionnaireQuestionType.SCALE:
                 //   return (
                 //     <ScaleAnswer
                 //       form={form}

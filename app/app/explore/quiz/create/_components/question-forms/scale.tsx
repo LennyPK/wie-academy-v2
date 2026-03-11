@@ -1,7 +1,7 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Toggle } from "@/components/ui/toggle"
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { formOpts } from ".."
 
 export const ScaleQuestion = withForm({
@@ -27,7 +27,10 @@ export const ScaleQuestion = withForm({
 
                     // Clear target if it falls below the new min
                     const question = form.getFieldValue(`questions[${questionIndex}]`)
-                    if (question.type === FormQuestionType.SCALE && question.targetValue < val) {
+                    if (
+                      question.type === QuestionnaireQuestionType.SCALE &&
+                      question.targetValue < val
+                    ) {
                       // clamp target to new min rather than clearing it
                       form.setFieldValue(`questions[${questionIndex}].targetValue`, val)
                     }
@@ -53,7 +56,10 @@ export const ScaleQuestion = withForm({
 
                     // Clear target if it falls above the new max
                     const question = form.getFieldValue(`questions[${questionIndex}]`)
-                    if (question.type === FormQuestionType.SCALE && question.targetValue > val) {
+                    if (
+                      question.type === QuestionnaireQuestionType.SCALE &&
+                      question.targetValue > val
+                    ) {
                       // clamp target to new max rather than clearing it
                       form.setFieldValue(`questions[${questionIndex}].targetValue`, val)
                     }
@@ -99,7 +105,7 @@ export const ScaleQuestion = withForm({
         <form.Subscribe
           selector={(state) => {
             const question = state.values.questions[questionIndex]
-            if (!question || question.type !== FormQuestionType.SCALE) {
+            if (!question || question.type !== QuestionnaireQuestionType.SCALE) {
               return { min: null, max: null, target: null }
             }
             return {

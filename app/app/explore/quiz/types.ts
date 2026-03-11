@@ -4,15 +4,15 @@ const quizWithQuestions = {
   include: {
     questions: { include: { options: true } },
   },
-} satisfies Prisma.FormDefaultArgs
+} satisfies Prisma.QuestionnaireDefaultArgs
 
 const quizAttempt = {
   select: { id: true, total: true, submittedAt: true },
-} satisfies Prisma.FormResponseDefaultArgs
+} satisfies Prisma.QuestionnaireResponseDefaultArgs
 
 const quizResult = {
   include: {
-    form: {
+    questionnaire: {
       include: {
         questions: {
           include: { options: true },
@@ -27,13 +27,13 @@ const quizResult = {
       },
     },
   },
-} satisfies Prisma.FormResponseDefaultArgs
+} satisfies Prisma.QuestionnaireResponseDefaultArgs
 
-type QuizWithQuestions = Prisma.FormGetPayload<typeof quizWithQuestions>
+type QuizWithQuestions = Prisma.QuestionnaireGetPayload<typeof quizWithQuestions>
 
-type QuizAttempt = Prisma.FormResponseGetPayload<typeof quizAttempt>
+type QuizAttempt = Prisma.QuestionnaireResponseGetPayload<typeof quizAttempt>
 
-type QuizResult = Prisma.FormResponseGetPayload<typeof quizAttempt>
+type QuizResult = Prisma.QuestionnaireResponseGetPayload<typeof quizAttempt>
 
 type QuizScoreData = {
   bestScore: number | null

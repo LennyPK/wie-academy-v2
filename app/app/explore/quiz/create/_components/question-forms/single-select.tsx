@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { cn, slugify } from "@/lib/utils"
 import { Check, Plus, Trash2 } from "lucide-react"
 import { formOpts } from ".."
@@ -76,7 +76,10 @@ export const SingleSelectQuestion = withForm({
                       <form.Subscribe
                         selector={(state) => {
                           const question = state.values.questions[questionIndex]
-                          if (!question || question.type !== FormQuestionType.SINGLE_SELECT) {
+                          if (
+                            !question ||
+                            question.type !== QuestionnaireQuestionType.SINGLE_SELECT
+                          ) {
                             return {
                               liveValue: "",
                               isDuplicate: false,

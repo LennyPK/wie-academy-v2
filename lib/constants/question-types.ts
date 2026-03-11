@@ -1,43 +1,43 @@
-import { FormQuestionType } from "@/prisma/enums"
+import { QuestionnaireQuestionType } from "@/prisma/enums"
 import { CheckCheck, List, SlidersHorizontal, SquareCheck, Star, Type } from "lucide-react"
 
 const questionTypeOptions = [
   {
-    value: FormQuestionType.TEXT,
+    value: QuestionnaireQuestionType.TEXT,
     label: "Text",
     icon: Type,
   },
   {
-    value: FormQuestionType.SINGLE_SELECT,
+    value: QuestionnaireQuestionType.SINGLE_SELECT,
     label: "Multiple Choice",
     icon: List,
   },
   {
-    value: FormQuestionType.MULTI_SELECT,
+    value: QuestionnaireQuestionType.MULTI_SELECT,
     label: "Checkbox",
     icon: SquareCheck,
   },
   {
-    value: FormQuestionType.TRUE_FALSE,
+    value: QuestionnaireQuestionType.TRUE_FALSE,
     label: "True / False",
     icon: CheckCheck,
   },
   {
-    value: FormQuestionType.RATING,
+    value: QuestionnaireQuestionType.RATING,
     label: "Rating",
     icon: Star,
   },
   {
-    value: FormQuestionType.SCALE,
+    value: QuestionnaireQuestionType.SCALE,
     label: "Scale",
     icon: SlidersHorizontal,
   },
 ]
 
-const quizAllowedTypes = new Set<FormQuestionType>([
-  FormQuestionType.SINGLE_SELECT,
-  FormQuestionType.MULTI_SELECT,
-  FormQuestionType.TRUE_FALSE,
+const quizAllowedTypes = new Set<QuestionnaireQuestionType>([
+  QuestionnaireQuestionType.SINGLE_SELECT,
+  QuestionnaireQuestionType.MULTI_SELECT,
+  QuestionnaireQuestionType.TRUE_FALSE,
 ])
 
 export const quizQuestionTypeOptions = questionTypeOptions.filter((option) =>

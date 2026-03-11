@@ -3,7 +3,7 @@ import { quizAttempt, quizWithQuestions } from "@/explore/quiz/types"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { FormType } from "@/lib/prisma/enums"
+import { QuestionnaireType } from "@/lib/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import QuizAttemptList from "./_components/attempts"
@@ -27,18 +27,18 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
 
   const { id } = await params
 
-  const quiz = await prisma.form.findUnique({
-    where: { id: id, type: FormType.QUIZ },
+  const quiz = await prisma.questionnaire.findUnique({
+    where: { id: id, type: QuestionnaireType.QUIZ },
     ...quizWithQuestions,
   })
 
   if (!quiz) return
 
-  const userResponses = await prisma.formResponse.groupBy({
-    by: ["formId"],
+  const userResponses = await prisma.questionnaireResponse.groupBy({
+    by: ["questionnaireId"],
     where: {
       userId: user.id,
-      formId: quiz.id,
+      questionnaireId: quiz.id,
     },
     _max: { total: true },
     _count: { id: true },
@@ -49,9 +49,8 @@ export default async function QuizPage({ params }: { params: Promise<{ id: strin
     ? { bestScore: scoreRecord._max.total, attemptCount: scoreRecord._count.id }
     : { bestScore: null, attemptCount: 0 }
 
-  const attempts = await prisma.formResponse.findMany({
-    where: { userId: user.id, formId: quiz.id },
-    // select: { id: true, total: true, submittedAt: true },
+  const attempts = await prisma.questionnaireResponse.findMany({
+    where: { userId: user.id, questionnaireId: quiz.id },
     ...quizAttempt,
     orderBy: { submittedAt: "desc" },
   })

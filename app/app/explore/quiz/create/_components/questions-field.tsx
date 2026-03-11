@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field"
 import { Switch } from "@/components/ui/switch"
 import { quizQuestionTypeOptions, surveyQuestionTypeOptions } from "@/lib/constants/question-types"
-import { FormQuestionType, FormType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType, QuestionnaireType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, Plus, Trash2 } from "lucide-react"
 import { formOpts } from "."
@@ -28,10 +28,12 @@ import { TrueFalseQuestion } from "./question-forms/true-false"
 
 export const QuestionsField = withForm({
   ...formOpts,
-  props: { formType: FormType.QUIZ as FormType },
-  render: ({ form, formType }) => {
+  props: { questionnaireType: QuestionnaireType.QUIZ as QuestionnaireType },
+  render: ({ form, questionnaireType }) => {
     const questionTypeOptions =
-      formType === FormType.QUIZ ? quizQuestionTypeOptions : surveyQuestionTypeOptions
+      questionnaireType === QuestionnaireType.QUIZ
+        ? quizQuestionTypeOptions
+        : surveyQuestionTypeOptions
 
     return (
       <form.Field name="questions" mode="array">
@@ -147,8 +149,8 @@ export const QuestionsField = withForm({
                                     // When switching to an options-based type, seed with
                                     // two empty options if none exist yet.
                                     if (
-                                      value === FormQuestionType.SINGLE_SELECT ||
-                                      value === FormQuestionType.MULTI_SELECT
+                                      value === QuestionnaireQuestionType.SINGLE_SELECT ||
+                                      value === QuestionnaireQuestionType.MULTI_SELECT
                                     ) {
                                       const question = form.getFieldValue(`questions[${i}]`)
                                       if (!("options" in question) || !question.options.length) {
@@ -247,17 +249,17 @@ export const QuestionsField = withForm({
                           <form.Subscribe selector={(state) => state.values.questions[i].type}>
                             {(questionType) => {
                               switch (questionType) {
-                                case FormQuestionType.TEXT:
+                                case QuestionnaireQuestionType.TEXT:
                                   return <TextQuestion form={form} />
-                                case FormQuestionType.SINGLE_SELECT:
+                                case QuestionnaireQuestionType.SINGLE_SELECT:
                                   return <SingleSelectQuestion form={form} questionIndex={i} />
-                                case FormQuestionType.MULTI_SELECT:
+                                case QuestionnaireQuestionType.MULTI_SELECT:
                                   return <MultiSelectQuestion form={form} questionIndex={i} />
-                                case FormQuestionType.TRUE_FALSE:
+                                case QuestionnaireQuestionType.TRUE_FALSE:
                                   return <TrueFalseQuestion form={form} questionIndex={i} />
-                                case FormQuestionType.RATING:
+                                case QuestionnaireQuestionType.RATING:
                                   return <RatingQuestion form={form} questionIndex={i} />
-                                case FormQuestionType.SCALE:
+                                case QuestionnaireQuestionType.SCALE:
                                   return <ScaleQuestion form={form} questionIndex={i} />
                                 default:
                                   return <div>TODO: {questionType}</div>
@@ -284,7 +286,7 @@ export const QuestionsField = withForm({
                   field.pushValue({
                     tempId: crypto.randomUUID(),
                     prompt: "",
-                    type: FormQuestionType.SINGLE_SELECT,
+                    type: QuestionnaireQuestionType.SINGLE_SELECT,
                     isRequired: true,
                     order: field.state.value.length,
                     score: 1,

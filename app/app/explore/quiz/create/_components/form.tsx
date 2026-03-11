@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldGroup } from "@/components/ui/field"
 import { insertQuiz } from "@/explore/quiz/actions"
 import { ROUTES } from "@/lib/constants"
-import { FormQuestionType, FormType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType, QuestionnaireType } from "@/lib/prisma/enums"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -39,10 +39,10 @@ export default function QuizForm() {
 
       const sanitizedQuestions = value.questions.map((q) => {
         switch (q.type) {
-          case FormQuestionType.TEXT:
-          case FormQuestionType.TRUE_FALSE:
-          case FormQuestionType.RATING:
-          case FormQuestionType.SCALE: {
+          case QuestionnaireQuestionType.TEXT:
+          case QuestionnaireQuestionType.TRUE_FALSE:
+          case QuestionnaireQuestionType.RATING:
+          case QuestionnaireQuestionType.SCALE: {
             return {
               id: q.id,
               type: q.type,
@@ -124,7 +124,7 @@ export default function QuizForm() {
       <h1 className="mx-2 text-3xl font-bold text-foreground">Questions</h1>
 
       {/* Questions Array */}
-      <QuestionsField form={form} formType={FormType.QUIZ} />
+      <QuestionsField form={form} questionnaireType={QuestionnaireType.QUIZ} />
 
       <Field>
         <div className="grid grid-rows-2 gap-4 sm:grid-cols-2">

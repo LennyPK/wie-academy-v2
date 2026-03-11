@@ -4,7 +4,7 @@ import { quizResult } from "@/explore/quiz/types"
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { BarChart3, Check, Trophy, X } from "lucide-react"
 import { headers } from "next/headers"
@@ -33,15 +33,15 @@ export default async function QuizResultsPage({
 
   const { attemptId } = await params
 
-  const response = await prisma.formResponse.findUnique({
+  const response = await prisma.questionnaireResponse.findUnique({
     where: { id: attemptId },
     ...quizResult,
   })
 
   if (!response) return
 
-  const quiz = response.form
-  const questions = response.form.questions
+  const quiz = response.questionnaire
+  const questions = response.questionnaire.questions
   const correctCount = response.answers.filter((answer) => answer.isCorrect === true).length
   const maxScore = questions.reduce((sum, question) => sum + (question.score ?? 0), 0)
   const percentage = ((response.total ?? 0) / maxScore) * 100
@@ -120,7 +120,7 @@ export default async function QuizResultsPage({
                           Q{i + 1}. {question.prompt}
                         </p>
 
-                        {question.type === FormQuestionType.TRUE_FALSE && (
+                        {question.type === QuestionnaireQuestionType.TRUE_FALSE && (
                           <div className="flex flex-col gap-2">
                             {[
                               { label: question.trueLabel ?? "True", value: true },
@@ -158,8 +158,8 @@ export default async function QuizResultsPage({
                           </div>
                         )}
 
-                        {(question.type === FormQuestionType.SINGLE_SELECT ||
-                          question.type === FormQuestionType.MULTI_SELECT) && (
+                        {(question.type === QuestionnaireQuestionType.SINGLE_SELECT ||
+                          question.type === QuestionnaireQuestionType.MULTI_SELECT) && (
                           <div className="flex flex-col gap-2">
                             {question.options
                               .sort((a, b) => a.order - b.order)

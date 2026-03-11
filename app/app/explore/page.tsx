@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
-import { FormType } from "@/lib/generated/prisma/enums"
+import { QuestionnaireType } from "@/lib/generated/prisma/enums"
 import { prisma } from "@/lib/prisma/client"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
@@ -35,16 +35,16 @@ export default async function ExplorePage() {
   }
 
   // Fetch all quizzes with question counts
-  const quizzes = await prisma.form.findMany({
-    where: { type: FormType.QUIZ },
+  const quizzes = await prisma.questionnaire.findMany({
+    where: { type: QuestionnaireType.QUIZ },
     ...quizWithQuestions,
   })
 
-  const userResponses = await prisma.formResponse.groupBy({
-    by: ["formId"],
+  const userResponses = await prisma.questionnaireResponse.groupBy({
+    by: ["questionnaireId"],
     where: {
       userId: user.id,
-      formId: { in: quizzes.map((quiz) => quiz.id) },
+      questionnaireId: { in: quizzes.map((quiz) => quiz.id) },
     },
     _max: { total: true },
     _count: { id: true },
@@ -52,7 +52,7 @@ export default async function ExplorePage() {
 
   const quizScores = Object.fromEntries(
     userResponses.map((record) => [
-      record.formId,
+      record.questionnaireId,
       { bestScore: record._max.total, attemptCount: record._count.id },
     ])
   )

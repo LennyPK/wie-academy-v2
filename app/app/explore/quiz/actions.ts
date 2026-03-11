@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { FormQuestionType, FormType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType, QuestionnaireType } from "@/lib/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import * as z from "zod"
@@ -18,10 +18,10 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
   }
 
   const quiz = await prisma.$transaction(async (tx) => {
-    return tx.form.upsert({
+    return tx.questionnaire.upsert({
       where: { id: quizPayload.id },
       create: {
-        type: FormType.QUIZ,
+        type: QuestionnaireType.QUIZ,
         title: quizPayload.title,
         description: quizPayload.description,
         questions: {
@@ -31,8 +31,8 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
             isRequired: question.isRequired,
             score: question.score,
             order: question.order,
-            ...((question.type === FormQuestionType.SINGLE_SELECT ||
-              question.type === FormQuestionType.MULTI_SELECT) && {
+            ...((question.type === QuestionnaireQuestionType.SINGLE_SELECT ||
+              question.type === QuestionnaireQuestionType.MULTI_SELECT) && {
               options: {
                 create: question.options.map((option) => ({
                   label: option.label,
@@ -43,15 +43,15 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
                 })),
               },
             }),
-            ...(question.type === FormQuestionType.TRUE_FALSE && {
+            ...(question.type === QuestionnaireQuestionType.TRUE_FALSE && {
               correctAnswer: question.correctAnswer,
               trueLabel: question.trueLabel,
               falseLabel: question.falseLabel,
             }),
-            ...(question.type === FormQuestionType.RATING && {
+            ...(question.type === QuestionnaireQuestionType.RATING && {
               ratingTarget: question.targetValue,
             }),
-            ...(question.type === FormQuestionType.SCALE && {
+            ...(question.type === QuestionnaireQuestionType.SCALE && {
               scaleMin: question.minValue,
               scaleMax: question.maxValue,
               scaleTarget: question.targetValue,
@@ -80,14 +80,14 @@ export async function insertQuizResponse(
   }
 
   // Fetch questions
-  const questions = await prisma.formQuestion.findMany({
-    where: { formId: quizId },
+  const questions = await prisma.questionnaireQuestion.findMany({
+    where: { questionnaireId: quizId },
     include: { options: true },
   })
 
   const response = await prisma.$transaction(async (tx) => {
-    const formResponse = await tx.formResponse.create({
-      data: { formId: quizId, userId: session.user.id },
+    const questionnaireResponse = await tx.questionnaireResponse.create({
+      data: { questionnaireId: quizId, userId: session.user.id },
     })
 
     let totalScore = 0
@@ -100,14 +100,14 @@ export async function insertQuizResponse(
       let isCorrect: boolean | null = null
       let score: number = 0
 
-      if (answer.type === FormQuestionType.TRUE_FALSE) {
+      if (answer.type === QuestionnaireQuestionType.TRUE_FALSE) {
         isCorrect = answer.value === question.correctAnswer
         score = isCorrect ? (question.score ?? 0) : 0
 
-        await tx.formAnswer.create({
+        await tx.questionnaireAnswer.create({
           data: {
             questionId: answer.questionId,
-            responseId: formResponse.id,
+            responseId: questionnaireResponse.id,
             valueBoolean: answer.value,
             isCorrect,
             score,
@@ -115,15 +115,15 @@ export async function insertQuizResponse(
         })
       }
 
-      if (answer.type === FormQuestionType.SINGLE_SELECT) {
+      if (answer.type === QuestionnaireQuestionType.SINGLE_SELECT) {
         const selected = question.options.find((option) => option.value === answer.value)
         isCorrect = selected?.isCorrect ?? false
         score = isCorrect ? (question.score ?? 0) : 0
 
-        await tx.formAnswer.create({
+        await tx.questionnaireAnswer.create({
           data: {
             questionId: answer.questionId,
-            responseId: formResponse.id,
+            responseId: questionnaireResponse.id,
             ...(selected && { valueOptions: { create: [{ optionId: selected.id }] } }),
             isCorrect,
             score,
@@ -131,7 +131,7 @@ export async function insertQuizResponse(
         })
       }
 
-      if (answer.type === FormQuestionType.MULTI_SELECT) {
+      if (answer.type === QuestionnaireQuestionType.MULTI_SELECT) {
         const selectedOptions = question.options.filter((option) =>
           answer.values.includes(option.value)
         )
@@ -146,10 +146,10 @@ export async function insertQuizResponse(
               .filter((option) => option.isCorrect)
               .reduce((sum, option) => sum + option.score, 0)
 
-        await tx.formAnswer.create({
+        await tx.questionnaireAnswer.create({
           data: {
             questionId: answer.questionId,
-            responseId: formResponse.id,
+            responseId: questionnaireResponse.id,
             valueOptions: { create: selectedOptions.map((option) => ({ optionId: option.id })) },
             isCorrect,
             score,
@@ -160,8 +160,8 @@ export async function insertQuizResponse(
       totalScore += score
     }
 
-    return tx.formResponse.update({
-      where: { id: formResponse.id },
+    return tx.questionnaireResponse.update({
+      where: { id: questionnaireResponse.id },
       data: { total: totalScore },
     })
   })

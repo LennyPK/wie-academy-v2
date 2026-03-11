@@ -1,4 +1,4 @@
-import { FormQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import * as z from "zod"
 
 // ─────────────────────────────────────────
@@ -33,12 +33,12 @@ const baseQuestionSchema = z.object({
 })
 
 const textQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal(FormQuestionType.TEXT),
+  type: z.literal(QuestionnaireQuestionType.TEXT),
 })
 
 const singleSelectQuestionSchema = baseQuestionSchema
   .extend({
-    type: z.literal(FormQuestionType.SINGLE_SELECT),
+    type: z.literal(QuestionnaireQuestionType.SINGLE_SELECT),
     options: z.array(optionSchema).min(2, "At least 2 options are required"),
   })
   .superRefine((data, ctx) => {
@@ -54,7 +54,7 @@ const singleSelectQuestionSchema = baseQuestionSchema
 
 const multiSelectQuestionSchema = baseQuestionSchema
   .extend({
-    type: z.literal(FormQuestionType.MULTI_SELECT),
+    type: z.literal(QuestionnaireQuestionType.MULTI_SELECT),
     options: z.array(optionSchema).min(2, "At least 2 options are required"),
   })
   .superRefine((data, ctx) => {
@@ -81,20 +81,20 @@ const multiSelectQuestionSchema = baseQuestionSchema
   })
 
 const trueFalseQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal(FormQuestionType.TRUE_FALSE),
+  type: z.literal(QuestionnaireQuestionType.TRUE_FALSE),
   correctAnswer: z.boolean("Choice is required"),
   trueLabel: z.string().trim().max(100, "True label is too long").optional(),
   falseLabel: z.string().trim().max(100, "False label is too long").optional(),
 })
 
 const ratingQuestionSchema = baseQuestionSchema.extend({
-  type: z.literal(FormQuestionType.RATING),
+  type: z.literal(QuestionnaireQuestionType.RATING),
   targetValue: z.int("Target value is required").min(1).max(5),
 })
 
 const scaleQuestionSchema = baseQuestionSchema
   .extend({
-    type: z.literal(FormQuestionType.SCALE),
+    type: z.literal(QuestionnaireQuestionType.SCALE),
     minValue: z.int(),
     maxValue: z.int(),
     targetValue: z.int("Target value is required"),
