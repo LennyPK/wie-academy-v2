@@ -31,8 +31,6 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
-// const filter = new Filter()
-
 interface AnnouncementFormProps {
   announcement?: Announcement | null
 }
@@ -40,8 +38,6 @@ interface AnnouncementFormProps {
 export default function AnnouncementForm({ announcement }: AnnouncementFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-
-  console.log("announcement in form:", announcement)
 
   const openAnnouncement = (postId: string) => {
     router.replace(`${ROUTES.ANNOUNCEMENTS}/${postId}`)

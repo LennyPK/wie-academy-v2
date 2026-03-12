@@ -52,8 +52,6 @@ export async function markAsRead(announcementId: string, userId: string) {
         type: AnnouncementInteractionType.VIEW,
       },
     },
-    // update: { isRead: true },
-    // create: { announcementId, userId, isRead: true },
     update: {},
     create: {
       announcementId,
@@ -61,8 +59,6 @@ export async function markAsRead(announcementId: string, userId: string) {
       type: AnnouncementInteractionType.VIEW,
     },
   })
-
-  // revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
 export async function insertAnnouncement(announcementPayload: NewAnnouncement) {
