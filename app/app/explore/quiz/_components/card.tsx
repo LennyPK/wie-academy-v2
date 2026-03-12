@@ -13,8 +13,9 @@ import {
 import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Progress } from "@/components/ui/progress"
 import { QuizScoreData, QuizWithQuestions } from "@/explore/quiz/types"
+import { ROUTES } from "@/lib/constants"
 import { ArrowRight, BarChart3, CircleQuestionMark } from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 interface QuizCardProps {
   quiz: QuizWithQuestions
@@ -23,17 +24,16 @@ interface QuizCardProps {
 
 export default function QuizCard({ quiz, scoreData }: QuizCardProps) {
   const router = useRouter()
-  const pathname = usePathname()
 
   const maxScore = quiz.questions.reduce((sum, question) => sum + (question.score ?? 0), 0)
 
   const handleQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`${pathname}/${quiz.id}`)
+    router.push(`${ROUTES.QUIZ}/${quiz.id}`)
   }
   const handleTakeQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    router.push(`${pathname}/${quiz.id}/attempt`)
+    router.push(`${ROUTES.QUIZ}/${quiz.id}/attempt`)
   }
 
   return (

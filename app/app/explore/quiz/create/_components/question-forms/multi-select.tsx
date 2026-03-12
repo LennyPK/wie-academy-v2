@@ -211,8 +211,10 @@ export const MultiSelectQuestion = withForm({
 
                             <div
                               className={cn(
-                                "flex flex-col justify-end self-stretch sm:justify-center sm:gap-0",
-                                labelIsInvalid ? "gap-y-10" : "gap-y-6"
+                                "flex flex-col justify-end self-stretch sm:gap-0",
+                                labelIsInvalid
+                                  ? "gap-y-10 sm:justify-center"
+                                  : "gap-y-6 sm:justify-end"
                               )}
                             >
                               <Toggle
@@ -230,7 +232,7 @@ export const MultiSelectQuestion = withForm({
                                 <Check />
                               </Toggle>
 
-                              <FieldLabel />
+                              <FieldLabel className="sm:hidden" />
 
                               <Button
                                 type="button"

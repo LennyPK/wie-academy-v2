@@ -113,6 +113,7 @@ export default function QuizForm() {
                   <field.TextField
                     label="Description"
                     placeholder="Add a description for this quiz"
+                    className="text-sm sm:text-base"
                   />
                 )
               }}

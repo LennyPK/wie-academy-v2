@@ -2,15 +2,15 @@
 
 import { Button } from "@/components/ui/button"
 import { ROUTES } from "@/lib/constants"
+import { Role } from "@/lib/prisma/enums"
 import { Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-// interface ExploreHeaderProps {
-//   userRole: Role
-// }
+interface ExploreHeaderProps {
+  userRole: Role
+}
 
-// export default function ExploreHeader({ userRole }: ExploreHeaderProps) {
-export default function ExploreHeader() {
+export default function ExploreHeader({ userRole }: ExploreHeaderProps) {
   const router = useRouter()
   // const [open, setOpen] = useState(false)
 
@@ -29,13 +29,13 @@ export default function ExploreHeader() {
               Discover new content and experiences tailored for you.
             </p>
           </div>
-          {/* {userRole === Role.ADMIN && ( */}
-          <Button className="gap-2" onClick={handleCreateClick}>
-            <Plus />
-            <span className="hidden sm:inline">Create Quiz</span>
-            <span className="sm:hidden">Create</span>
-          </Button>
-          {/* )} */}
+          {userRole === Role.ADMIN && (
+            <Button className="gap-2" onClick={handleCreateClick}>
+              <Plus />
+              <span className="hidden sm:inline">Create Quiz</span>
+              <span className="sm:hidden">Create</span>
+            </Button>
+          )}
         </div>
       </header>
 

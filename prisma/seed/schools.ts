@@ -1,4 +1,4 @@
-import { Prisma } from "@/lib/generated/prisma/client"
+import { Prisma } from "@/generated/client"
 
 const CKAN_BASE = "https://catalogue.data.govt.nz/api/3/action/datastore_search_sql"
 const RESOURCE_ID = "4b292323-9fcc-41f8-814b-3c7b19cf14b3"
