@@ -1,9 +1,9 @@
 import BackButton from "@/components/back-button"
+import { ROUTES } from "@/constants"
+import QuizForm from "@/explore/quiz/_components/form"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import QuizForm from "./_components/form"
 
 export default async function QuizCreatePage() {
   const session = await auth.api.getSession({ headers: await headers() })

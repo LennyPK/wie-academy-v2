@@ -1,8 +1,8 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { formOpts } from "@/explore/quiz/_components/attempt-form/options"
 import * as z from "zod"
-import { formOpts } from ".."
 
 export const TextAnswer = withForm({
   ...formOpts,

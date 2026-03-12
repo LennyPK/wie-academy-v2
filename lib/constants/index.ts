@@ -1,5 +1,6 @@
 export * from "./avatars"
 export * from "./badge-ids"
 export * from "./interests"
+export * from "./question-types"
 export * from "./routes"
 export * from "./xp-values"

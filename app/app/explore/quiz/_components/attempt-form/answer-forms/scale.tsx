@@ -1,8 +1,8 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field"
 import { Toggle } from "@/components/ui/toggle"
+import { cn } from "@/utils"
 import { formOptions } from "@tanstack/react-form"
-import { cn } from "@/lib/utils"
 import * as z from "zod"
 
 const formOpts = formOptions({

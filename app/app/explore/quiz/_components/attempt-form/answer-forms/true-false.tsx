@@ -1,10 +1,10 @@
 import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Toggle } from "@/components/ui/toggle"
-import { cn } from "@/lib/utils"
+import { formOpts } from "@/explore/quiz/_components/attempt-form/options"
+import { cn } from "@/utils"
 import { Check } from "lucide-react"
 import * as z from "zod"
-import { formOpts } from ".."
 
 export const TrueFalseAnswer = withForm({
   ...formOpts,

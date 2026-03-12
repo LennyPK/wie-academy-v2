@@ -2,9 +2,9 @@ import { withForm } from "@/components/form"
 import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
-import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
+import { formOpts } from "@/explore/quiz/_components/form/options"
+import { QuestionnaireQuestionType } from "@/prisma/enums"
 import { Check } from "lucide-react"
-import { formOpts } from ".."
 
 export const TrueFalseQuestion = withForm({
   ...formOpts,

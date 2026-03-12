@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { QuizAttempt } from "@/explore/quiz/types"
-import { cn } from "@/lib/utils"
+import { cn } from "@/utils"
 import { format } from "date-fns"
 import { BarChart3 } from "lucide-react"
 

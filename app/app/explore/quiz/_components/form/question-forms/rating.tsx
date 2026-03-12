@@ -1,7 +1,7 @@
 import { withForm } from "@/components/form"
 import { FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
+import { formOpts } from "@/explore/quiz/_components/form/options"
 import { Star } from "lucide-react"
-import { formOpts } from ".."
 
 const MAX_RATING = 5
 

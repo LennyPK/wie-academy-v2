@@ -1,4 +1,4 @@
-import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/prisma/enums"
 import { formOptions } from "@tanstack/react-form"
 import * as z from "zod"
 import { formSchema } from "./form-schema"

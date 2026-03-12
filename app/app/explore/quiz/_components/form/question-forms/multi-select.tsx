@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Toggle } from "@/components/ui/toggle"
-import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
-import { cn, slugify } from "@/lib/utils"
+import { formOpts } from "@/explore/quiz/_components/form/options"
+import { QuestionnaireQuestionType } from "@/prisma/enums"
+import { cn, slugify } from "@/utils"
 import { Check, Plus, Trash2 } from "lucide-react"
-import { formOpts } from ".."
 
 export const MultiSelectQuestion = withForm({
   ...formOpts,

@@ -1,4 +1,4 @@
-import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
+import { QuestionnaireQuestionType } from "@/prisma/enums"
 import * as z from "zod"
 
 const baseAnswerSchema = z.object({

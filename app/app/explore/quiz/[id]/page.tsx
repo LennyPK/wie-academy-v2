@@ -1,13 +1,13 @@
 import BackButton from "@/components/back-button"
+import { ROUTES } from "@/constants"
+import QuizDetail from "@/explore/quiz/_components/detail"
+import QuizAttemptList from "@/explore/quiz/_components/detail/attempts"
 import { quizAttempt, quizWithQuestions } from "@/explore/quiz/types"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
-import { prisma } from "@/lib/prisma/client"
-import { QuestionnaireType } from "@/lib/prisma/enums"
+import { prisma } from "@/prisma/client"
+import { QuestionnaireType } from "@/prisma/enums"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import QuizAttemptList from "./_components/attempts"
-import QuizDetail from "./_components/detail"
 
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })
