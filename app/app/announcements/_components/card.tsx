@@ -1,5 +1,7 @@
 "use client"
 
+import { markAsRead, toggleRead } from "@/announcements/actions"
+import { Announcement } from "@/announcements/types"
 import CategoryBadge from "@/components/category-badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -10,14 +12,12 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { ROUTES } from "@/lib/constants"
+import { ROUTES } from "@/constants"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { cn, highlightText } from "@/utils"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, EyeOff } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import { markAsRead, toggleRead } from "../actions"
-import { Announcement } from "../types"
 
 interface AnnouncementCardProps {
   userId: string

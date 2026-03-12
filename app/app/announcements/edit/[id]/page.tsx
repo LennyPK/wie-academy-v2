@@ -1,6 +1,6 @@
+import AnnouncementForm from "@/announcements/_components/form"
 import BackButton from "@/components/back-button"
-import { prisma } from "@/lib/prisma/client"
-import AnnouncementForm from "../../_components/form"
+import { prisma } from "@/prisma/client"
 
 export default async function AnnouncementEditPage({
   params,

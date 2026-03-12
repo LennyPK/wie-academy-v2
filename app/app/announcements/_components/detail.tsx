@@ -1,5 +1,7 @@
 "use client"
 
+import { toggleRead } from "@/announcements/actions"
+import { Announcement } from "@/announcements/types"
 import CategoryBadge from "@/components/category-badge"
 import { RenderTipTap } from "@/components/editor/render"
 import { Badge } from "@/components/ui/badge"
@@ -7,14 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { ROUTES } from "@/lib/constants"
-import { cn } from "@/lib/utils"
+import { ROUTES } from "@/constants"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
+import { cn } from "@/utils"
 import { formatRelative } from "date-fns"
 import { BookCheck, BookOpenCheck, BookX, ChevronDown, Clock, Edit } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import { toggleRead } from "../actions"
-import { Announcement } from "../types"
 
 interface AnnouncementDetailProps {
   userId: string

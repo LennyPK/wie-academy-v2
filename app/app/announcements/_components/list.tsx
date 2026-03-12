@@ -1,6 +1,6 @@
 "use client"
 
-import { Announcement } from "../types"
+import { Announcement } from "@/announcements/types"
 import AnnouncementCard from "./card"
 
 interface AnnouncementListProps {
@@ -16,12 +16,6 @@ export default function AnnouncementList({
   announcements,
   searchQuery,
 }: AnnouncementListProps) {
-  // const [detailOpen, setDetailOpen] = useState(false)
-  // const pathname = usePathname()
-
-  // const [editOpen, setEditOpen] = useState(false)
-  // const [announcement, setAnnouncement] = useState<Announcement | null>(null)
-
   // const handleAnnouncementClick = (announcement: Announcement) => async () => {
   // setAnnouncement(announcement)
   // setDetailOpen(true)
@@ -46,30 +40,8 @@ export default function AnnouncementList({
   // }
   // }
 
-  // const handleEditClick = async (announcementId: string) => {
-  //   setEditOpen(true)
-  //   setAnnouncement(
-  //     announcements.find((announcement) => announcement.id === announcementId) || null
-  //   )
-  // }
-
-  // const onToggleRead = async (announcementId: string) => {
-  //   await toggleRead(announcementId, userId, pathname)
-  // }
-
   return (
     <div className="space-y-6" role="list" aria-label="announcements">
-      {/* <AnnouncementDetail
-        open={detailOpen}
-        setOpen={setDetailOpen}
-        announcement={announcement}
-        userRole={userRole}
-        onToggleRead={(id) => onToggleRead(id)}
-        onEdit={handleEditClick}
-      /> */}
-
-      {/* <AnnouncementFormModal announcement={announcement} open={editOpen} setOpen={setEditOpen} /> */}
-
       {announcements &&
         announcements.map((announcement) => (
           <AnnouncementCard
@@ -77,9 +49,6 @@ export default function AnnouncementList({
             userRole={userRole}
             key={announcement.id}
             announcement={announcement}
-            // onClick={handleAnnouncementClick(announcement)}
-            // onEdit={handleEditClick}
-            // onToggleRead={() => onToggleRead(announcement.id)}
             searchQuery={searchQuery}
           />
         ))}

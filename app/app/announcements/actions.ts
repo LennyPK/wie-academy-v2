@@ -1,7 +1,7 @@
 "use server"
 
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
 import { AnnouncementInteractionType } from "@/prisma/enums"
 import { revalidatePath } from "next/cache"

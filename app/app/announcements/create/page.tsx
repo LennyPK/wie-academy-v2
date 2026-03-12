@@ -1,5 +1,5 @@
+import AnnouncementForm from "@/announcements/_components/form"
 import BackButton from "@/components/back-button"
-import AnnouncementForm from "../_components/form"
 
 export default async function AnnouncementCreatePage() {
   return (

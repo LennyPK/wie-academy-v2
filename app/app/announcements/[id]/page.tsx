@@ -1,10 +1,10 @@
+import AnnouncementDetail from "@/announcements/_components/detail"
 import BackButton from "@/components/back-button"
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
-import { prisma } from "@/lib/prisma/client"
+import { prisma } from "@/prisma/client"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
-import AnnouncementDetail from "../_components/detail"
 
 export default async function AnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })

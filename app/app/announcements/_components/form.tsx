@@ -1,5 +1,7 @@
 "use client"
 
+import { insertAnnouncement } from "@/announcements/actions"
+import { Announcement, NewAnnouncement } from "@/announcements/types"
 import RichTextEditor from "@/components/editor/rich-text-editor"
 import {
   MultiSelect,
@@ -20,17 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ROUTES } from "@/lib/constants"
-import { getAnnouncementCategories, getSchools } from "@/lib/database"
-import { getRegions } from "@/lib/database/regions"
-import { getYearLevels } from "@/lib/database/year-levels"
-import { Category, RegionOption, SchoolOption, YearLevelOption } from "@/lib/types"
+import { ROUTES } from "@/constants"
+import { getAnnouncementCategories, getRegions, getSchools, getYearLevels } from "@/db"
+import { Category, RegionOption, SchoolOption, YearLevelOption } from "@/types"
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { insertAnnouncement } from "../actions"
-import { Announcement, NewAnnouncement } from "../types"
 import { formSchema } from "./form-schema"
 
 // const filter = new Filter()
