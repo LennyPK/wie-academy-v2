@@ -40,7 +40,6 @@ model QuestionnaireQuestion {
   isRequired      Boolean
   explanation     String?
   score           Int?
-  // quizConfig  Json?
   order           Int
 
   // TRUE_FALSE
