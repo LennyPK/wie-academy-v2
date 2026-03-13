@@ -33,13 +33,14 @@
       "@/types": ["./lib/types"],
       "@/db": ["./lib/database/index.ts"],
       "@/generated/*": ["./lib/generated/prisma/*"],
-      "@/constants*": ["./lib/constants"],
+      "@/constants": ["./lib/constants/"],
       "@/db/*": ["./lib/database/*"],
 
       // App subfolders
       "@/announcements/*": ["./app/app/announcements/*"],
       "@/events/*": ["./app/app/events/*"],
-      "@/forum/*": ["./app/app/forum/*"]
+      "@/forum/*": ["./app/app/forum/*"],
+      "@/explore/*": ["./app/app/explore/*"]
     }
   },
   "include": [

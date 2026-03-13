@@ -1,7 +1,7 @@
 "use server"
 
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/prisma/client"
 import { AnnouncementInteractionType } from "@/prisma/enums"
 import { revalidatePath } from "next/cache"
@@ -52,8 +52,6 @@ export async function markAsRead(announcementId: string, userId: string) {
         type: AnnouncementInteractionType.VIEW,
       },
     },
-    // update: { isRead: true },
-    // create: { announcementId, userId, isRead: true },
     update: {},
     create: {
       announcementId,
@@ -61,8 +59,6 @@ export async function markAsRead(announcementId: string, userId: string) {
       type: AnnouncementInteractionType.VIEW,
     },
   })
-
-  // revalidatePath(ROUTES.ANNOUNCEMENTS)
 }
 
 export async function insertAnnouncement(announcementPayload: NewAnnouncement) {

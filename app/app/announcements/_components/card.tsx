@@ -1,5 +1,7 @@
 "use client"
 
+import { markAsRead, toggleRead } from "@/announcements/actions"
+import { Announcement } from "@/announcements/types"
 import CategoryBadge from "@/components/category-badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -10,23 +12,18 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { ROUTES } from "@/lib/constants"
+import { ROUTES } from "@/constants"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { cn, highlightText } from "@/utils"
 import { formatRelative } from "date-fns"
 import { Clock, Edit, Eye, EyeOff } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
-import { markAsRead, toggleRead } from "../actions"
-import { Announcement } from "../types"
 
 interface AnnouncementCardProps {
   userId: string
   userRole: string
   announcement: Announcement
   searchQuery?: string
-  // onClick: () => Promise<void>
-  // onEdit: (announcementId: string) => Promise<void>
-  // onToggleRead: () => Promise<void>
 }
 
 export default function AnnouncementCard({
@@ -34,9 +31,6 @@ export default function AnnouncementCard({
   userRole,
   announcement,
   searchQuery,
-  // onClick,
-  // onEdit,
-  // onToggleRead,
 }: AnnouncementCardProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -44,24 +38,21 @@ export default function AnnouncementCard({
   const handleAnnouncementClick = async () => {
     await markAsRead(announcement.id, userId)
     router.push(`${ROUTES.ANNOUNCEMENTS}/${announcement.id}`)
-    // onClick()
   }
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click
-    // onEdit(announcement.id)
+    router.push(`${ROUTES.ANNOUNCEMENTS}/edit/${announcement.id}`)
   }
 
   const handleToggleReadStatus = async (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click/open
     await toggleRead(announcement.id, userId, pathname)
-    // onToggleRead()
   }
 
   const isRead = announcement.interactions.some(
     (i) => i.type === AnnouncementInteractionType.VIEW && i.userId === userId
   )
-  // const isRead = announcement.interactions.some((i) => i.isRead)
   const updated = announcement.updatedAt > announcement.createdAt
 
   return (

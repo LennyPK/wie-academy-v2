@@ -46,6 +46,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 }
 
 :root {
@@ -159,5 +166,57 @@ html body[data-scroll-locked] {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+@layer base {
+  :root {
+    --success: oklch(0.623 0.169 149.2);
+    --success-foreground: oklch(1 0 0);
+
+    --warning: oklch(0.77 0.165 70.6);
+    --warning-foreground: oklch(0 0 0);
+
+    --info: oklch(0.58 0.231 259.6);
+    --info-foreground: oklch(1 0 0);
+  }
+
+  .dark {
+    --success: oklch(0.747 0.205 149);
+    --success-foreground: oklch(1 0 0);
+
+    --warning: oklch(0.77 0.165 70.6);
+    --warning-foreground: oklch(0 0 0);
+
+    --info: oklch(0.646 0.191 256.9);
+    --info-foreground: oklch(1 0 0);
+  }
+}
+
+.collapsible-content {
+  overflow: hidden;
+}
+.collapsible-content[data-state="open"] {
+  animation: slideDown 300ms ease-out;
+}
+.collapsible-content[data-state="closed"] {
+  animation: slideUp 300ms ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
   }
 }

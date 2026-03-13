@@ -1,8 +1,9 @@
 export {
   AnnouncementInteractionType,
   ApprovalStatus,
-  FormQuestionType,
   ParticipationType,
   PostInteractionType,
+  QuestionnaireQuestionType,
+  QuestionnaireType,
   Role,
 } from "@/generated/enums"

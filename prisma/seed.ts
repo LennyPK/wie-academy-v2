@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import { Prisma, PrismaClient } from "@/generated/client"
-import { Role } from "@/lib/prisma/enums"
+import { Role } from "@/prisma/enums"
 import { faker } from "@faker-js/faker"
 import { PrismaPg } from "@prisma/adapter-pg"
 import "dotenv/config"
@@ -15,6 +15,7 @@ import {
   yearLevelData,
 } from "./seed/constants"
 import { eventData } from "./seed/events"
+import { quizData } from "./seed/quiz"
 import { getNZSchools } from "./seed/schools"
 
 const adapter = new PrismaPg({
@@ -144,6 +145,15 @@ export async function main() {
       where: { id: event.id },
       update: {},
       create: event,
+    })
+  }
+
+  console.log("...seeding quizzes...")
+  for (const quiz of quizData) {
+    await prisma.questionnaire.upsert({
+      where: { id: quiz.id },
+      update: {},
+      create: quiz,
     })
   }
 
