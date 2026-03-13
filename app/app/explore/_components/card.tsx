@@ -20,8 +20,9 @@ import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants"
 import { QuizScoreData, QuizWithQuestions } from "@/explore/quiz/types"
 import { Role } from "@/prisma/enums"
+import { highlightText } from "@/utils"
 import { ArrowRight, BarChart3, CircleQuestionMark, Edit } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 interface QuizCardProps {
   userRole: string
@@ -31,9 +32,12 @@ interface QuizCardProps {
 
 export default function QuizCard({ userRole, quiz, scoreData }: QuizCardProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const isAdmin = userRole === Role.ADMIN
 
   const maxScore = quiz.questions.reduce((sum, question) => sum + (question.score ?? 0), 0)
+
+  const searchQuery = searchParams.get("query")
 
   const handleQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -68,8 +72,12 @@ export default function QuizCard({ userRole, quiz, scoreData }: QuizCardProps) {
       <ContextMenuTrigger asChild className="cursor-pointer">
         <Card key={quiz.id} onClick={handleQuizClick}>
           <CardHeader>
-            <CardTitle className="line-clamp-1">{quiz.title}</CardTitle>
-            <CardDescription className="line-clamp-2">{quiz.description}</CardDescription>
+            <CardTitle className="line-clamp-1">
+              {highlightText(quiz.title, searchQuery ?? "")}
+            </CardTitle>
+            <CardDescription className="line-clamp-2">
+              {quiz.description && highlightText(quiz.description, searchQuery ?? "")}
+            </CardDescription>
           </CardHeader>
 
           <CardContent>
