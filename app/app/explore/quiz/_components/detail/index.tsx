@@ -42,11 +42,6 @@ export default function QuizDetail({ quiz, scoreData }: QuizDetailProps) {
             <p className="text-lg font-semibold">{totalQuestions}</p>
             <p className="text-xs text-muted-foreground">Questions</p>
           </div>
-          {/* <div className="rounded-lg bg-muted p-3 text-center">
-            <Clock className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-lg font-semibold ">{estimatedTime}</p>
-            <p className="text-xs text-muted-foreground">Est. Time</p>
-          </div> */}
           <div className="rounded-lg bg-muted p-3 text-center">
             <BarChart3 className="mx-auto mb-1 h-5 w-5 text-primary" />
             <p className="text-lg font-semibold">{maxScore}</p>

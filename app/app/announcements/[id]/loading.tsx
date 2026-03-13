@@ -7,7 +7,7 @@ export default function Loading() {
         <div className="py-4">
           <Skeleton className="h-9 w-30 bg-card" />
         </div>
-        {/* <div> */}
+
         <Skeleton className="flex w-full flex-col gap-2 rounded-lg bg-card p-5">
           {/* Category Badge and Timestamp */}
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
@@ -88,7 +88,6 @@ export default function Loading() {
             </div>
           </div>
         </footer>
-        {/* </div> */}
       </main>
     </div>
   )

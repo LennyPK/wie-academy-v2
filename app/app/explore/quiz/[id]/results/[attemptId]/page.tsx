@@ -230,7 +230,9 @@ export default async function QuizResultsPage({
               </Button>
             ) : (
               <Button asChild className="w-full sm:flex-1">
-                <Link href={`${ROUTES.QUIZ}/${quiz.id}/attempt`}>Try Again</Link>
+                <Link href={`${ROUTES.QUIZ}/${quiz.id}/attempt`} replace>
+                  Try Again
+                </Link>
               </Button>
             )}
 

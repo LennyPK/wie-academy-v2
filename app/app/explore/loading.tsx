@@ -15,6 +15,23 @@ export default function Loading() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+        {/* Filters */}
+        <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-1 items-center">
+            {/* Search Filter */}
+            <Skeleton className="h-9 flex-1 bg-card" />
+
+            {/* Clear Filters */}
+            <Skeleton className="h-9 bg-card sm:ml-5 sm:w-30" />
+          </div>
+
+          {/* Results Count */}
+          <div className="flex items-baseline justify-end gap-2 whitespace-nowrap">
+            <Skeleton className="h-10 w-10 bg-card" />
+            <Skeleton className="h-5 w-15 bg-card" />
+          </div>
+        </div>
+
         {/* List */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
