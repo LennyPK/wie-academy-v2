@@ -33,7 +33,7 @@ type QuizWithQuestions = Prisma.QuestionnaireGetPayload<typeof quizWithQuestions
 
 type QuizAttempt = Prisma.QuestionnaireResponseGetPayload<typeof quizAttempt>
 
-type QuizResult = Prisma.QuestionnaireResponseGetPayload<typeof quizAttempt>
+type QuizResult = Prisma.QuestionnaireResponseGetPayload<typeof quizResult>
 
 type QuizScoreData = {
   bestScore: number | null
