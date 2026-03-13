@@ -16,7 +16,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 0,
-          correctAnswer: true,
+          trueFalseAnswer: true,
           trueLabel: "Yes",
           falseLabel: "No",
         },
@@ -54,7 +54,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 3,
-          correctAnswer: false,
+          trueFalseAnswer: false,
         },
         {
           type: QuestionnaireQuestionType.SINGLE_SELECT,
@@ -101,7 +101,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 0,
-          correctAnswer: true,
+          trueFalseAnswer: true,
         },
         {
           type: QuestionnaireQuestionType.SINGLE_SELECT,
@@ -137,7 +137,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 3,
-          correctAnswer: true,
+          trueFalseAnswer: true,
         },
         {
           type: QuestionnaireQuestionType.SINGLE_SELECT,
@@ -184,7 +184,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 0,
-          correctAnswer: true,
+          trueFalseAnswer: true,
         },
         {
           type: QuestionnaireQuestionType.SINGLE_SELECT,
@@ -220,7 +220,7 @@ export const quizData: Prisma.QuestionnaireCreateInput[] = [
           score: 1,
           isRequired: true,
           order: 3,
-          correctAnswer: false,
+          trueFalseAnswer: false,
         },
         {
           type: QuestionnaireQuestionType.SINGLE_SELECT,

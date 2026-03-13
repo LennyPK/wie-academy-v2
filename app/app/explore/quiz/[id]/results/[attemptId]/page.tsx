@@ -127,7 +127,7 @@ export default async function QuizResultsPage({
                               { label: question.falseLabel ?? "False", value: false },
                             ].map(({ label, value }) => {
                               const isUserChoice = answer?.valueBoolean === value
-                              const isCorrectAnswer = question.correctAnswer === value
+                              const isCorrectAnswer = question.trueFalseAnswer === value
 
                               return (
                                 <div

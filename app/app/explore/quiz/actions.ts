@@ -44,7 +44,7 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
               },
             }),
             ...(question.type === QuestionnaireQuestionType.TRUE_FALSE && {
-              correctAnswer: question.correctAnswer,
+              trueFalseAnswer: question.correctAnswer,
               trueLabel: question.trueLabel,
               falseLabel: question.falseLabel,
             }),
@@ -101,7 +101,7 @@ export async function insertQuizResponse(
       let score: number = 0
 
       if (answer.type === QuestionnaireQuestionType.TRUE_FALSE) {
-        isCorrect = answer.value === question.correctAnswer
+        isCorrect = answer.value === question.trueFalseAnswer
         score = isCorrect ? (question.score ?? 0) : 0
 
         await tx.questionnaireAnswer.create({

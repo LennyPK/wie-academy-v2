@@ -28,7 +28,7 @@ interface QuizAttemptFormProps {
   userId: string
 }
 
-export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) {
+export default function QuizAttemptForm({ quiz }: QuizAttemptFormProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -106,7 +106,6 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
     onSubmit: async ({ value }) => {
       setIsSubmitting(true)
       toast.loading("Saving...")
-      console.log(value)
 
       const sanitizedAnswers = attemptSchema.parse(value)
 
@@ -126,8 +125,6 @@ export default function QuizAttemptForm({ quiz, userId }: QuizAttemptFormProps) 
 
   const answers = useStore(form.store, (state) => state.values.answers)
   const progress = (answers.filter((answer) => isAnswered(answer)).length / questions.length) * 100
-
-  console.log(userId)
 
   const headerCard = (
     <Card>

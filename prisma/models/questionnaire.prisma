@@ -44,9 +44,9 @@ model QuestionnaireQuestion {
   order           Int
 
   // TRUE_FALSE
-  correctAnswer Boolean?
-  trueLabel     String?
-  falseLabel    String?
+  trueFalseAnswer Boolean?
+  trueLabel       String?
+  falseLabel      String?
 
   // RATING (fixed 1-5)
   ratingTarget Int?
