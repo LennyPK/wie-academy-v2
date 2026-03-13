@@ -7,7 +7,7 @@ import { QuestionnaireQuestionType } from "@/prisma/enums"
 import { Check } from "lucide-react"
 
 export const TrueFalseQuestion = withForm({
-  ...formOpts,
+  ...formOpts(),
   props: { questionIndex: 0 },
   render: ({ form, questionIndex }) => {
     return (

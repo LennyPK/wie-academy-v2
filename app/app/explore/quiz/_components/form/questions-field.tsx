@@ -27,7 +27,7 @@ import { TextQuestion } from "./question-forms/text"
 import { TrueFalseQuestion } from "./question-forms/true-false"
 
 export const QuestionsField = withForm({
-  ...formOpts,
+  ...formOpts(),
   props: { questionnaireType: QuestionnaireType.QUIZ as QuestionnaireType },
   render: ({ form, questionnaireType }) => {
     const questionTypeOptions =

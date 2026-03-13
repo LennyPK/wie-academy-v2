@@ -10,20 +10,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { ContextMenu, ContextMenuTrigger } from "@/components/ui/context-menu"
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
 import { Progress } from "@/components/ui/progress"
+import { ROUTES } from "@/constants"
 import { QuizScoreData, QuizWithQuestions } from "@/explore/quiz/types"
-import { ROUTES } from "@/lib/constants"
-import { ArrowRight, BarChart3, CircleQuestionMark } from "lucide-react"
+import { Role } from "@/prisma/enums"
+import { ArrowRight, BarChart3, CircleQuestionMark, Edit } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface QuizCardProps {
+  userRole: string
   quiz: QuizWithQuestions
   scoreData: QuizScoreData
 }
 
-export default function QuizCard({ quiz, scoreData }: QuizCardProps) {
+export default function QuizCard({ userRole, quiz, scoreData }: QuizCardProps) {
   const router = useRouter()
+  const isAdmin = userRole === Role.ADMIN
 
   const maxScore = quiz.questions.reduce((sum, question) => sum + (question.score ?? 0), 0)
 
@@ -31,10 +39,29 @@ export default function QuizCard({ quiz, scoreData }: QuizCardProps) {
     e.stopPropagation()
     router.push(`${ROUTES.QUIZ}/${quiz.id}`)
   }
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    router.push(`${ROUTES.QUIZ}/edit/${quiz.id}`)
+  }
+
   const handleTakeQuizClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     router.push(`${ROUTES.QUIZ}/${quiz.id}/attempt`)
   }
+
+  const contextMenu = (() => {
+    if (isAdmin) {
+      return (
+        <ContextMenuContent>
+          <ContextMenuItem onClick={handleEditClick}>
+            <Edit />
+            <span>Edit</span>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      )
+    }
+  })()
 
   return (
     <ContextMenu>
@@ -83,6 +110,7 @@ export default function QuizCard({ quiz, scoreData }: QuizCardProps) {
           </CardFooter>
         </Card>
       </ContextMenuTrigger>
+      {contextMenu}
     </ContextMenu>
   )
 }

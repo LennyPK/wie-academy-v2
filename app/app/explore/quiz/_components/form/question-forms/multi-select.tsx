@@ -9,7 +9,7 @@ import { cn, slugify } from "@/utils"
 import { Check, Plus, Trash2 } from "lucide-react"
 
 export const MultiSelectQuestion = withForm({
-  ...formOpts,
+  ...formOpts(),
   props: { questionIndex: 0 },
   render: ({ form, questionIndex }) => {
     return (

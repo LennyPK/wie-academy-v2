@@ -61,8 +61,47 @@ export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
           })),
         },
       },
-      // TODO: Edit functionality to be implemented
-      update: {},
+      update: {
+        title: quizPayload.title,
+        description: quizPayload.description,
+        questions: {
+          deleteMany: {},
+          create: quizPayload.questions.map((question) => ({
+            type: question.type,
+            prompt: question.prompt,
+            isRequired: question.isRequired,
+            score: question.score,
+            order: question.order,
+            ...((question.type === QuestionnaireQuestionType.SINGLE_SELECT ||
+              question.type === QuestionnaireQuestionType.MULTI_SELECT) && {
+              options: {
+                create: question.options.map((option) => ({
+                  label: option.label,
+                  value: option.value,
+                  isCorrect: option.isCorrect,
+                  score: option.score,
+                  order: option.order,
+                })),
+              },
+            }),
+            ...(question.type === QuestionnaireQuestionType.TRUE_FALSE && {
+              trueFalseAnswer: question.correctAnswer,
+              trueLabel: question.trueLabel,
+              falseLabel: question.falseLabel,
+            }),
+            ...(question.type === QuestionnaireQuestionType.RATING && {
+              ratingTarget: question.targetValue,
+            }),
+            ...(question.type === QuestionnaireQuestionType.SCALE && {
+              scaleMin: question.minValue,
+              scaleMax: question.maxValue,
+              scaleTarget: question.targetValue,
+              scaleMinLabel: question.minLabel,
+              scaleMaxLabel: question.maxLabel,
+            }),
+          })),
+        },
+      },
     })
   })
 

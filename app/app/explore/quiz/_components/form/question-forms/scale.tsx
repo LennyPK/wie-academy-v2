@@ -5,7 +5,7 @@ import { formOpts } from "@/explore/quiz/_components/form/options"
 import { QuestionnaireQuestionType } from "@/prisma/enums"
 
 export const ScaleQuestion = withForm({
-  ...formOpts,
+  ...formOpts(),
   props: { questionIndex: 0 },
   render: ({ form, questionIndex }) => {
     return (

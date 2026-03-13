@@ -1,7 +1,7 @@
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
-import { QuestionnaireType } from "@/lib/generated/prisma/enums"
 import { prisma } from "@/lib/prisma/client"
+import { QuestionnaireType } from "@/prisma/enums"
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
@@ -66,7 +66,9 @@ export default async function ExplorePage() {
         {quizzes.length === 0 && <QuizEmpty />}
 
         {/* Quiz List */}
-        {quizzes.length > 0 && <QuizList quizzes={quizzes} quizScores={quizScores} />}
+        {quizzes.length > 0 && (
+          <QuizList userRole={user.role} quizzes={quizzes} quizScores={quizScores} />
+        )}
       </main>
     </div>
   )

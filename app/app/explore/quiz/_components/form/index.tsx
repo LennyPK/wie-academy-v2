@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Field, FieldGroup } from "@/components/ui/field"
 import { ROUTES } from "@/constants"
 import { insertQuiz } from "@/explore/quiz/actions"
+import { QuizWithQuestions } from "@/explore/quiz/types"
 import { QuestionnaireQuestionType, QuestionnaireType } from "@/prisma/enums"
 import { revalidateLogic } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
@@ -16,7 +17,11 @@ import { formSchema } from "./form-schema"
 import { formOpts } from "./options"
 import { QuestionsField } from "./questions-field"
 
-export default function QuizForm() {
+interface QuizFormProps {
+  quiz?: QuizWithQuestions
+}
+
+export default function QuizForm({ quiz }: QuizFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -25,7 +30,7 @@ export default function QuizForm() {
   }
 
   const form = useAppForm({
-    ...formOpts,
+    ...formOpts(quiz),
     validators: {
       onDynamic: formSchema,
     },
@@ -76,7 +81,7 @@ export default function QuizForm() {
       try {
         const newQuiz = await insertQuiz(sanitizedQuiz)
         toast.dismiss()
-        toast.success(`New quiz saved: ${newQuiz.title}`)
+        toast.success(quiz ? `Quiz updated: ${newQuiz.title}` : `New quiz saved: ${newQuiz.title}`)
         router.replace(`${ROUTES.QUIZ}/${newQuiz.id}`)
       } catch {
         toast.dismiss()

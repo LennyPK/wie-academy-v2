@@ -6,7 +6,7 @@ import { Star } from "lucide-react"
 const MAX_RATING = 5
 
 export const RatingQuestion = withForm({
-  ...formOpts,
+  ...formOpts(),
   props: { questionIndex: 0 },
   render: ({ form, questionIndex }) => {
     return (
