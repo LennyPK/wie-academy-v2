@@ -8,54 +8,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { auth } from "@/lib/auth"
 import { ROUTES } from "@/lib/constants"
-import { prisma } from "@/lib/prisma/client"
 import { Mail } from "lucide-react"
+import { cookies, headers } from "next/headers"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import VerifyForm from "./_components/form"
 
-// interface SearchParams {
-//   email: string
-// }
+export default async function VerifyPage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  const cookieStore = await cookies()
+  const pendingEmail = cookieStore.get("pending_email")?.value
 
-// interface VerifyPageProps {
-//   searchParams?: Promise<SearchParams>
-// }
-
-interface VerifyPageProps {
-  // searchParams?: Promise<SearchParams>
-  searchParams?: {
-    email?: string
+  if (!session && !pendingEmail) {
+    redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
-}
 
-export default async function VerifyPage({ searchParams }: VerifyPageProps) {
-  // FIXME: Email param needs to be replacecd with a token param
-  const params = await searchParams
+  if (session?.user.emailVerified) {
+    redirect(ROUTES.APPROVAL)
+  }
 
-  const email = params?.email || ""
+  const email = session?.user.email ?? pendingEmail
 
   if (!email) {
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
-    console.error("No email provided.")
+    redirect(ROUTES.SIGN_IN)
   }
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { id: true, emailVerified: true },
-  })
+  /* FIXME: Cleaner solution if BetterAuth has a built in method to create a session when
+      user signs in/up with requireEmailVerification turned on */
+  // if (!session) {
+  //   redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  // }
 
-  if (!user) {
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
-    console.error("User not found.")
-    return <div>No User</div>
-  }
-
-  if (user.emailVerified) {
-    console.log("Email already verified, redirecting to pending approval.")
-    redirect(`${ROUTES.PENDING_APPROVAL}?email=${email}`)
-  }
+  // if (session.user.emailVerified) {
+  //   redirect(ROUTES.APPROVAL)
+  // }
 
   return (
     <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">

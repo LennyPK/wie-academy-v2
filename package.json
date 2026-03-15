@@ -45,6 +45,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-email/components": "^1.0.9",
     "@tanstack/react-form": "^1.26.0",
     "@tiptap/extension-image": "^3.11.1",
     "@tiptap/extension-text-align": "^3.11.1",

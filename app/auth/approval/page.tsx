@@ -8,47 +8,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { ROUTES } from "@/lib/constants"
-import { prisma } from "@/lib/prisma/client"
-import { ApprovalStatus } from "@/lib/prisma/enums"
+import { ROUTES } from "@/constants"
+import { auth } from "@/lib/auth"
+import { ApprovalStatus } from "@/prisma/enums"
 import { AlertCircle, Clock, Home, Mail } from "lucide-react"
+import { headers } from "next/headers"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
-interface SearchParams {
-  email: string
-}
+export default async function ApprovalPage() {
+  const session = await auth.api.getSession({ headers: await headers() })
 
-interface ApprovalPageProps {
-  searchParams?: Promise<SearchParams>
-}
-
-export default async function ApprovalPage({ searchParams }: ApprovalPageProps) {
-  // FIXME: Email param needs to be replacecd with a token param
-  const params = await searchParams
-
-  const email = params?.email || ""
-
-  if (!email) {
-    console.error("No email provided.")
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  if (!session) {
+    redirect(ROUTES.UNAUTHENTICATED_ERROR)
   }
 
-  const user = await prisma.user.findUnique({ where: { email }, select: { approvalStatus: true } })
+  const email = session.user.email
 
-  console.log("Fetched user for email:", email, user)
-
-  if (!user) {
-    console.error("User not found.")
-    return <div>No User</div>
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  if (session.user.approvalStatus === ApprovalStatus.APPROVED) {
+    redirect(ROUTES.DASHBOARD)
   }
 
-  if (user.approvalStatus === ApprovalStatus.APPROVED) {
-    // redirect(ROUTES.DASHBOARD)
-    console.info("Your application has already been approved. Redirecting to dashboard.")
-  }
-
-  if (user.approvalStatus === ApprovalStatus.DECLINED) {
+  if (session.user.approvalStatus === ApprovalStatus.DECLINED) {
     return (
       <main className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
         <div className="w-full max-w-sm">

@@ -10,12 +10,13 @@ import { cn } from "@/lib/utils"
 import { useForm } from "@tanstack/react-form"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
 export default function SignInForm({ className, ...props }: React.ComponentProps<"div">) {
-  // const router = useRouter()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
@@ -34,7 +35,6 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
         {
           email: value.email,
           password: value.password,
-          // callbackURL: ROUTES.VERIFY_EMAIL,
           callbackURL: ROUTES.DASHBOARD,
         },
         {
@@ -44,11 +44,17 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
           onSuccess: () => {
             toast.dismiss()
             toast.success("Successful sign in.")
-            // router.push(`${ROUTES.VERIFY_EMAIL}?email=${encodeURIComponent(value.email)}`)
-            // FIXME: Email param needs to be replacecd with a token param
           },
           onError: (ctx) => {
             toast.dismiss()
+
+            if (ctx.error.code === "EMAIL_NOT_VERIFIED") {
+              toast.error(`${ctx.error.message}. Please check your inbox for a verification email.`)
+              document.cookie = `pending_email=${encodeURIComponent(value.email)}; max-age=3600; path=/; samesite=lax`
+              router.push(ROUTES.VERIFY_EMAIL)
+              return
+            }
+
             toast.error(ctx.error.message)
             setIsLoading(false)
           },
