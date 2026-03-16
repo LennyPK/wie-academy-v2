@@ -7,6 +7,7 @@ import { after } from "next/server"
 import { sendPasswordResetEmail, sendVerificationEmail } from "./mail/send"
 
 export const auth = betterAuth({
+  trustedOrigins: ["http://localhost:3000", "http://192.168.20.201:3000"],
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
@@ -20,6 +21,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendOnSignIn: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       after(() => sendVerificationEmail(user.email, url))
     },
