@@ -1,16 +1,19 @@
 import {
   Body,
   Button,
-  Container,
   Head,
   Heading,
   Html,
   Link,
+  pixelBasedPreset,
   Preview,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components"
+import { colors, style } from "./theme"
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card"
+import { Separator } from "./ui/separator"
 
 interface VerificationEmailProps {
   userEmail: string
@@ -25,73 +28,77 @@ export default function VerificationEmail({
 }: VerificationEmailProps) {
   return (
     <Html lang="en" dir="ltr">
-      <Tailwind>
+      <Tailwind
+        config={{
+          presets: [pixelBasedPreset],
+          theme: {
+            extend: {
+              colors: colors,
+            },
+          },
+        }}
+      >
         <Head />
         <Preview>Verify your email address to complete your account setup</Preview>
         <Body className="bg-background py-10 font-sans">
-          <Container className="mx-auto max-w-150 rounded-xl bg-card p-8">
-            {/* Header */}
-            <Section className="mb-8 text-center">
-              <Heading className="text-foregound m-0 text-[24px] font-bold">
-                Verify Your Email Address
-              </Heading>
-            </Section>
+          <Card>
+            <CardHeader>
+              <Heading style={style.heading}>Verify Your Email Address</Heading>
+            </CardHeader>
 
             {/* Main Content */}
-            <Section className="mb-8">
-              <Text className="mb-4 text-[16px] leading-6 text-card-foreground">Hi there,</Text>
-              <Text className="mb-4 text-[16px] leading-6 text-card-foreground">
-                Thanks for signing up with {appName}! To complete your account setup and ensure the
-                security of your account, please verify your email address by clicking the button
-                below.
-              </Text>
-            </Section>
+            <CardContent>
+              <Section>
+                <Text style={style.body}>Hi there,</Text>
+                <Text style={style.body}>
+                  Thanks for signing up with {appName}! To complete your account setup and ensure
+                  the security of your account, please verify your email address by clicking the
+                  button below.
+                </Text>
+              </Section>
 
-            {/* CTA Button */}
-            <Section className="mb-8 text-center">
-              <Button
-                href={verificationUrl}
-                className="box-border inline-block rounded-xl bg-primary px-8 py-4 text-[16px] font-semibold text-primary-foreground no-underline"
-              >
-                Verify Email Address
-              </Button>
-            </Section>
+              {/* CTA Button */}
+              <Section className="py-5 text-center">
+                <Button href={verificationUrl} style={style.button}>
+                  Verify Email Address
+                </Button>
+              </Section>
 
-            {/* Alternative Link */}
-            <Section className="mb-8">
-              <Text className="mb-2 text-[14px] leading-5 text-card-foreground">
-                If the button doesn&apos;t work, copy and paste this link into your browser:
-              </Text>
-              <Link href={verificationUrl} className="text-[14px] break-all text-primary">
-                {verificationUrl}
-              </Link>
-            </Section>
+              {/* Alternative Link */}
+              <Section>
+                <Text style={{ ...style.body, marginBottom: "0" }}>
+                  If the button doesn&apos;t work, copy and paste this link into your browser:
+                </Text>
+                <Link href={verificationUrl} style={style.link}>
+                  {verificationUrl}
+                </Link>
+              </Section>
 
-            {/* Security Notice */}
-            <Section className="mb-8 border-t border-muted pt-6">
-              <Text className="mb-2 text-[14px] leading-5 text-muted-foreground">
-                <strong>Security Notice:</strong>
-              </Text>
-              <Text className="mb-2 text-[14px] leading-5 text-muted-foreground">
-                • This verification link will expire in 1 hour
-              </Text>
-              <Text className="mb-2 text-[14px] leading-5 text-muted-foreground">
-                • If you didn&apos;t create an account, you can safely ignore this email
-              </Text>
-              <Text className="text-[14px] leading-5 text-muted-foreground">
-                • Never share this verification link with anyone
-              </Text>
-            </Section>
+              <Separator />
 
-            {/* Footer */}
-            <Section className="border-t border-muted pt-6 text-center">
-              <Text className="m-0 mb-2 text-[12px] leading-4 text-muted-foreground">
+              {/* Security Notice */}
+              <Section>
+                <Text style={style.muted}>• This verification link will expire in 1 hour</Text>
+                <Text style={style.muted}>
+                  • If you didn&apos;t create an account, you can safely ignore this email
+                </Text>
+              </Section>
+            </CardContent>
+
+            <CardFooter>
+              <Text style={{ ...style.muted, fontSize: "12px" }}>
                 This email was sent to {userEmail}
               </Text>
-            </Section>
-          </Container>
+            </CardFooter>
+          </Card>
         </Body>
       </Tailwind>
     </Html>
   )
+}
+
+VerificationEmail.PreviewProps = {
+  userEmail: "user@example.com",
+  verificationUrl: "https://localhost:3000",
+  appName: "WiE Academy",
 }

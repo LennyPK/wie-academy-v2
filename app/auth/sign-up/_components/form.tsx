@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/select"
 import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
-import { cn } from "@/lib/utils"
 import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
+import { cn } from "@/utils"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
@@ -387,8 +387,8 @@ export default function SignUpForm({
       </Card>
       {/* FIXME: Add Privacy Policy and Terms of Service links*/}
       <FieldDescription className="px-6 text-center">
-        By signing up, you agree to our <a href="#">Terms of Service</a> and{" "}
-        <a href="#">Privacy Policy</a>.
+        By signing up, you agree to our <br />
+        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   )

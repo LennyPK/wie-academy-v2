@@ -4,6 +4,7 @@ export const ROUTES = {
   SIGN_UP: "/auth/sign-up",
   // SIGN_UP_SUCCESS: "/auth/sign-up-success",
   FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
   VERIFY_EMAIL: "/auth/verify",
   APPROVAL: "/auth/approval",
   UNAUTHENTICATED_ERROR: "/auth/error",

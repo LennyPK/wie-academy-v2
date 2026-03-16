@@ -157,7 +157,10 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
                 </form.Field> */}
 
                 {/* TODO: Add forgot password link */}
-                <Link href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                <Link
+                  href={ROUTES.FORGOT_PASSWORD}
+                  className="ml-auto text-sm underline-offset-4 hover:underline"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -174,10 +177,11 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
           </form>
         </CardContent>
       </Card>
+
       {/* FIXME: Add Privacy Policy and Terms of Service links*/}
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{" "}
-        <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <br />
+        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   )

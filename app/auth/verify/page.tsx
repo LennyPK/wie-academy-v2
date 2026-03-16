@@ -8,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
 import { Mail } from "lucide-react"
 import { cookies, headers } from "next/headers"
 import Link from "next/link"
