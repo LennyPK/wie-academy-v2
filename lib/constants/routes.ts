@@ -8,6 +8,7 @@ export const ROUTES = {
   VERIFY_EMAIL: "/auth/verify",
   APPROVAL: "/auth/approval",
   UNAUTHENTICATED_ERROR: "/auth/error",
+  UNAUTHORIZED_ERROR: "/app/unauthorized",
 
   DASHBOARD: "/app/dashboard",
   PROFILE: "/app/profile",

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { ROUTES } from "@/constants"
 import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { ApprovalStatus } from "@/prisma/enums"
 import { AlertCircle, Clock, FilePlus, Home, LogOut, Mail } from "lucide-react"
 import { headers } from "next/headers"
@@ -17,11 +18,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 export default async function ApprovalPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   const email = session.user.email
 

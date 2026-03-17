@@ -1,12 +1,9 @@
 import Pagination from "@/components/pagination"
-import { ROUTES } from "@/constants"
 import { Prisma } from "@/generated/client"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
 import { AnnouncementInteractionType, Role } from "@/prisma/enums"
 import { Metadata } from "next"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import AnnouncementEmpty from "./_components/empty"
 import AnnouncementFilters from "./_components/filters"
 import AnnouncementHeader from "./_components/header"
@@ -29,26 +26,8 @@ interface AnnouncementsPageProps {
 }
 
 export default async function AnnouncementsPage({ searchParams }: AnnouncementsPageProps) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      role: true,
-      school: { select: { id: true, label: true } },
-      region: { select: { id: true, label: true } },
-      yearLevel: { select: { id: true, label: true } },
-    },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
+  const user = session.user
 
   // Extract search params with defaults
   const params = await searchParams
@@ -121,14 +100,14 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
     const targetingConditions: Prisma.AnnouncementWhereInput[] = []
 
     // Regions
-    if (user.region) {
+    if (user.regionId) {
       targetingConditions.push({
         OR: [
           // Announcement has no region targeting => visible to all
           { targetRegions: { none: {} } },
 
           // Announcement targets user's region
-          { targetRegions: { some: { regionId: user.region.id } } },
+          { targetRegions: { some: { regionId: user.regionId } } },
         ],
       })
     } else {
@@ -139,11 +118,11 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
     }
 
     // Schools
-    if (user.school) {
+    if (user.schoolId) {
       targetingConditions.push({
         OR: [
           { targetSchools: { none: {} } },
-          { targetSchools: { some: { schoolId: user.school.id } } },
+          { targetSchools: { some: { schoolId: user.schoolId } } },
         ],
       })
     } else {
@@ -153,11 +132,11 @@ export default async function AnnouncementsPage({ searchParams }: AnnouncementsP
     }
 
     // Year Levels
-    if (user.yearLevel) {
+    if (user.yearId) {
       targetingConditions.push({
         OR: [
           { targetYearLevels: { none: {} } },
-          { targetYearLevels: { some: { yearLevelId: user.yearLevel.id } } },
+          { targetYearLevels: { some: { yearLevelId: user.yearId } } },
         ],
       })
     } else {

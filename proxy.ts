@@ -30,7 +30,7 @@ export async function proxy(request: NextRequest) {
 
     // Admin pages access
     if (pathname.startsWith("/app/admin") && session.user.role !== Role.ADMIN) {
-      return NextResponse.redirect(new URL(ROUTES.DASHBOARD, request.url))
+      return NextResponse.redirect(new URL(ROUTES.UNAUTHORIZED_ERROR, request.url))
     }
 
     return NextResponse.next()

@@ -1,16 +1,11 @@
 import MenuBar from "@/components/header/menu-bar"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
-import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -25,7 +20,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   })
 
   if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    redirect(ROUTES.SIGN_IN)
   }
 
   return (
