@@ -67,7 +67,7 @@ export default async function ApprovalPage() {
             <CardFooter className="flex flex-col gap-2">
               <Button asChild variant="default" className="w-full">
                 <Link
-                  href={`mailto:support@wieacademy.org?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
+                  href={`mailto:${process.env.EMAIL_SUPPORT_ADDRESS}?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
                     email
                   )}`}
                 >
@@ -127,7 +127,7 @@ export default async function ApprovalPage() {
           <CardFooter className="flex flex-col gap-2">
             <Button asChild variant="default" className="w-full">
               <Link
-                href={`mailto:support@wie-academy.lennypk.dev?subject=Application%20Inquiry&body=Hi,%20I%20need%20help%20with%20my%20application%20for%20${encodeURIComponent(
+                href={`mailto:${process.env.EMAIL_SUPPORT_ADDRESS}?subject=Application%20Inquiry&body=Hi,%20I%20need%20help%20with%20my%20application%20for%20${encodeURIComponent(
                   email
                 )}`}
               >

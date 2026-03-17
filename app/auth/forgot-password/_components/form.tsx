@@ -46,7 +46,7 @@ export default function ForgotPasswordForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Reset Your Password</CardTitle>
+        <CardTitle>Forgot Your Password?</CardTitle>
         <CardDescription>
           Enter your email below to receive password reset instructions.
         </CardDescription>

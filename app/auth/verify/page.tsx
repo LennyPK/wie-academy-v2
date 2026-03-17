@@ -22,7 +22,7 @@ export default async function VerifyPage() {
   const pendingEmail = cookieStore.get("pending_email")?.value
 
   if (!session && !pendingEmail) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
+    redirect(ROUTES.SIGN_IN)
   }
 
   if (session?.user.emailVerified) {

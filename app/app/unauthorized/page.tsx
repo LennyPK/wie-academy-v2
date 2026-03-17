@@ -39,7 +39,7 @@ export default async function UnauthorizedPage() {
 
             <Button asChild variant="default">
               <Link
-                href={`mailto:support@wieacademy.org?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
+                href={`mailto:${process.env.EMAIL_SUPPORT_ADDRESS}?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
                   email
                 )}`}
               >

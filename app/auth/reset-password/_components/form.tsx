@@ -7,6 +7,7 @@ import { Field, FieldDescription } from "@/components/ui/field"
 import { authClient } from "@/lib/auth/client"
 import { ROUTES } from "@/lib/constants"
 import { revalidateLogic } from "@tanstack/react-form"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -60,15 +61,34 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     },
   })
 
+  if (!token) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Reset link is invalid or expired</CardTitle>
+          <CardDescription>
+            This password reset link is no longer valid. Please request a new one to continue.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex gap-2">
+          <Button asChild variant="outline" className="flex-1">
+            <Link href={ROUTES.SIGN_IN}>Back to Sign In</Link>
+          </Button>
+          <Button asChild className="flex-1">
+            <Link href={ROUTES.FORGOT_PASSWORD}>Request a New Link</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Reset Your Password</CardTitle>
-        <CardDescription>
-          Enter your email below to receive password reset instructions.
-        </CardDescription>
+        <CardDescription>Choose a new password for your account.</CardDescription>
         <FieldDescription>
-          Trying to sign in?{" "}
+          Remember your password?{" "}
           <a href={ROUTES.SIGN_IN} className="text-primary">
             Sign in
           </a>
