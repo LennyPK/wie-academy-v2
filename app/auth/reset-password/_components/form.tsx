@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { formSchema } from "./form-schema"
 
 interface ResetPasswordFormProps {
-  token: string
+  token?: string
 }
 
 export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
