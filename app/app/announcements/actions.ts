@@ -1,12 +1,9 @@
 "use server"
 
-import { ROUTES } from "@/constants"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
 import { AnnouncementInteractionType } from "@/prisma/enums"
 import { revalidatePath } from "next/cache"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { NewAnnouncement } from "./types"
 
 export async function toggleRead(announcementId: string, userId: string, path: string) {
@@ -62,11 +59,7 @@ export async function markAsRead(announcementId: string, userId: string) {
 }
 
 export async function insertAnnouncement(announcementPayload: NewAnnouncement) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   const announcement = await prisma.announcement.upsert({
     where: { id: announcementPayload.id },
@@ -76,7 +69,7 @@ export async function insertAnnouncement(announcementPayload: NewAnnouncement) {
       contentHtml: announcementPayload.contentHtml,
       contentJson: announcementPayload.contentJson,
       categoryId: announcementPayload.categoryId,
-      authorId: session?.user.id ?? undefined,
+      authorId: session.user.id,
       targetSchools: {
         create: announcementPayload.schoolIds.map((schoolId) => ({
           school: { connect: { id: schoolId } },

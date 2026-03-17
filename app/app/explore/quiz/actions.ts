@@ -1,21 +1,14 @@
 "use server"
 
-import { ROUTES } from "@/constants"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
 import { QuestionnaireQuestionType, QuestionnaireType } from "@/prisma/enums"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import * as z from "zod"
 import { attemptSchema } from "./_components/attempt-form/form-schema"
 import { formSchema } from "./_components/form/form-schema"
 
 export async function insertQuiz(quizPayload: z.infer<typeof formSchema>) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  await requireSession()
 
   const questionsData = quizPayload.questions.map((question) => ({
     type: question.type,
@@ -79,11 +72,7 @@ export async function insertQuizResponse(
   quizId: string,
   answers: z.infer<typeof attemptSchema>["answers"]
 ) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   // Fetch questions
   const questions = await prisma.questionnaireQuestion.findMany({

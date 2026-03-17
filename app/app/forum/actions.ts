@@ -1,20 +1,13 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/lib/prisma/client"
 import { PostInteractionType } from "@/prisma/enums"
 import { revalidatePath } from "next/cache"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { NewPost, NewReply } from "./types"
 
 export async function insertPost(postPayload: NewPost) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   const post = await prisma.post.upsert({
     where: { id: postPayload.id },
@@ -26,7 +19,7 @@ export async function insertPost(postPayload: NewPost) {
       isAnonymous: postPayload.isAnonymous,
       isPrivate: postPayload.isPrivate,
       categoryId: postPayload.categoryId,
-      authorId: session?.user.id ?? undefined,
+      authorId: session.user.id,
     },
     update: {
       title: postPayload.title,
@@ -47,11 +40,7 @@ export async function insertPost(postPayload: NewPost) {
 }
 
 export async function insertReply(replyPayload: NewReply) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
 
   const reply = await prisma.postReply.upsert({
     where: { id: replyPayload.id },
@@ -61,7 +50,7 @@ export async function insertReply(replyPayload: NewReply) {
       contentHtml: replyPayload.contentHtml,
       contentJson: replyPayload.contentJson,
       isAnonymous: replyPayload.isAnonymous,
-      authorId: session?.user.id ?? undefined,
+      authorId: session.user.id,
     },
     update: {
       contentPlain: replyPayload.contentPlain,

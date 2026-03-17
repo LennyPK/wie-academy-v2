@@ -16,11 +16,12 @@ import {
 } from "@/components/ui/select"
 import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
-import { cn } from "@/lib/utils"
 import { RegionOption, SchoolOption, YearLevelOption } from "@/types"
+import { cn } from "@/utils"
 import { useForm } from "@tanstack/react-form"
 import { getYear } from "date-fns"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { formSchema } from "./form-schema"
@@ -38,7 +39,7 @@ export default function SignUpForm({
   schools,
   ...props
 }: React.ComponentProps<"div"> & SignUpFormProps) {
-  // const router = useRouter()
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm({
@@ -64,7 +65,6 @@ export default function SignUpForm({
         return
       }
 
-      // TODO: Handle redirect
       await authClient.signUp.email(
         {
           email: value.email,
@@ -77,7 +77,6 @@ export default function SignUpForm({
           regionId: Number(value.region),
           yearId: Number(value.yearLevel),
           // image: null,
-          // callbackURL: ROUTES.VERIFY_EMAIL,
           callbackURL: ROUTES.DASHBOARD,
         },
         {
@@ -87,8 +86,8 @@ export default function SignUpForm({
           onSuccess: () => {
             toast.dismiss()
             toast.success("Check your email to verify your account.")
-            // router.push(`${ROUTES.VERIFY_EMAIL}?email=${encodeURIComponent(value.email)}`)
-            // FIXME: Email param needs to be replacecd with a token param
+            document.cookie = `pending_email=${encodeURIComponent(value.email)}; max-age=3600; path=/; samesite=lax`
+            router.push(ROUTES.VERIFY_EMAIL)
           },
           onError: (ctx) => {
             toast.dismiss()
@@ -388,8 +387,8 @@ export default function SignUpForm({
       </Card>
       {/* FIXME: Add Privacy Policy and Terms of Service links*/}
       <FieldDescription className="px-6 text-center">
-        By signing up, you agree to our <a href="#">Terms of Service</a> and{" "}
-        <a href="#">Privacy Policy</a>.
+        By signing up, you agree to our <br />
+        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
   )

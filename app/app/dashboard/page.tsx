@@ -2,8 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants"
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma/client"
+import { requireSession } from "@/lib/auth/session"
 import { cn } from "@/lib/utils"
 import {
   Award,
@@ -22,34 +21,12 @@ import {
   User,
   Zap,
 } from "lucide-react"
-import { headers } from "next/headers"
 import Link from "next/link"
-import { redirect } from "next/navigation"
 import DashboardHeader from "./_components/header"
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.SIGN_IN)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      // role: true,
-      // school: { select: { id: true, label: true } },
-      // region: { select: { id: true, label: true } },
-      // yearLevel: { select: { id: true, label: true } },
-    },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
+  const user = session.user
 
   // TODO
   // const progressToNextLevel = (userData.xp / userData.xpToNextLevel) * 100

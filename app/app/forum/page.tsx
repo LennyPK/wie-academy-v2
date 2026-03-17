@@ -1,13 +1,10 @@
 import Pagination from "@/components/pagination"
-import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
+import { requireSession } from "@/lib/auth/session"
 import { getPostCategories } from "@/lib/database"
 import { Prisma } from "@/lib/generated/prisma/client"
 import { prisma } from "@/lib/prisma/client"
 import { Role } from "@/lib/prisma/enums"
 import { Metadata } from "next"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import ForumEmpty from "./_components/empty"
 import ForumFilters from "./_components/filters"
 import ForumHeader from "./_components/header"
@@ -30,20 +27,8 @@ interface ForumPageProps {
 }
 
 export default async function ForumPage({ searchParams }: ForumPageProps) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, role: true },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
+  const user = session.user
 
   // Extract search params with defaults
   const params = await searchParams

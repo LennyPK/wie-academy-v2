@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ROUTES } from "@/constants"
 import { authClient } from "@/lib/auth/client"
-import { ROUTES } from "@/lib/constants"
 import { useForm } from "@tanstack/react-form"
 import { RefreshCw } from "lucide-react"
 import { useState } from "react"
@@ -17,26 +17,6 @@ interface VerifyFormProps {
 
 export default function VerifyForm({ email }: VerifyFormProps) {
   const [isLoading, setIsLoading] = useState(false)
-
-  // const handleResendVerificationEmail = async () => {
-  //   toast.loading("Sending verification email...")
-
-  //   await authClient.sendVerificationEmail({
-  //     email: email,
-  //     callbackURL: ROUTES.PENDING_APPROVAL,
-  //     // email: email,
-  //     // callbackURL: ROUTES.PENDING_APPROVAL,
-  //   })
-
-  //   toast.dismiss()
-  //   toast.success("Verification email sent.")
-  //   // resend.emails.send({
-  //   //   from: "onboarding@resending.dev",
-  //   //   to: email,
-  //   //   subject: "Verify your email address",
-  //   //   html: `<p>Click the link to verify your email: ${url}</p>`,
-  //   // })
-  // }
 
   const form = useForm({
     defaultValues: {
@@ -51,17 +31,8 @@ export default function VerifyForm({ email }: VerifyFormProps) {
 
       await authClient.sendVerificationEmail({
         email: value.email,
-        callbackURL: ROUTES.PENDING_APPROVAL,
+        callbackURL: ROUTES.DASHBOARD,
       })
-      // const resend = new Resend(process.env.RESEND_API_KEY)
-
-      // await resend.emails.send({
-      //   from: "onboarding@resending.dev",
-      //   to: value.email,
-      //   subject: "Verify your email address",
-      //   html: "<p>Click the link to verify your email</p>",
-      //   // html: `<p>Click the link to verify your email: ${url}</p>`,
-      // })
 
       toast.dismiss()
       toast.success("Verification email sent.")

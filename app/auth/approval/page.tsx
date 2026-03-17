@@ -8,47 +8,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { ROUTES } from "@/lib/constants"
-import { prisma } from "@/lib/prisma/client"
-import { ApprovalStatus } from "@/lib/prisma/enums"
-import { AlertCircle, Clock, Home, Mail } from "lucide-react"
+import { ROUTES } from "@/constants"
+import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
+import { ApprovalStatus } from "@/prisma/enums"
+import { AlertCircle, Clock, FilePlus, Home, LogOut, Mail } from "lucide-react"
+import { headers } from "next/headers"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
-interface SearchParams {
-  email: string
-}
+export default async function ApprovalPage() {
+  const session = await requireSession()
 
-interface ApprovalPageProps {
-  searchParams?: Promise<SearchParams>
-}
+  const email = session.user.email
 
-export default async function ApprovalPage({ searchParams }: ApprovalPageProps) {
-  // FIXME: Email param needs to be replacecd with a token param
-  const params = await searchParams
-
-  const email = params?.email || ""
-
-  if (!email) {
-    console.error("No email provided.")
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  if (session.user.approvalStatus === ApprovalStatus.APPROVED) {
+    redirect(ROUTES.DASHBOARD)
   }
 
-  const user = await prisma.user.findUnique({ where: { email }, select: { approvalStatus: true } })
-
-  console.log("Fetched user for email:", email, user)
-
-  if (!user) {
-    console.error("User not found.")
-    return <div>No User</div>
-    // redirect(ROUTES.UNAUTHENTICATED_ERROR)
+  async function newApplication() {
+    "use server"
+    await auth.api.signOut({ headers: await headers() })
+    redirect(ROUTES.SIGN_UP)
   }
 
-  if (user.approvalStatus === ApprovalStatus.APPROVED) {
-    // redirect(ROUTES.DASHBOARD)
-    console.info("Your application has already been approved. Redirecting to dashboard.")
+  async function signOut() {
+    "use server"
+    await auth.api.signOut({ headers: await headers() })
+    redirect(ROUTES.SIGN_IN)
   }
 
-  if (user.approvalStatus === ApprovalStatus.DECLINED) {
+  if (session.user.approvalStatus === ApprovalStatus.DECLINED) {
     return (
       <main className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
         <div className="w-full max-w-sm">
@@ -63,9 +53,8 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Alert variant="destructive" className="flex items-center justify-center">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription className="justify-items-center text-center">
+              <Alert variant="destructive" className="py-5">
+                <AlertDescription className="justify-items-center">
                   Your application for <strong>{email}</strong> has been declined.
                 </AlertDescription>
               </Alert>
@@ -78,7 +67,7 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
             <CardFooter className="flex flex-col gap-2">
               <Button asChild variant="default" className="w-full">
                 <Link
-                  href={`mailto:support@wieacademy.org?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
+                  href={`mailto:${process.env.EMAIL_SUPPORT_ADDRESS}?subject=Application%20Review%20Request&body=Please%20review%20my%20application%20for%20${encodeURIComponent(
                     email
                   )}`}
                 >
@@ -87,9 +76,22 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
                 </Link>
               </Button>
 
-              <Button asChild variant="outline" className="w-full bg-transparent">
-                <Link href={ROUTES.SIGN_UP}>Submit New Application</Link>
-              </Button>
+              <form className="w-full" action={newApplication}>
+                <Button variant="outline" className="w-full">
+                  <FilePlus className="mr-2 h-4 w-4" />
+                  Submit New Application
+                </Button>
+              </form>
+
+              <form className="w-full" action={signOut}>
+                <Button
+                  variant="outline"
+                  className="w-full hover:bg-destructive hover:text-destructive-foreground"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </form>
             </CardFooter>
           </Card>
         </div>
@@ -109,7 +111,7 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
             <CardDescription>Your application is currently under review</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Alert>
+            <Alert className="py-5">
               <AlertDescription className="justify-items-center">
                 We&apos;ll notify you via email at{" "}
                 <strong className="text-foreground">{email}</strong> once a decision has been made.
@@ -125,7 +127,7 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
           <CardFooter className="flex flex-col gap-2">
             <Button asChild variant="default" className="w-full">
               <Link
-                href={`mailto:support@wieacademy.org?subject=Application%20Inquiry&body=Hi,%20I%20need%20help%20with%20my%20application%20for%20${encodeURIComponent(
+                href={`mailto:${process.env.EMAIL_SUPPORT_ADDRESS}?subject=Application%20Inquiry&body=Hi,%20I%20need%20help%20with%20my%20application%20for%20${encodeURIComponent(
                   email
                 )}`}
               >
@@ -134,7 +136,7 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
               </Link>
             </Button>
 
-            <Button asChild variant="outline" className="w-full bg-transparent">
+            <Button asChild variant="outline" className="w-full">
               <Link
                 href={ROUTES.HOME}
                 className="flex items-center justify-center gap-2 align-middle"
@@ -143,6 +145,16 @@ export default async function ApprovalPage({ searchParams }: ApprovalPageProps) 
                 Back to Home
               </Link>
             </Button>
+
+            <form className="w-full" action={signOut}>
+              <Button
+                variant="outline"
+                className="w-full hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </Button>
+            </form>
           </CardFooter>
         </Card>
       </div>

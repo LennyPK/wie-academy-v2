@@ -1,29 +1,14 @@
 import BackButton from "@/components/back-button"
-import { ROUTES } from "@/constants"
 import QuizDetail from "@/explore/quiz/_components/detail"
 import QuizAttemptList from "@/explore/quiz/_components/detail/attempts"
 import { quizAttempt, quizWithQuestions } from "@/explore/quiz/types"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
 import { QuestionnaireType } from "@/prisma/enums"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 
 export default async function QuizPage({ params }: { params: Promise<{ id: string }> }) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, role: true },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
+  const user = session.user
 
   const { id } = await params
 

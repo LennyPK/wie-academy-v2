@@ -1,28 +1,13 @@
 import BackButton from "@/components/back-button"
-import { auth } from "@/lib/auth"
-import { ROUTES } from "@/lib/constants"
+import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/lib/prisma/client"
 import { PostInteractionType } from "@/lib/prisma/enums"
-import { headers } from "next/headers"
-import { redirect } from "next/navigation"
 import ForumDetail from "../../_components/detail"
 import { markAsRead } from "../../actions"
 
 export default async function ForumPostPage({ params }: { params: Promise<{ id: string }> }) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, role: true },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  const session = await requireSession()
+  const user = session.user
 
   const { id } = await params
 

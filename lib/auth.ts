@@ -3,30 +3,27 @@ import { prismaAdapter } from "better-auth/adapters/prisma"
 // If your Prisma file is located elsewhere, you can change the path
 import { prisma } from "@/prisma/client"
 import { nextCookies } from "better-auth/next-js"
-import { resend } from "./mail/client"
+import { after } from "next/server"
+import { sendPasswordResetEmail, sendVerificationEmail } from "./mail/send"
 
 export const auth = betterAuth({
+  trustedOrigins: ["http://localhost:3000", "http://192.168.20.201:3000"],
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
   emailAndPassword: {
     enabled: true,
-    // requireEmailVerification: true,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      after(() => sendPasswordResetEmail(user.email, url))
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
-    // sendOnSignIn: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      console.log("Sending verification email to:", user.email)
-
-      const { data, error } = await resend.emails.send({
-        from: "onboarding@updates.lennypk.dev",
-        to: user.email,
-        subject: "Verify your email address",
-        html: `<p>Click the link to verify your email: ${url}</p>`,
-      })
-
-      console.log("Resend response data:", data, "error:", error)
+      after(() => sendVerificationEmail(user.email, url))
     },
     expiresIn: 3600, // 1 hour
   },

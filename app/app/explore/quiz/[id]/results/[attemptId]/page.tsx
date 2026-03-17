@@ -1,35 +1,20 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { quizResult } from "@/explore/quiz/types"
-import { auth } from "@/lib/auth"
+import { requireSession } from "@/lib/auth/session"
 import { ROUTES } from "@/lib/constants"
 import { prisma } from "@/lib/prisma/client"
 import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { BarChart3, Check, Trophy, X } from "lucide-react"
-import { headers } from "next/headers"
 import Link from "next/link"
-import { redirect } from "next/navigation"
 
 export default async function QuizResultsPage({
   params,
 }: {
   params: Promise<{ attemptId: string }>
 }) {
-  const session = await auth.api.getSession({ headers: await headers() })
-
-  if (!session) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true, role: true },
-  })
-
-  if (!user) {
-    redirect(ROUTES.UNAUTHENTICATED_ERROR)
-  }
+  await requireSession()
 
   const { attemptId } = await params
 
