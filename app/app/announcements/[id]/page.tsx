@@ -2,6 +2,7 @@ import AnnouncementDetail from "@/announcements/_components/detail"
 import BackButton from "@/components/back-button"
 import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
+import { notFound } from "next/navigation"
 
 export default async function AnnouncementPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requireSession()
@@ -49,7 +50,7 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ i
     },
   })
 
-  if (!announcement) return
+  if (!announcement) notFound()
 
   return (
     <div>

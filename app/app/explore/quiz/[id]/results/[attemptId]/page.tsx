@@ -8,6 +8,7 @@ import { QuestionnaireQuestionType } from "@/lib/prisma/enums"
 import { cn } from "@/lib/utils"
 import { BarChart3, Check, Trophy, X } from "lucide-react"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
 export default async function QuizResultsPage({
   params,
@@ -23,7 +24,7 @@ export default async function QuizResultsPage({
     ...quizResult,
   })
 
-  if (!response) return
+  if (!response) notFound()
 
   const quiz = response.questionnaire
   const questions = response.questionnaire.questions
