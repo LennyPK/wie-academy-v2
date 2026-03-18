@@ -1,5 +1,6 @@
 import BackButton from "@/components/back-button"
 import { prisma } from "@/lib/prisma/client"
+import { notFound } from "next/navigation"
 import ForumForm from "../../_components/form"
 
 export default async function ForumPostEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -13,6 +14,8 @@ export default async function ForumPostEditPage({ params }: { params: Promise<{ 
       interactions: { where: { postId: "__never__" } },
     },
   })
+
+  if (!post) notFound()
 
   return (
     <div>

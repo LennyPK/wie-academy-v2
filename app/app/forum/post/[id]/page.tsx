@@ -2,6 +2,7 @@ import BackButton from "@/components/back-button"
 import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/lib/prisma/client"
 import { PostInteractionType } from "@/lib/prisma/enums"
+import { notFound } from "next/navigation"
 import ForumDetail from "../../_components/detail"
 import { markAsRead } from "../../actions"
 
@@ -27,9 +28,7 @@ export default async function ForumPostPage({ params }: { params: Promise<{ id: 
     },
   })
 
-  if (!post) {
-    return
-  }
+  if (!post) notFound()
 
   await markAsRead(id, user.id)
 

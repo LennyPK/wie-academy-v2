@@ -156,7 +156,6 @@ export default function SignInForm({ className, ...props }: React.ComponentProps
                   }}
                 </form.Field> */}
 
-                {/* TODO: Add forgot password link */}
                 <Link
                   href={ROUTES.FORGOT_PASSWORD}
                   className="ml-auto text-sm underline-offset-4 hover:underline"

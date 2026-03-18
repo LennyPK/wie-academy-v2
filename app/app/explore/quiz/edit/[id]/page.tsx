@@ -3,6 +3,7 @@ import QuizForm from "@/explore/quiz/_components/form"
 import { quizWithQuestions } from "@/explore/quiz/types"
 import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
+import { notFound } from "next/navigation"
 
 export default async function QuizEditPage({ params }: { params: Promise<{ id: string }> }) {
   await requireSession()
@@ -12,6 +13,8 @@ export default async function QuizEditPage({ params }: { params: Promise<{ id: s
     where: { id: id },
     ...quizWithQuestions,
   })
+
+  if (!quiz) notFound()
 
   return (
     <div>

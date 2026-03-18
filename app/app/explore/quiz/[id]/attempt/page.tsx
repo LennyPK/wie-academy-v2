@@ -3,6 +3,7 @@ import { quizWithQuestions } from "@/explore/quiz/types"
 import { requireSession } from "@/lib/auth/session"
 import { prisma } from "@/prisma/client"
 import { QuestionnaireType } from "@/prisma/enums"
+import { notFound } from "next/navigation"
 
 export default async function QuizAttemptPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requireSession()
@@ -14,7 +15,7 @@ export default async function QuizAttemptPage({ params }: { params: Promise<{ id
     ...quizWithQuestions,
   })
 
-  if (!quiz) return
+  if (!quiz) notFound()
 
   return (
     <div>

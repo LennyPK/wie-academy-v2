@@ -1,6 +1,7 @@
 import AnnouncementForm from "@/announcements/_components/form"
 import BackButton from "@/components/back-button"
 import { prisma } from "@/prisma/client"
+import { notFound } from "next/navigation"
 
 export default async function AnnouncementEditPage({
   params,
@@ -36,6 +37,8 @@ export default async function AnnouncementEditPage({
       interactions: { where: { announcementId: "__never__" } },
     },
   })
+
+  if (!announcement) notFound()
 
   return (
     <div>
