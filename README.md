@@ -1,95 +1,115 @@
 # WiE Academy
 
-A comprehensive Next.js platform for engineering student communities with event management, member engagement, and admin analytics. Built with Supabase, TypeScript, and modern React patterns.
+A Next.js platform for engineering student communities — announcements, events, a
+discussion forum, and quizzes, with role-based access and an application/approval
+flow for new members.
+
+Built with **Next.js 16** (app router), **TypeScript**, **PostgreSQL + Prisma**,
+**better-auth**, **Resend**, **TipTap**, **shadcn/ui**, and **Zod**.
+
+> **New to this codebase?** Read [HANDOFF.md](HANDOFF.md) for the current state of
+> the project — what's built, what's left, and the known bugs.
 
 ## Getting Started
 
 ### Prerequisites
 
-If you do not have npm installed, download Node.js and npm from [the official npm documentation](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/) (`npm install -g pnpm`) — this project uses pnpm, not npm/yarn
+- A PostgreSQL database (local or hosted)
+- A [Resend](https://resend.com/) API key (for verification / password-reset emails)
 
 ### Installation
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/SOFTENG761/project-team-6-2025.git
-   cd project-team-6-2025
+   git clone git@github.com:LennyPK/wie-academy-v2.git
+   cd wie-academy-v2
    ```
 
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 ### Environment Setup
 
-1. Copy the environment example file:
+1. Copy the example env file:
 
    ```bash
-   cp .env.example .env.local
+   cp .env.example .env
    ```
 
-2. Update the values in `.env.local` with your configuration:
+2. Fill in the values in `.env` (see [.env.example](.env.example) for the full list):
+   - `DATABASE_URL` — PostgreSQL connection string
+   - `BETTER_AUTH_SECRET` — generate with `openssl rand -base64 32`
+   - `RESEND_API_KEY`, `EMAIL_SENDER_NAME`, `EMAIL_SENDER_ADDRESS`, `EMAIL_SUPPORT_ADDRESS`
+   - `NEXT_PUBLIC_SITE_URL`
 
-   You will need to obtain the Supabase URL and keys from your Supabase project settings.
+### Database Setup
 
-   ```env
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   NEXT_PUBLIC_SUPABASE_URL=your-project-url
-   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your-anon-key
-   EVENT_JWT_SECRET=your-secret-key
-   ```
+Push the Prisma schema to your database and generate the client:
+
+```bash
+pnpm db:push       # push schema/models to the database
+pnpm db:generate   # generate the Prisma client (into lib/generated/prisma)
+pnpm db:seed       # optional: seed reference data + sample content
+```
+
+> **Note:** Seeded user accounts are not usable for sign-in as-is — they have no
+> password/account record and are not email-verified or approved. To use the app,
+> register through the UI, then approve your account (see [HANDOFF.md](HANDOFF.md)
+> for the current manual approval workaround). This is a known gap.
+
+Useful database commands:
+
+```bash
+pnpm db:studio     # open Prisma Studio
+pnpm db:reset      # DESTRUCTIVE: force-reset the schema
+```
 
 ### Running the Development Server
 
-To launch the app for development, run:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-This will start the development server with Turbopack. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Testing and Linting
+## Scripts
 
-- Running Tests:
-
-  To run the test suite, use:
-
-  ```bash
-  npm run test
-  ```
-
-- Linting:
-
-  To check the code for linting errors, run:
-
-  ```bash
-  npm run lint
-  ```
+| Command             | Description                              |
+| ------------------- | ---------------------------------------- |
+| `pnpm dev`          | Start the dev server                     |
+| `pnpm build`        | Generate the Prisma client and build     |
+| `pnpm start`        | Start the production server              |
+| `pnpm lint`         | Run ESLint                               |
+| `pnpm lint:fix`     | Fix ESLint issues                        |
+| `pnpm format`       | Format with Prettier                     |
+| `pnpm ts-check`     | Type-check with `tsc --noEmit`           |
+| `pnpm email:dev`    | Preview email templates locally          |
 
 ## Additional Tools
 
-### ShadCN
+### shadcn/ui
 
-This project uses [ShadCN](https://ui.shadcn.com/docs). To add new components, use the ShadCN CLI:
+This project uses [shadcn/ui](https://ui.shadcn.com/docs). Add components with:
 
 ```bash
-npx shadcn@latest add
+pnpm dlx shadcn@latest add
 ```
 
 ### Fonts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
+to load [Geist](https://vercel.com/font).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branching and commit conventions.
 
 ## Contributors
 
-This project was created by SOFTENG 761 2025 Team 6.
+Originally created by SOFTENG 761 2025 Team 6.
